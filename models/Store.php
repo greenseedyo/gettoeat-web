@@ -54,6 +54,7 @@ class Store extends Pix_Table
         $this->_relations['products'] = array('rel' => 'has_many', 'type' => 'Product', 'foreign_key' => 'store_id');
         $this->_relations['bills'] = array('rel' => 'has_many', 'type' => 'Bill', 'foreign_key' => 'store_id');
         $this->_relations['events'] = array('rel' => 'has_many', 'type' => 'Event', 'foreign_key' => 'store_id');
+        $this->_relations['table_info'] = array('rel' => 'has_one', 'type' => 'TableInfo', 'foreign_key' => 'id');
 	}
 
     public static function getByAccount($account)
