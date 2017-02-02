@@ -13,11 +13,14 @@ include(ROOT_DIR . '/pixframework/Pix/Loader.php');
 set_include_path(ROOT_DIR . '/pixframework/' . PATH_SEPARATOR . ROOT_DIR . '/models/');
 Pix_Loader::registerAutoload();
 
-$config = json_decode(file_get_contents('/VeryBuy/config/db.json'), 1);
+$config = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/../config/db.json'), 1);
 $link = new Mysqli;
-$link->connect($config['host'], 'buddyhouse', 'w3VJMH6Zmfy8aXu4', 'buddyhouse');
+$link->connect($config['host'], $config['user'], $config['password'], $config['database']);
 $link->set_charset("utf8");
 Pix_Table::setDefaultDb(new Pix_Table_Db_Adapter_Mysqli($link));
+
+$store_account = explode('.', $_SERVER['HTTP_HOST'])[0];
+$_SESSION['store_account'] = $store_account;
 
 /*
 if (!getenv('DATABASE_URL')) {

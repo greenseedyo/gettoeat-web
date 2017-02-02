@@ -2,6 +2,11 @@
 header('Content-type: text/json');
 require_once 'config.php';
 
+$store = Store::getByAccount($_SESSION['store_account']);
+if (!$store instanceof StoreRow) {
+    die('找不到此帳號');
+}
+
 $item_datas = $_POST['item_datas'];
 $ordered_at = substr($_POST['ordered_at'], 0, 10);
 if (date('H', $ordered_at) > 6) {
@@ -21,6 +26,6 @@ $data = array(
     'custermers' => $_POST['custermers'],
 );
 
-$bill = Bill::insert($data);
+$bill = $store->create_bills($data);
 $bill->pay($item_datas, $_POST['event_id']);
 echo $bill->id;

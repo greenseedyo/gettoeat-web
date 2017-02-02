@@ -1,14 +1,19 @@
 <?php
 require_once 'config.php';
 
-$categories = Category::search(1);
+$store = Store::getByAccount($_SESSION['store_account']);
+if (!$store instanceof StoreRow) {
+    die('找不到此帳號');
+}
+
+$categories = $store->categories;
 ?>
 <!DOCTYPE HTML>
 <html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-<title>Buddy House</title>
+<title><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</title>
 <link rel="stylesheet" href="static/jquery.mobile-1.3.1.min.css" />
 <link rel="stylesheet" href="static/style.css" />
 <script src="static/jquery-1.9.1.min.js"></script>
@@ -25,7 +30,7 @@ $(document).on('mobileinit', function(){
 <!-- table -->
 <div class="page" id="table">
     <div data-theme="a" data-role="header">
-        <h5>Buddy House 結帳小幫手</h5>
+        <h5><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</h5>
         <button class="ui-btn-right to-bill-page">已結帳單</button>
     </div>
 
@@ -78,12 +83,12 @@ $(document).on('mobileinit', function(){
 <div class="page" id="pos" style="display:none;">
     <div data-theme="a" data-role="header">
         <input class="ui-btn-left back-to-table" type="button" value="返回" />
-        <h5>Buddy House 結帳小幫手</h5>
+        <h5><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</h5>
         <div id="navbar" data-role="navbar" data-iconpos="left">
             <ul>
                 <?php foreach ($categories as $category) { ?>
                 <li>
-                <a href="#page<?= intval($category->id) ?>" data-transition="fade" data-theme="" data-icon="star" <?= 1 == $category->id ? 'class="ui-btn-active ui-state-persist"' : '' ?> data-category="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a>
+                <a href="#page<?= intval($category->id) ?>" data-transition="fade" data-theme="" data-icon="star" <?= 1 == $category->id ? 'class="ui-btn-active ui-state-persist"' : '' ?> data-category_id="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a>
                 </li>
                 <?php } ?>
             </ul>
@@ -103,7 +108,7 @@ $(document).on('mobileinit', function(){
     <div id="right-column" data-role="content">
         <?php foreach ($categories as $category) { ?>
         <div class="list-div" id="category-<?= intval($category->id) ?>" <?= 1 == $category->id ? '' : 'style="display:none;"' ?>>
-            <?php foreach (Product::search(array('category' => $category->id, 'off' => 0))->order('position ASC') as $product) { ?>
+            <?php foreach ($category->getCurrentProducts()->order('position ASC') as $product) { ?>
             <span class="grid">
                 <button data-role="none" data-product_id="<?= intval($product->id) ?>">
                     <span class="name"><?= htmlspecialchars($product->name) ?></span><br>
@@ -179,7 +184,7 @@ $(document).on('mobileinit', function(){
 <div class="page" id="submit" style="display:none;">
     <div data-theme="a" data-role="header">
         <button class="back-to-pos">返回</button>
-        <h5>Buddy House 結帳小幫手</h5>
+        <h5><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</h5>
     </div>
     <div data-role="content">
         <div class="submit_content">
@@ -341,7 +346,7 @@ $('#change-table').click(function(e){
 /* 切換分類 */
 $pos_page.find('#navbar').find('a').click(function(e){
     e.preventDefault();
-    var cid = $(this).data('category');
+    var cid = $(this).data('category_id');
     $pos_page.find('.list-div').hide();
     $('#category-' + cid).show();
 });

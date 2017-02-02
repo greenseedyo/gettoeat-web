@@ -96,31 +96,26 @@ class Bill extends Pix_Table
 		$this->_name = 'bill';
 		$this->_primary = array('id');
 
-		$this->_columns['id'] = array('type' => 'int', 'auto_increment' => true);
-		$this->_columns['year'] = array('type' => 'smallint', 'size' => 5);
-		$this->_columns['month'] = array('type' => 'tinyint', 'size' => 2);
-		$this->_columns['date'] = array('type' => 'tinyint', 'size' => 2);
-		$this->_columns['day'] = array('type' => 'tinyint', 'size' => 1);
-		$this->_columns['price'] = array('type' => 'int', 'size' => 10);
-		$this->_columns['ordered_at'] = array('type' => 'int', 'size' => 10);
-		$this->_columns['paid_at'] = array('type' => 'int', 'size' => 10);
-		$this->_columns['custermers'] = array('type' => 'tinyint', 'size' => 2);
+        $this->_columns['id'] = array('type' => 'int', 'auto_increment' => true, 'unsigned' => true);
+		$this->_columns['store_id'] = array('type' => 'int', 'unsigned' => true);
+		$this->_columns['year'] = array('type' => 'int', 'unsigned' => true);
+		$this->_columns['month'] = array('type' => 'tinyint', 'unsigned' => true);
+		$this->_columns['date'] = array('type' => 'tinyint', 'unsigned' => true);
+		$this->_columns['day'] = array('type' => 'tinyint', 'unsigned' => true);
+		$this->_columns['price'] = array('type' => 'int', 'unsigned' => true);
+		$this->_columns['ordered_at'] = array('type' => 'int', 'unsigned' => true);
+		$this->_columns['paid_at'] = array('type' => 'int', 'unsigned' => true);
+		$this->_columns['custermers'] = array('type' => 'tinyint', 'unsigned' => true);
 		$this->_columns['table'] = array('type' => 'varchar', 'size' => 10);
+
+        $this->addIndex('store_id', array('store_id'));
+        $this->addIndex('year', array('year'));
+        $this->addIndex('month', array('month'));
+        $this->addIndex('date', array('date'));
+        $this->addIndex('day', array('day'));
+        $this->addIndex('table', array('table'));
 
         $this->_relations['items'] = array('rel' => 'has_many', 'type' => 'BillItem', 'foreign_key' => 'bill_id');
         $this->_relations['discounts'] = array('rel' => 'has_many', 'type' => 'BillDiscount', 'foreign_key' => 'bill_id');
 	}
-
-    public static function getTodayPaidBills()
-    {
-        if (date('H') > 6) {
-            $start_at = mktime(6, 0, 0, date('m'), date('d'), date('Y'));
-            $end_at = mktime(6, 0, 0, date('m'), date('d') + 1, date('Y'));
-        } else {
-            $start_at = mktime(6, 0, 0, date('m'), date('d') - 1, date('Y'));
-            $end_at = mktime(6, 0, 0, date('m'), date('d'), date('Y'));
-        }
-        return Bill::search("ordered_at >= {$start_at} and ordered_at < {$end_at}");
-    }
 }
-

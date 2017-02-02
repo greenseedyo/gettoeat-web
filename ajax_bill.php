@@ -1,31 +1,35 @@
 <?php
 require_once 'config.php';
 
-if ($_GET['id']) {
-    $bill = Bill::find(intval($_GET['id']));
-} else {
-    $bill = Bill::getTodayPaidBills()->order('paid_at DESC')->first();
+$store = Store::getByAccount($_SESSION['store_account']);
+if (!$store instanceof StoreRow) {
+    die('找不到此帳號');
 }
 
-if (!$bill) {
-    exit;
+if ($_GET['id']) {
+    $bill = $store->getBillById($_GET['id']);
+} else {
+    $bill = $store->getTodayPaidBills()->order('paid_at DESC')->first();
 }
 
 $paid_at = intval($bill->paid_at);
-if ($prev_bill = Bill::getTodayPaidBills()->search("paid_at < {$paid_at}")->order('paid_at DESC')->first()) {
+if ($prev_bill = $store->getTodayPaidBills()->search("paid_at < {$paid_at}")->order('paid_at DESC')->first()) {
     $prev_bill_id = $prev_bill->id;
 }
-if ($next_bill = Bill::getTodayPaidBills()->search("paid_at > {$paid_at}")->order('paid_at ASC')->first()) {
+if ($next_bill = $store->getTodayPaidBills()->search("paid_at > {$paid_at}")->order('paid_at ASC')->first()) {
     $next_bill_id = $next_bill->id;
 }
 
 ?>
 <div data-theme="a" data-role="header" class="ui-header ui-bar-a" role="banner">
     <button data-role="button" class="ui-btn-left back-to-table">返回</button>
-    <h5 class="ui-title" role="heading" aria-level="1">Buddy House 結帳小幫手</h5>
+    <h5 class="ui-title" role="heading" aria-level="1"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</h5>
+    <?php if ($bill) { ?>
     <button class="ui-btn-right" id="delete_bill" data-id="<?= intval($bill->id) ?>">刪除</button>
+    <?php } ?>
 </div>
 
+<?php if ($bill) { ?>
 <div data-role="content">
     <ul data-role="listview" data-divider-theme="b" data-inset="false">
         <li data-theme="d" class="info"><?= sprintf('桌號: %s (點餐時間: %s, 結帳時間: %s) 人數: %s', $bill->getTableName(), date('H:i:s', $bill->ordered_at), date('H:i:s', $bill->paid_at), $bill->custermers) ?></li>
@@ -39,6 +43,14 @@ if ($next_bill = Bill::getTodayPaidBills()->search("paid_at > {$paid_at}")->orde
     </ul>
     <div class="clear"></div>
 </div>
+<?php } else { ?>
+<div data-role="content">
+    <ul data-role="listview" data-divider-theme="b" data-inset="false">
+        <li>無帳單資訊</li>
+    </ul>
+    <div class="clear"></div>
+</div>
+<?php } ?>
 
 <div data-theme="a" data-role="footer" data-position="fixed" data-tap-toggle="false" class="ui-footer ui-bar-a ui-footer-fixed slideup" role="contentinfo">
     <div class="ui-title">
