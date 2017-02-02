@@ -5,6 +5,7 @@ $store = Store::getByAccount($_SESSION['store_account']);
 if (!$store instanceof StoreRow) {
     die('找不到此帳號');
 }
+$tables_file = "{$_SERVER['DOCUMENT_ROOT']}/tables/{$store->account}.html";
 
 $categories = $store->categories;
 ?>
@@ -33,50 +34,7 @@ $(document).on('mobileinit', function(){
         <h5><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</h5>
         <button class="ui-btn-right to-bill-page">已結帳單</button>
     </div>
-
-    <div class="list-div">
-        <div>
-            <span class="grid select-table" id="table-button-outer_1"><button data-role="none"><span>戶外1</span></button></span>
-            <span class="grid select-table" id="table-button-outer_2"><button data-role="none"><span>戶外2</span></button></span>
-            <span class="grid select-table" id="table-button-outer_3"><button data-role="none"><span>戶外3</span></button></span>
-        </div>
-        <div>
-            <span class="grid select-table" id="table-button-sofa_1"><button data-role="none"><span>沙1</span></button></span>
-            <span style="margin-right:100px;">&nbsp</span>
-            <span class="grid select-table" id="table-button-sofa_2"><button data-role="none"><span>沙2</span></button></span>
-        </div>
-        <div style="display:inline-block;margin-right:100px;">
-            <span class="grid select-table" id="table-button-left_1"><button data-role="none"><span>左1</span></button></span><br>
-            <span class="grid select-table" id="table-button-left_2"><button data-role="none"><span>左2</span></button></span><br>
-            <span class="grid select-table" id="table-button-left_3"><button data-role="none"><span>左3</span></button></span><br>
-            <span class="grid select-table" id="table-button-left_4"><button data-role="none"><span>左4</span></button></span>
-        </div>
-        <div style="display:inline-block;margin-right:100px;">
-            <span class="grid select-table" id="table-button-middle_1"><button data-role="none"><span>中1</span></button></span><br>
-            <span class="grid select-table" id="table-button-middle_2"><button data-role="none"><span>中2</span></button></span><br>
-            <span class="grid select-table" id="table-button-middle_3"><button data-role="none"><span>中3</span></button></span><br><br>
-        </div>
-        <div style="display:inline-block;">
-            <span class="grid select-table" id="table-button-right_1"><button data-role="none"><span>右1</span></button></span><br><br><br><br><br>
-            <span class="grid select-table" id="table-button-right_2"><button data-role="none"><span>右2</span></button></span><br><br>
-        </div>
-        <div>
-            <span style="margin-right:100px;">&nbsp</span>
-            <span class="grid-small select-table" id="table-button-bar_1"><button data-role="none"><span>吧1</span></button></span>
-            <span class="grid-small select-table" id="table-button-bar_2"><button data-role="none"><span>吧2</span></button></span>
-            <span class="grid-small select-table" id="table-button-bar_3"><button data-role="none"><span>吧3</span></button></span>
-            <span class="grid-small select-table" id="table-button-bar_4"><button data-role="none"><span>吧4</span></button></span>
-            <span class="grid-small select-table" id="table-button-bar_5"><button data-role="none"><span>吧5</span></button></span>
-        </div>
-        <hr>
-        <div>
-            <span class="grid select-table" id="table-button-takeout_1"><button data-role="none"><span>外帶1</span></button></span>
-            <span class="grid select-table" id="table-button-takeout_2"><button data-role="none"><span>外帶2</span></button></span>
-            <span class="grid select-table" id="table-button-takeout_3"><button data-role="none"><span>外帶3</span></button></span>
-            <span class="grid select-table" id="table-button-takeout_4"><button data-role="none"><span>外帶4</span></button></span>
-            <span class="grid select-table" id="table-button-takeout_5"><button data-role="none"><span>外帶5</span></button></span>
-        </div>
-    </div>
+    <?php require_once($tables_file); ?>
 </div>
 
 <!-- pos -->
