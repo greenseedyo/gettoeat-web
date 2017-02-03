@@ -1,16 +1,21 @@
 <?php
 
-class TableInfoRow extends Pix_Table_Row
+class TablesInfoRow extends Pix_Table_Row
 {
+    public function getHelper()
+    {
+        $helper = new TablesInfo_Helper($this);
+        return $helper;
+    }
 }
 
-class TableInfo extends Pix_Table
+class TablesInfo extends Pix_Table
 {
-    public $_rowClass = 'TableInfoRow';
+    public $_rowClass = 'TablesInfoRow';
 
 	public function init()
 	{
-		$this->_name = 'table_info';
+		$this->_name = 'tables_info';
 		$this->_primary = array('id');
 
 		$this->_columns['id'] = array('type' => 'int', 'auto_increment' => true, 'unsigned' => true);
@@ -18,7 +23,7 @@ class TableInfo extends Pix_Table
 		$this->_columns['version'] = array('type' => 'tinyint', 'unsigned' => true);
 		$this->_columns['data'] = array('type' => 'text');
 
-        $this->addIndex('store_id', array('store_id'));
+        $this->addIndex('store_version', array('store_id', 'version'));
 	}
 }
 

@@ -67,110 +67,146 @@ if ($_GET['category_id']) {
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-<title><?= htmlspecialchars($store->nickname) ?> 菜單管理</title>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
-<style>
-ul { list-style-type: none; margin: 0; padding: 0; width: 500px; }
-ul li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
-ul li span.ui-icon { position: absolute; margin-left: -1.3em; }
-ul li span.function { font-size: 12px; margin-left: 10px; }
-</style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?= htmlspecialchars($store->nickname) ?> 菜單管理</title>
+    <?php include("{$_SERVER['DOCUMENT_ROOT']}/include/static_common.phtml"); ?>
 </head>
 
 <body>
-<h1><?= htmlspecialchars($store->nickname) ?> 菜單管理</h1>
-<?php if ($categories instanceof Pix_Table_ResultSet) { ?>
-<h3>分類</h3>
-<?php foreach ($categories as $category) { ?>
-<a href="manage_items.php?category_id=<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a><br>
-<?php } ?>
-<form id="form-add-category" method="post">
-    <h4>新增分類</h4>
-    <fieldset>
-        名稱：<input type="text" name="name" value="" /><br>
-        <input type="submit" class="save" value="新增" />
-        <input type="hidden" name="form_name" value="add_category" />
-    </fieldset>
-</form>
-<?php } elseif ($products instanceof Pix_Table_ResultSet) { ?>
-<h3><?= htmlspecialchars($category->name) ?></h3>
-<form id="form-edit-category" method="post">
-    <h4>編輯分類</h4>
-    <fieldset>
-        名稱：<input type="text" name="name" value="<?= htmlspecialchars($category->name) ?>" /><br>
-        <input type="submit" class="save" value="更新" />
-        <input type="hidden" name="id" value="<?= intval($category->id) ?>" />
-        <input type="hidden" name="form_name" value="edit_category" />
-    </fieldset>
-</form>
+<?php include("{$_SERVER['DOCUMENT_ROOT']}/include/manage_nav.phtml"); ?>
+<div class="container">
+    <div>
+        <h1><?= htmlspecialchars($store->nickname) ?> 菜單管理</h1>
+    </div>
 
-<form id="form-products-order" method="post">
-    <h4>項目排序</h4>
-    <input type="submit" class="save" value="儲存" />
-    <input type="button" value="回上頁" onclick="document.location.href='manage_items.php';" />
-    <fieldset>
-        <h4>上架中</h4>
-        <ul id="ul-on">
-            <?php foreach ($online_products as $product) { ?>
-            <li class="ui-state-default" data-id="<?= intval($product->id) ?>">
-            <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <span><?= htmlspecialchars($product->name) ?></span>
-            <span>($<?= intval($product->price) ?>)</span>
-            <span class="function"><a href="manage_items.php?product=<?= intval($product->id) ?>">編輯</a></span>
-            <span class="function"><a href="" class="off">下架</a></span>
-            </li>
-            <?php } ?>
-        </ul>
-        <hr>
-        <h4>已下架</h4>
-        <ul id="ul-off">
-            <?php foreach ($offline_products as $product) { ?>
-            <li class="ui-state-default" data-id="<?= intval($product->id) ?>">
-            <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <span><?= htmlspecialchars($product->name) ?></span>
-            <span>($<?= intval($product->price) ?>)</span>
-            <span class="function"><a href="manage_items.php?product=<?= intval($product->id) ?>">編輯</a></span>
-            <span class="function"><a href="" class="on">上架</a></span>
-            </li>
-            <?php } ?>
-        </ul>
-        <hr>
-    </fieldset>
-    <input type="submit" class="save" value="儲存" />
-    <input type="button" value="回上頁" onclick="document.location.href='manage_items.php';" />
-    <input type="hidden" name="data" value="" />
-    <input type="hidden" name="form_name" value="products_order" />
-</form>
-<br><br>
-<form id="form-add-product" method="post">
-    <h4>新增項目</h4>
-    <fieldset>
-        名稱：<input type="text" name="name" value="" /><br>
-        價格：<input type="text" name="price" value="" /><br>
-        <input type="hidden" name="category_id" value="<?= intval($category->id) ?>" /><br>
-        <input type="submit" class="save" value="新增" />
-        <input type="hidden" name="form_name" value="add_product" />
-    </fieldset>
-</form>
-<hr>
-<?php } elseif ($product) { ?>
-<form id="form-edit-product" method="post">
-    <h4>編輯項目</h4>
-    <fieldset>
-        名稱：<input type="text" name="name" value="<?= htmlspecialchars($product->name) ?>" /><br>
-        價格：<input type="text" name="price" value="<?= htmlspecialchars($product->price) ?>" /><br>
-        <input type="hidden" name="id" value="<?= intval($product->id) ?>" /><br>
-        <input type="submit" class="save" value="更新" />
-        <input type="button" value="回上頁" onclick="document.location.href='manage_items.php?category_id=<?= intval($product->category_id) ?>';" />
-        <input type="hidden" name="form_name" value="edit_product" />
-    </fieldset>
-</form>
-<?php } ?>
+    <?php if ($categories instanceof Pix_Table_ResultSet) { ?>
+    <div>
+        <div class="page-header">
+            <h2>分類</h2>
+        </div>
+        <?php foreach ($categories as $category) { ?>
+        <div class="list-group">
+            <a class="list-group-item list-group-item-info" href="manage_items.php?category_id=<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a>
+        </div>
+        <?php } ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">新增分類</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-add-category" method="post">
+                    <fieldset>
+                        名稱：<input type="text" name="name" value="" />
+                        <input type="submit" class="save" value="新增" />
+                        <input type="hidden" name="form_name" value="add_category" />
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php } elseif ($products instanceof Pix_Table_ResultSet) { ?>
+    <div>
+        <div class="page-header">
+            <h2>編輯分類: <?= htmlspecialchars($category->name) ?></h2>
+            <input type="button" value="回上頁" onclick="document.location.href='manage_items.php';" />
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">更改名稱</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-edit-category" method="post">
+                    <fieldset>
+                        名稱：<input type="text" name="name" value="<?= htmlspecialchars($category->name) ?>" />
+                        <input type="submit" class="save" value="更新" />
+                        <input type="hidden" name="id" value="<?= intval($category->id) ?>" />
+                        <input type="hidden" name="form_name" value="edit_category" />
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">項目編輯/排序</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-products-order" method="post">
+                    <input type="submit" class="save" value="儲存" />
+                    <fieldset>
+                        <h4>上架中</h4>
+                        <ul id="ul-on" class="list-group">
+                            <?php foreach ($online_products as $product) { ?>
+                            <li class="list-group-item ui-state-default" data-id="<?= intval($product->id) ?>">
+                                <span class="ui-icon ui-icon-arrowthick-2-n-s" style="display:inline-block"></span>
+                                <span><?= htmlspecialchars($product->name) ?> ($<?= intval($product->price) ?>)</h4></span>
+                                <span class="function"><a href="manage_items.php?product=<?= intval($product->id) ?>">編輯</a></span>
+                                <span class="function"><a href="" class="off">下架</a></span>
+                            </li>
+                            <?php } ?>
+                        </ul>
+                        <h4>已下架</h4>
+                        <ul id="ul-off" class="list-group">
+                            <?php foreach ($offline_products as $product) { ?>
+                            <li class="list-group-item ui-state-default" data-id="<?= intval($product->id) ?>">
+                                <span class="ui-icon ui-icon-arrowthick-2-n-s" style="display:inline-block"></span>
+                                <span><?= htmlspecialchars($product->name) ?> ($<?= intval($product->price) ?>)</h4></span>
+                                <span class="function"><a href="manage_items.php?product=<?= intval($product->id) ?>">編輯</a></span>
+                                <span class="function"><a href="" class="on">上架</a></span>
+                            </li>
+                            <?php } ?>
+                        </ul>
+                    </fieldset>
+                    <input type="submit" class="save" value="儲存" />
+                    <input type="hidden" name="data" value="" />
+                    <input type="hidden" name="form_name" value="products_order" />
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">新增項目</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-add-product" method="post">
+                    <fieldset>
+                        名稱：<input type="text" name="name" value="" /><br>
+                        價格：<input type="text" name="price" value="" /><br>
+                        <input type="hidden" name="category_id" value="<?= intval($category->id) ?>" /><br>
+                        <input type="submit" class="save" value="新增" />
+                        <input type="hidden" name="form_name" value="add_product" />
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php } elseif ($product) { ?>
+    <div>
+        <div class="page-header">
+            <h2>編輯項目: <?= htmlspecialchars($product->name) ?></h2>
+            <input type="button" value="回上頁" onclick="document.location.href='manage_items.php?category_id=<?= intval($product->category_id) ?>';" />
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">更新資訊</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-edit-product" method="post">
+                    <fieldset>
+                        名稱：<input type="text" name="name" value="<?= htmlspecialchars($product->name) ?>" /><br>
+                        價格：<input type="text" name="price" value="<?= htmlspecialchars($product->price) ?>" /><br>
+                        <input type="hidden" name="id" value="<?= intval($product->id) ?>" /><br>
+                        <input type="submit" class="save" value="更新" />
+                        <input type="hidden" name="form_name" value="edit_product" />
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php } ?>
+</div>
 
 <script>
 $('#ul-on').on('click', '.off', function(e){

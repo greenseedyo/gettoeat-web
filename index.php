@@ -17,6 +17,8 @@ $categories = $store->categories;
 <title><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</title>
 <link rel="stylesheet" href="static/jquery.mobile-1.3.1.min.css" />
 <link rel="stylesheet" href="static/style.css" />
+<!-- css: boostrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="static/jquery-1.9.1.min.js"></script>
 <script>
 $(document).on('mobileinit', function(){ 
@@ -25,6 +27,8 @@ $(document).on('mobileinit', function(){
 </script>
 <script src="static/jquery.mobile-1.3.1.min.js"></script>
 <script type="text/javascript" src="static/jquery.tmpl.min.js"></script>
+<!-- js: boostrap -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
 
