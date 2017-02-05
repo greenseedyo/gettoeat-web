@@ -44,11 +44,9 @@ if ($_POST) {
             </div>
             <div class="panel-body">
                 <div id="tables-off" class="well">
-                    <?php foreach ($tables as $key => $table) { ?>
-                    <div type="button" class="table-grid btn btn-default btn-lg"><?= htmlspecialchars($table->name) ?></div>
-                    <?php } ?>
+                    <?php foreach ($tables as $key => $table) { ?><div type="button" class="table-grid btn btn-default btn-lg" style="background-color: #ddd; border: 0; box-sizing: content-box; padding: 0; width: <?= intval($table->width) ?>px; height: <?= intval($table->height) ?>px; line-height: <?= intval($table->height) ?>px;"><?= htmlspecialchars($table->name) ?></div><?php } ?>
                 </div>
-                <div id="tables-on" class="well well-lg">
+                <div id="tables-on" style="background-color: transparent; background-image: linear-gradient(180deg, transparent 2%, #ddd 0%, transparent 3%), linear-gradient(90deg, transparent 2%, #ddd 0%, transparent 3%); background-size: 20px 20px; height: 500px; width: 1000px;">
                 </div>
             </div>
         </div>
@@ -73,7 +71,12 @@ if ($_POST) {
 <script>
 $(function() {
     var grid = 10;
-    $(".table-grid").draggable({stack: "div", grid: [grid, grid]}).resizable({grid: grid});
+    $(".table-grid")
+        .draggable({stack: "div", grid: [grid, grid]})
+        .resizable({
+            grid: grid
+        });
+
     $("#tables-on")
         .resizable({grid: grid})
         .droppable({

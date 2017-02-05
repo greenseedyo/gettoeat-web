@@ -42,7 +42,7 @@ class TablesInfo_Helper
 
     public function addTable($name)
     {
-        $this->_data->tables[] = array("name" => $name);
+        $this->_data->tables[] = array("name" => $name, "width" => 80, "height" => 40);
     }
 
     public function renameTable($key, $name)
