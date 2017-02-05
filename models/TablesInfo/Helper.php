@@ -11,8 +11,8 @@ class TablesInfo_Helper
         $this->_data = json_decode($tables_info->data);
         /* [data 格式範例]
         // {
-        //     "maxHeight": "100",
-        //     "maxWidth": "50",
+        //     "totalHeight": "100",
+        //     "totalWidth": "50",
         //     "tables": [
         //         0: {
         //             "name": "吧1",
