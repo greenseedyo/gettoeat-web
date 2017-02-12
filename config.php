@@ -13,6 +13,7 @@ if (DEBUG_ENV) {
 
 session_start();
 date_default_timezone_set('Asia/Taipei');
+define('VIEWS_DIR', $_SERVER['DOCUMENT_ROOT'] . "/views");
 define('ROOT_DIR', $_SERVER['DOCUMENT_ROOT']);
 error_reporting(E_ERROR | E_WARNING);
 include(ROOT_DIR . '/pixframework/Pix/Loader.php');
