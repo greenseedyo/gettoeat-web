@@ -120,6 +120,7 @@
 }
 
 #tables-inactive {
+    min-height: 60px;
     position: relative;
 }
 

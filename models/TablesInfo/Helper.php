@@ -40,36 +40,18 @@ class TablesInfo_Helper
         return $tables;
     }
 
-    public function addTable($name)
+    public function getTotalHeight()
     {
-        $this->_data->tables[] = array("name" => $name, "width" => 80, "height" => 40);
+        return $this->_data->totalHeight;
     }
 
-    public function renameTable($key, $name)
+    public function getTotalWidth()
     {
-        $this->_data->tables[$key]->name = $name;
+        return $this->_data->totalWidth;
     }
 
-    public function moveTable($key, $x, $y)
+    public function save(string $data)
     {
-        $this->_data->tables[$key]->x = $x;
-        $this->_data->tables[$key]->y = $y;
-    }
-
-    public function resizeTable($key, $height, $width)
-    {
-        $this->_data->tables[$key]->height = $height;
-        $this->_data->tables[$key]->width = $width;
-    }
-
-    public function deleteTable($key)
-    {
-        unset($this->_data->tables[$key]);
-    }
-
-    public function save()
-    {
-        $data = json_encode($this->_data);
         $this->_pix_tabel_row->update(array("data" => $data));
     }
 }
