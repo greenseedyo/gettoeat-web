@@ -31,10 +31,15 @@ foreach ($tables as $table) {
 }
 
 if ($_POST) {
-    if ('save_table' == $_POST['form_name']) {
-        print_r($_POST['tables_info']);
-        $helper->save($_POST['tables_info']);
+    try {
+        if ('save_table' == $_POST['form_name']) {
+            $helper->save($_POST['tables_info']);
+        }
+        $result = array("error" => false);
+    } catch (Exception $e) {
+        $result = array("error" => true, "message" => $e->getMessage());
     }
+    echo json_encode($result);
     exit;
 }
 ?>
@@ -119,9 +124,13 @@ if ($_POST) {
                 <hr>
                 <form id="form-save-table" method="post">
                     <fieldset>
-                        <button type="submit" class="btn btn-default">儲存</button>
+                        <button type="submit" class="btn btn-default" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> 處理中">儲存</button>
                         <input type="hidden" name="form_name" value="save_table" />
                         <input type="hidden" name="tables_info" value="" />
+                        <div class="result-icons">
+                            <button type="button" class="btn btn-success btn-xs btn-round" style="display:none;"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button type="button" class="btn btn-danger btn-xs btn-round" style="display:none;"><span class="glyphicon glyphicon-remove"></span></button>
+                        </div>
                     </fieldset>
                 </form>
             </div>

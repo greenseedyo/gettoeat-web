@@ -151,6 +151,7 @@ $("#form-save-table").submit(function(e) {
     e.preventDefault();
     var $div_active = $("#tables-active");
     var $form = $(this);
+    $form.find("button[type=submit]").button('loading');
     var tables_info = {
         "totalHeight": $div_active.height(),
         "totalWidth": $div_active.width(),
@@ -169,8 +170,13 @@ $("#form-save-table").submit(function(e) {
     });
     $form.find(":input[name=tables_info]").val(JSON.stringify(tables_info));
     var form_data = $form.serializeArray();
-    //console.log(form_data);
     $.post("/manage_tables.php", form_data, function(rtn) {
-        console.log(rtn);
-    });
+        $form.find("button[type=submit]").button('reset');
+        if (rtn.error) {
+            alert(rtn.message);
+            $form.find(".btn-danger").show();
+        } else {
+            $form.find(".btn-success").show();
+        }
+    }, 'json');
 });
