@@ -12,14 +12,19 @@ $tables = $helper->getTables();
 $active_tables = array();
 $inactive_tables = array();
 $z = count($tables);
-$max_height = 0;
+$new_grid_x = 20;
+$new_grid_y = 10;
+$new_grid_z = $z;
+$new_grid_width = 80;
+$new_grid_height = 40;
+$max_height = $new_grid_height;
 foreach ($tables as $table) {
     if ($table->active) {
         $active_tables[] = $table;
     } else {
-        $table->x = 10 * (++ $x);
-        $table->y = 10;
-        $table->z = $z --;
+        $table->x = $new_grid_x * (++ $x);
+        $table->y = $new_grid_y;
+        $table->z = (-- $z);
         $max_height = ($table->height > $max_height ? $table->height : $max_height);
         $inactive_tables[] = $table;
     }
@@ -27,8 +32,7 @@ foreach ($tables as $table) {
 $well_height = $max_height + 20;
 
 if ($_POST) {
-    if ('add_table' == $_POST['form_name']) {
-        $helper->addTable($_POST['name']);
+    if ('save_table' == $_POST['form_name']) {
         $helper->save();
         header('Location: manage_tables.php');
     }
@@ -41,6 +45,7 @@ if ($_POST) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= htmlspecialchars($store->nickname) ?> 桌號管理</title>
     <?php include("{$_SERVER['DOCUMENT_ROOT']}/include/static_common.phtml"); ?>
+    <script type="text/javascript" src="/scripts/manage_tables.js?v=<?= STATIC_VERSION ?>"></script>
 </head>
 
 <body>
@@ -56,47 +61,41 @@ if ($_POST) {
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">新增桌號</h3>
-            </div>
-            <div class="panel-body">
-                <form id="form-add-table" method="post">
-                    <fieldset>
-                        名稱：<input type="text" name="name" value="" />
-                        <input type="submit" class="save" value="新增" />
-                        <input type="hidden" name="form_name" value="add_table" />
-                    </fieldset>
-                </form>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
                 <h3 class="panel-title">桌位圖</h3>
             </div>
             <div class="panel-body" style="font-size: 0">
-                <div class="alert alert-info" role="alert">
+                <div class="alert alert-info" role="alert" style="font-size: initial">
                     <ul>
                         <li>將網格大小調整至適當尺寸，即為室內空間</li>
                         <li>將桌號拖曳至網格內並調整至適當尺寸</li>
                     </ul>
                 </div>
-                <form id="form-save-table" method="post">
-                    <fieldset>
-                        <button type="submit" class="btn btn-default">儲存</button>
-                        <input type="hidden" name="form_name" value="save_table" />
+                <hr>
+                <form id="form-add-table">
+                    <fieldset style="font-size: initial">
+                        <div class="col-lg-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="name" value="" placeholder="新增桌號" />
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-default">新增</button>
+                                </span>
+                            </div>
+                        </div>
                     </fieldset>
                 </form>
-                <hr>
-                <div id="tables-inactive" class="well" style="position: relative; height: <?= intval($well_height) ?>px;">
-                    <?php foreach ($inactive_tables as $key => $table) { ?><div type="button" class="table-grid btn btn-default btn-lg" style="position: absolute; background-color: #eee; border: 0px; box-shadow: 0px 0px 0px 1px #bbb inset; box-sizing: content-box; padding: 0; width: <?= intval($table->width) ?>px; height: <?= intval($table->height) ?>px; line-height: <?= intval($table->height) ?>px; left: <?= intval($table->x) ?>px; top: <?= intval($table->y) ?>px; z-index: <?= intval($table->z) ?>"><?= htmlspecialchars($table->name) ?></div><?php } ?>
+                <div class="block-separator">&nbsp;</div>
+
+                <div id="tables-inactive" class="well" style="height: <?= intval($well_height) ?>px;">
+                    <?php foreach ($inactive_tables as $key => $table) { ?><div class="table-grid btn btn-default btn-lg" style="width: <?= intval($table->width) ?>px; height: <?= intval($table->height) ?>px; line-height: <?= intval($table->height) ?>px; left: <?= intval($table->x) ?>px; top: <?= intval($table->y) ?>px; z-index: <?= intval($table->z) ?>"><?= htmlspecialchars($table->name) ?></div><?php } ?>
                 </div>
 
-                <div id="trash-can" class="well" style="display: inline-block; height: 100px; width: 100px; vertical-align:top; font-size: 20px; text-align: center; line-height: 60px;">
+                <div id="trash-can" class="well">
                     <span class="glyphicon glyphicon-trash"></span>
                 </div>
 
-                <div style="display: inline-block; margin: 10px;">&nbsp;</div>
+                <div class="inline-block-separator">&nbsp;</div>
 
-                <div id="tables-active" style="display: inline-block; position: relative; box-shadow: 0px 0px 0px 1px #ddd inset; background-color: transparent; background-image: linear-gradient(0deg, transparent 1%, #ddd 0%, transparent 3%),linear-gradient(90deg, transparent 1%, #ddd 0%, transparent 3%),  linear-gradient(180deg, transparent 1%, #ddd 0%, transparent 3%), linear-gradient(270deg, transparent 1%, #ddd 0%, transparent 3%); background-size: 20px 20px; height: 400px; width: 600px;">
+                <div id="tables-active">
                 </div>
                 <hr>
                 <form id="form-save-table" method="post">
@@ -113,28 +112,18 @@ if ($_POST) {
 
 <script>
 $(function() {
-    var grid = 10;
-    $(".table-grid")
-        .draggable({
-            stack: "div",
-            grid: [grid, grid],
-            stop: function() {
-                var $grid = $(this);
-                if (false == $grid.data("active")) {
-                    $grid.appendTo("#tables-inactive").css({"top": "10px", "left": "10px"});
-                }
-            }
-        })
-        .resizable({
-            grid: grid,
-            resize: function() {
-                console.log($(this).height());
-                $(this).css("line-height", $(this).height() + "px");
-            }
-        });
+    var GTE = GTE || {};
+    GTE.gridPixel = 10;
+    GTE.new_grid_width = <?= intval($new_grid_width) ?>;
+    GTE.new_grid_height = <?= intval($new_grid_height) ?>;
+    GTE.new_grid_x = <?= intval($new_grid_x) ?>;
+    GTE.new_grid_y = <?= intval($new_grid_y) ?>;
+    GTE.new_grid_z = <?= intval($new_grid_z) ?>;
+
+    $(".table-grid").initTableGrid(GTE.gridPixel);
 
     $("#tables-active")
-        .resizable({grid: grid})
+        .resizable({grid: GTE.gridPixel})
         .droppable({
             acceept: ".table-grid",
             over: function(event, ui) {
@@ -157,6 +146,30 @@ $(function() {
                 $(ui.draggable).data("active", false).css("background-color", "#ffffff");
             }
         });
+
+    $("#trash-can").droppable({
+        acceept: ".table-grid",
+        drop: function(event, ui) {
+            $(ui.draggable).remove();
+        }
+    });
+
+    $("#form-add-table").submit(function(e){
+        e.preventDefault();
+        var $form = $(this);
+        $("#tables-inactive").find(".table-grid").css("left", "+=" + GTE.new_grid_x);
+        $("<div>")
+            .addClass("table-grid btn btn-default btn-lg")
+            .text($form.find(":input[name=name]").val())
+            .width(GTE.new_grid_width)
+            .height(GTE.new_grid_height)
+            .css("line-height", GTE.new_grid_height + "px")
+            .css("left", GTE.new_grid_x + "px")
+            .css("top", GTE.new_grid_y + "px")
+            .css("z-index", GTE.new_grid_z ++)
+            .initTableGrid()
+            .appendTo("#tables-inactive");
+    });
 
     $("#form-save-table").submit(function(e) {
     });

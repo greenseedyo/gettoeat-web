@@ -3,7 +3,13 @@
 if (file_exists(__DIR__ . '/debug.php')) {
     require_once(__DIR__ . '/debug.php');
 }
-define('DEBUG_ENV', false);
+define('DEBUG_ENV', true);
+
+if (DEBUG_ENV) {
+    define('STATIC_VERSION', time());
+} else {
+    define('STATIC_VERSION', md5(file_get_contents(__DIR__ . '/fingerprint.txt')));
+}
 
 session_start();
 date_default_timezone_set('Asia/Taipei');

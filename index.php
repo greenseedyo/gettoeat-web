@@ -15,8 +15,8 @@ $categories = $store->categories;
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <title><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</title>
-<link rel="stylesheet" href="static/jquery.mobile-1.3.1.min.css" />
-<link rel="stylesheet" href="static/style.css" />
+<link rel="stylesheet" href="/static/jquery.mobile-1.3.1.min.css" />
+<link rel="stylesheet" href="/static/style.css?v=<?= STATIC_VERSION ?>" />
 <!-- css: boostrap -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="static/jquery-1.9.1.min.js"></script>
