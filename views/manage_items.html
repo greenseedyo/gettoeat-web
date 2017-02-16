@@ -30,11 +30,15 @@
             </div>
             <div class="panel-body">
                 <form id="form-add-category" method="post">
-                    <fieldset>
-                        名稱：<input type="text" name="name" value="" />
-                        <input type="submit" class="save" value="新增" />
-                        <input type="hidden" name="form_name" value="add_category" />
-                    </fieldset>
+                    <div class="col-lg-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="name" value="" placeholder="請輸入分類名稱" />
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default">新增</button>
+                            </span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="form_name" value="add_category" />
                 </form>
             </div>
         </div>
@@ -43,7 +47,7 @@
     <div>
         <div class="page-header">
             <h2>編輯分類: <?= htmlspecialchars($category->name) ?></h2>
-            <input type="button" value="回上頁" onclick="document.location.href='manage_items.php';" />
+            <input type="button" class="btn btn-default" value="回上頁" onclick="document.location.href='manage_items.php';" />
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -51,50 +55,16 @@
             </div>
             <div class="panel-body">
                 <form id="form-edit-category" method="post">
-                    <fieldset>
-                        名稱：<input type="text" name="name" value="<?= htmlspecialchars($category->name) ?>" />
-                        <input type="submit" class="save" value="更新" />
-                        <input type="hidden" name="id" value="<?= intval($category->id) ?>" />
-                        <input type="hidden" name="form_name" value="edit_category" />
-                    </fieldset>
-                </form>
-            </div>
-        </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">項目編輯/排序</h3>
-            </div>
-            <div class="panel-body">
-                <form id="form-products-order" method="post">
-                    <input type="submit" class="save" value="儲存" />
-                    <fieldset>
-                        <h4>上架中</h4>
-                        <ul id="ul-on" class="list-group">
-                            <?php foreach ($online_products as $product) { ?>
-                            <li class="list-group-item ui-state-default" data-id="<?= intval($product->id) ?>">
-                                <span class="ui-icon ui-icon-arrowthick-2-n-s" style="display:inline-block"></span>
-                                <span><?= htmlspecialchars($product->name) ?> ($<?= intval($product->price) ?>)</h4></span>
-                                <span class="function"><a href="manage_items.php?product=<?= intval($product->id) ?>">編輯</a></span>
-                                <span class="function"><a href="" class="off">下架</a></span>
-                            </li>
-                            <?php } ?>
-                        </ul>
-                        <h4>已下架</h4>
-                        <ul id="ul-off" class="list-group">
-                            <?php foreach ($offline_products as $product) { ?>
-                            <li class="list-group-item ui-state-default" data-id="<?= intval($product->id) ?>">
-                                <span class="ui-icon ui-icon-arrowthick-2-n-s" style="display:inline-block"></span>
-                                <span><?= htmlspecialchars($product->name) ?> ($<?= intval($product->price) ?>)</h4></span>
-                                <span class="function"><a href="manage_items.php?product=<?= intval($product->id) ?>">編輯</a></span>
-                                <span class="function"><a href="" class="on">上架</a></span>
-                            </li>
-                            <?php } ?>
-                        </ul>
-                    </fieldset>
-                    <input type="submit" class="save" value="儲存" />
-                    <input type="hidden" name="data" value="" />
-                    <input type="hidden" name="form_name" value="products_order" />
+                    <div class="col-lg-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($category->name) ?>" placeholder="請輸入新名稱" />
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default">更新</button>
+                            </span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="id" value="<?= intval($category->id) ?>" />
+                    <input type="hidden" name="form_name" value="edit_category" />
                 </form>
             </div>
         </div>
@@ -105,13 +75,55 @@
             </div>
             <div class="panel-body">
                 <form id="form-add-product" method="post">
-                    <fieldset>
-                        名稱：<input type="text" name="name" value="" /><br>
-                        價格：<input type="text" name="price" value="" /><br>
+                    <div class="form-group">
+                        <label>名稱</label>
+                        <input type="text" class="form-control" name="name" value="" placeholder="請輸入名稱" />
+                    </div>
+                    <div class="form-group">
+                        <label>價格</label>
+                        <input type="text" class="form-control" name="price" value="" placeholder="請輸入價格" />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">新增</button>
                         <input type="hidden" name="category_id" value="<?= intval($category->id) ?>" /><br>
-                        <input type="submit" class="save" value="新增" />
                         <input type="hidden" name="form_name" value="add_product" />
-                    </fieldset>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">項目編輯/排序</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-products-order" method="post">
+                    <input type="submit" class="btn btn-default" value="儲存" />
+                    <h4><span class="label label-default">上架中</span></h4>
+                    <ul id="ul-on" class="list-group">
+                        <?php foreach ($online_products as $product) { ?>
+                        <li class="list-group-item ui-state-default clearfix" data-id="<?= intval($product->id) ?>">
+                            <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                            <span class="h4"><?= htmlspecialchars($product->name) ?> ($<?= intval($product->price) ?>)</span>
+                            <button class="btn btn-default off pull-right" type="button">下架</button>
+                            <a href="manage_items.php?product=<?= intval($product->id) ?>"><button class="btn btn-default pull-right" type="button">編輯</button></a>
+                        </li>
+                        <?php } ?>
+                    </ul>
+                    <h4><span class="label label-default">已下架</span></h4>
+                    <ul id="ul-off" class="list-group">
+                        <?php foreach ($offline_products as $product) { ?>
+                        <li class="list-group-item ui-state-default clearfix" data-id="<?= intval($product->id) ?>">
+                            <span class="ui-icon ui-icon-arrowthick-2-n-s" style="display:none;"></span>
+                            <span class="h4"><?= htmlspecialchars($product->name) ?> ($<?= intval($product->price) ?>)</span>
+                            <button class="btn btn-default on pull-right" type="button">上架</button>
+                            <a href="manage_items.php?product=<?= intval($product->id) ?>"><button class="btn btn-default pull-right" type="button">編輯</button></a>
+                        </li>
+                        <?php } ?>
+                    </ul>
+                    <input type="submit" class="btn btn-default" value="儲存" />
+                    <input type="hidden" name="data" value="" />
+                    <input type="hidden" name="form_name" value="products_order" />
                 </form>
             </div>
         </div>
@@ -120,7 +132,7 @@
     <div>
         <div class="page-header">
             <h2>編輯項目: <?= htmlspecialchars($product->name) ?></h2>
-            <input type="button" value="回上頁" onclick="document.location.href='manage_items.php?category_id=<?= intval($product->category_id) ?>';" />
+            <input type="button" class="btn btn-default" value="回上頁" onclick="document.location.href='manage_items.php?category_id=<?= intval($product->category_id) ?>';" />
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -128,13 +140,19 @@
             </div>
             <div class="panel-body">
                 <form id="form-edit-product" method="post">
-                    <fieldset>
-                        名稱：<input type="text" name="name" value="<?= htmlspecialchars($product->name) ?>" /><br>
-                        價格：<input type="text" name="price" value="<?= htmlspecialchars($product->price) ?>" /><br>
+                    <div class="form-group">
+                        <label>名稱</label>
+                        <input type="text" class="form-control" name="name" placeholder="請輸入名稱" value="<?= htmlspecialchars($product->name) ?>" /><br>
+                    </div>
+                    <div class="form-group">
+                        <label>價格</label>
+                        <input type="text" class="form-control" name="price" placeholder="請輸入價格" value="<?= htmlspecialchars($product->price) ?>" /><br>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-default" value="更新" />
                         <input type="hidden" name="id" value="<?= intval($product->id) ?>" /><br>
-                        <input type="submit" class="save" value="更新" />
                         <input type="hidden" name="form_name" value="edit_product" />
-                    </fieldset>
+                    </div>
                 </form>
             </div>
         </div>
@@ -145,14 +163,18 @@
 <script>
 $('#ul-on').on('click', '.off', function(e){
     e.preventDefault();
-    $(this).closest('li').appendTo('#ul-off');
-    $(this).removeClass('off').addClass('on').text('上架');
+    var $this = $(this);
+    $this.removeClass('off').addClass('on').text('上架');
+    $this.closest('li').appendTo('#ul-off');
+    $this.closest('li').find('.ui-icon').hide();
 });
 
 $('#ul-off').on('click', '.on', function(e){
     e.preventDefault();
-    $(this).closest('li').appendTo('#ul-on');
-    $(this).removeClass('on').addClass('off').text('下架');
+    var $this = $(this);
+    $this.removeClass('on').addClass('off').text('下架');
+    $this.closest('li').appendTo('#ul-on');
+    $this.closest('li').find('.ui-icon').show();
 });
 
 $('#form-products-order').submit(function(e){
