@@ -49,25 +49,6 @@
             <h2>編輯分類: <?= htmlspecialchars($category->name) ?></h2>
             <input type="button" class="btn btn-default" value="回上頁" onclick="document.location.href='manage_items.php';" />
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">更改名稱</h3>
-            </div>
-            <div class="panel-body">
-                <form id="form-edit-category" method="post">
-                    <div class="col-lg-3">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($category->name) ?>" placeholder="請輸入新名稱" />
-                            <span class="input-group-btn">
-                                <button type="submit" class="btn btn-default">更新</button>
-                            </span>
-                        </div>
-                    </div>
-                    <input type="hidden" name="id" value="<?= intval($category->id) ?>" />
-                    <input type="hidden" name="form_name" value="edit_category" />
-                </form>
-            </div>
-        </div>
 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -124,6 +105,26 @@
                     <input type="submit" class="btn btn-default" value="儲存" />
                     <input type="hidden" name="data" value="" />
                     <input type="hidden" name="form_name" value="products_order" />
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">更改名稱</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-edit-category" method="post">
+                    <div class="col-lg-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($category->name) ?>" placeholder="請輸入新名稱" />
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default">更新</button>
+                            </span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="id" value="<?= intval($category->id) ?>" />
+                    <input type="hidden" name="form_name" value="edit_category" />
                 </form>
             </div>
         </div>
