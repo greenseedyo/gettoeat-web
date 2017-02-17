@@ -1,0 +1,117 @@
+#table .list-div {
+    text-align: center;
+}
+#table .list-div .grid {
+    padding: 5px;
+    display: inline-block;
+    width: 100px;
+}
+#table .list-div .grid-small {
+    padding: 5px;
+    display: inline-block;
+    width: 70px;
+}
+#table .list-div .taken button {
+    background: #FDFF55;
+}
+#table .list-div span button {
+    border: 1px solid #999999;
+    background-color: #f9f9f9;
+    height: 50px;
+    width: 100%;
+    -webkit-border-radius: 10px /*{global-radii-blocks}*/;
+    border-radius: 10px /*{global-radii-blocks}*/;
+}
+#table .list-div span button span{
+    font-size: 25px;
+}
+
+#pos .ui-header .ui-title {
+    margin-right: 10%;
+    margin-left: 10%;
+}
+#pos #left-column {
+    width:30%;
+    height:100%;
+    float:left;
+}
+#pos #left-column table tr td {
+    border-bottom: 1px dashed gray;
+}
+#pos #left-column table tr td.item-name {
+    font-weight: bold;
+    cursor: pointer;
+}
+#pos #left-column table tr.thead {
+    background-color: #999999;
+    color: #ffffff;
+    text-shadow: none;
+}
+#pos #right-column {
+    border-left: 2px solid #000000;
+    width:auto;
+    display:block;
+}
+#pos .list-div {
+    text-align: center;
+}
+#pos .list-div .grid {
+    padding: 5px;
+    display: inline-block;
+    width: 20%;
+}
+#pos .list-div .grid button {
+    border: 1px solid #999999;
+    background-color: #f9f9f9;
+    height: 100px;
+    width: 100%;
+    -webkit-border-radius: 10px /*{global-radii-blocks}*/;
+    border-radius: 10px /*{global-radii-blocks}*/;
+}
+#pos .list-div .grid button span {
+    line-height: 18px;
+}
+#pos .list-div .grid button span.name{
+    font-size: 18px;
+}
+
+#submit .submit_content {
+    text-align:center;
+}
+
+#submit .submit_content .grid-small {
+    padding: 5px;
+    display: inline-block;
+    width: 70px;
+}
+
+#submit .submit_content span button {
+    border: 1px solid #999999;
+    background-color: #f9f9f9;
+    height: 50px;
+    width: 100%;
+    -webkit-border-radius: 10px /*{global-radii-blocks}*/;
+    border-radius: 10px /*{global-radii-blocks}*/;
+}
+
+#submit .submit_content span button.selected {
+    background-color: #FEFF91;
+}
+
+#submit .submit_content span button span{
+    font-size: 25px;
+}
+
+#bill .item-price {
+    float: right;
+}
+#bill .total {
+    font-weight: bold;
+}
+#bill .info {
+    text-align: center;
+}
+#bill .discount {
+    color: red;
+}
+

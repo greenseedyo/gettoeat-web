@@ -8,75 +8,59 @@
 </head>
 <body>
 
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </div><!--/.nav-collapse -->
-    </div>
-</nav>
 <!-- table -->
 <div class="page" id="table">
-    <div data-theme="a" data-role="header">
-        <h5><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</h5>
-        <button class="ui-btn-right to-bill-page">已結帳單</button>
-    </div>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <?php include(VIEWS_DIR . "/index/partial/navbar_common.html") ?>
+        </div>
+    </nav>
     <?php require_once($tables_file); ?>
 </div>
 
 <!-- pos -->
 <div class="page" id="pos" style="display:none;">
-    <div data-theme="a" data-role="header">
-        <input class="ui-btn-left back-to-table" type="button" value="返回" />
-        <h5><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</h5>
-        <div id="navbar" data-role="navbar" data-iconpos="left">
-            <ul>
-                <?php foreach ($categories as $category) { ?>
-                <li>
-                <a href="#page<?= intval($category->id) ?>" data-transition="fade" data-theme="" data-icon="star" <?= 1 == $category->id ? 'class="ui-btn-active ui-state-persist"' : '' ?> data-category_id="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a>
-                </li>
-                <?php } ?>
-            </ul>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <button type="button" class="navbar-toggle navbar-left back-to-table"><span class="glyphicon glyphicon-chevron-left"></span></button>
+        <div class="container">
+            <?php include(VIEWS_DIR . "/index/partial/navbar_common.html") ?>
         </div>
+    </nav>
+
+    <div id="nav-category" class="btn-group btn-group-justified" role="group" aria-label="分類">
+        <ul class="nav nav-tabs nav-justified">
+            <?php foreach ($categories as $category) { ?>
+            <li>
+                <a href="#page<?= intval($category->id) ?>" data-transition="fade" data-theme="" data-icon="star" <?= 1 == $category->id ? 'class="ui-btn-active ui-state-persist"' : '' ?> data-category_id="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a>
+            </li>
+            <?php } ?>
+        </ul>
     </div>
 
-    <div id="left-column" data-role="content">
-        <table width="100%" cellpadding="10" id="all-items">
-            <tr class="thead" style="text-align:center">
-                <td width="50%">項目</td>
-                <td colspan="3">數量</td>
-            </tr>
-        </table>
-        <div class="clear"></div>
-    </div>
+    <div id="pos-content">
+        <div id="pos-left-column">
+            <table width="100%" cellpadding="10" id="all-items">
+                <tr class="thead">
+                    <td width="50%">項目</td>
+                    <td colspan="3">數量</td>
+                </tr>
+            </table>
+        </div>
 
-    <div id="right-column" data-role="content">
-        <?php foreach ($categories as $category) { ?>
-        <div class="list-div" id="category-<?= intval($category->id) ?>" <?= 1 == $category->id ? '' : 'style="display:none;"' ?>>
-            <?php foreach ($category->getCurrentProducts()->order('position ASC') as $product) { ?>
-            <span class="grid">
-                <button data-role="none" data-product_id="<?= intval($product->id) ?>">
-                    <span class="name"><?= htmlspecialchars($product->name) ?></span><br>
-                    <span class="price">$<?= intval($product->price) ?></span><br>
-                </button>
-            </span>
+        <div id="pos-right-column">
+            <?php foreach ($categories as $category) { ?>
+            <div class="list-div" id="category-<?= intval($category->id) ?>" <?= 1 == $category->id ? '' : 'style="display:none;"' ?>>
+                <?php foreach ($category->getCurrentProducts()->order('position ASC') as $product) { ?>
+                <span class="grid">
+                    <button data-product_id="<?= intval($product->id) ?>">
+                        <span class="name"><?= htmlspecialchars($product->name) ?></span><br>
+                        <span class="price">$<?= intval($product->price) ?></span><br>
+                    </button>
+                </span>
+                <?php } ?>
+            </div>
             <?php } ?>
         </div>
-        <?php } ?>
-        <div class="clear"></div>
     </div>
 
     <div data-theme="a" data-role="footer" data-position="fixed" data-tap-toggle="false" style="">
@@ -191,6 +175,9 @@ var display_page = function(page_id){
 };
 
 var display_pos_page = function(table){
+    if (0 === $('#nav-category').find('li.active').length) {
+        setCategoryActive($('#nav-category').find('li:first'));
+    }
     $pos_page.data('table', table);
     $pos_page.find('tr.item').remove();
     all_table_datas[table] = all_table_datas[table] || {};
@@ -260,6 +247,10 @@ var saveItemDatas = function(table){
     }
 };
 
+var setCategoryActive = function($li){
+    $li.addClass('active').siblings('li').removeClass('active');
+};
+
 /* -------- talbe 頁設定 -------- */
 $table_page.delegate('.select-table', 'click', function(e){
     e.preventDefault();
@@ -302,9 +293,11 @@ $('#change-table').click(function(e){
 });
 
 /* 切換分類 */
-$pos_page.find('#navbar').find('a').click(function(e){
+$('#nav-category').find('a').click(function(e){
     e.preventDefault();
-    var cid = $(this).data('category_id');
+    var $this = $(this);
+    setCategoryActive($this.closest('li'));
+    var cid = $this.data('category_id');
     $pos_page.find('.list-div').hide();
     $('#category-' + cid).show();
 });
@@ -352,7 +345,7 @@ $pos_page.delegate('.list-div button', 'click', function(e){
     var product_id = $this.data('product_id');
     var $item_tr = $('#item-' + product_id);
     var name = $this.find('.name').text();
-    if (0 === $item_tr.size()) {
+    if (0 === $item_tr.length) {
         $item_tr = $tmpl_item_tr.tmpl({product_id: product_id, name: name, price: price, amount: 0}).appendTo($all_items);
         $all_items.trigger("create");
     }
