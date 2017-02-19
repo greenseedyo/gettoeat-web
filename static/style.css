@@ -1,8 +1,13 @@
-/* for bootstrap fixed nav height */
 body { 
+    /* fixed nav height */
     padding-top: 50px; 
+    /* Margin bottom by footer height */
+    padding-bottom: 50px;
 }
 
+.navbar-header {
+    padding-left: 15px;
+}
 /* centered navbar title */
 .navbar-brand {
     position: absolute;
@@ -12,16 +17,27 @@ body {
     text-align: center;
     margin: auto;
 }
+
+/* navbar menu */
 .navbar-toggle {
     z-index:3;
 }
 
-/* back button */
+/* navbar button */
+.navbar-btn {
+    z-index:3;
+    color: #fff;
+    padding: 6px 10px;
+}
 .navbar-left {
     float:left;
-    margin-left:15px;
-    padding:6px 10px;
-    color: #fff;
+}
+
+/* scrollable menu */
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
 }
 
 /* category nav */
@@ -31,6 +47,20 @@ body {
 }
 .nav-justified > li > a {
     margin-bottom: 0;
+}
+
+/* tables map */
+.table-content {
+    position:relative;
+    text-align: center;
+    width: 100%;
+}
+.table-content .map {
+    position: relative;
+    display:inline-block;
+}
+.table-content .map .taken {
+    background: #FDFF55;
 }
 
 /* pos content */
@@ -83,12 +113,10 @@ body {
     -webkit-border-radius: 10px /*{global-radii-blocks}*/;
     border-radius: 10px /*{global-radii-blocks}*/;
 }
-#pos-right-column .list-div .grid button span {
-    line-height: 18px;
-}
 #pos-right-column .list-div .grid button span.name{
-    font-size: 18px;
+    font-size: 12px;
 }
+
 
 /* manage tables page */
 #tables-inactive {

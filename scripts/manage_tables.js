@@ -1,31 +1,8 @@
+var GTE = GTE || {};
 var gridPixel = GTE.gridPixel || 10;
 
-function initTableGrid($element) {
+function initManageableGrid($element) {
     $element
-        .text(function() {
-            return $(this).data("name");
-        })
-        .width(function() {
-            return $(this).data("width");
-        })
-        .height(function() {
-            return $(this).data("height");
-        })
-        .css({
-            "position": "absolute",
-        })
-        .css("line-height", function() {
-            return $(this).data("line-height");
-        })
-        .css("left", function() {
-            return $(this).data("left");
-        })
-        .css("top", function() {
-            return $(this).data("top");
-        })
-        .css("z-index", function() {
-            return $(this).data("z-index");
-        })
         .draggable({
             stack: "div",
             grid: [gridPixel, gridPixel],
@@ -34,7 +11,6 @@ function initTableGrid($element) {
                 if (true == $grid.data("removed")) {
                     $grid.remove();
                 } else if (false == $grid.data("active")) {
-                    console.log('a');
                     shiftInactiveGridsPosition();
                     $grid.appendTo("#tables-inactive").css({"top": "10px", "left": "10px"});
                 }
@@ -46,7 +22,6 @@ function initTableGrid($element) {
             resize: function() {
                 $(this).css("line-height", $(this).height() + "px");
                 setInactiveDivHeight();
-                console.log($("#tables-inactive").height());
             }
         })
         .each(function(index, element) {
@@ -81,24 +56,14 @@ function setInactiveDivHeight() {
     });
 };
 
-function setActiveDivSize()
-{
-    $("#tables-active")
-        .height(function() {
-            return $(this).data("height")
-        })
-        .width(function() {
-            return $(this).data("width")
-        });
-}
-
 function shiftInactiveGridsPosition() {
     $("#tables-inactive").find(".table-grid").css("left", "+=" + GTE.new_grid_x);
 }
 
-initTableGrid($(".table-grid"));
+GTE.common.initTableGrid($(".table-grid"));
+GTE.common.setMapSize($("#tables-active"));
+initManageableGrid($(".table-grid"));
 setInactiveDivHeight();
-setActiveDivSize();
 
 $("#tables-active")
     .resizable({grid: gridPixel})
@@ -144,7 +109,8 @@ $("#form-add-table").submit(function(e) {
         .data("top", GTE.new_grid_y + "px")
         .data("z-index", ++ GTE.new_grid_z + 100)
         .appendTo("#tables-inactive");
-    initTableGrid($new_div);
+    GTE.common.initTableGrid($new_div);
+    initManageableGrid($new_div);
 });
 
 $("#form-save-table").submit(function(e) {
