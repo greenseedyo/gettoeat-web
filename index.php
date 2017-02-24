@@ -5,6 +5,7 @@ $store = Store::getByAccount($_SESSION['store_account']);
 if (!$store instanceof StoreRow) {
     die('找不到此帳號');
 }
+$events = $store->getCurrentEvents();
 $tables_file = "{$_SERVER['DOCUMENT_ROOT']}/tables/{$store->account}.html";
 
 $categories = $store->categories;

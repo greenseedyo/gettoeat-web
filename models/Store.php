@@ -45,6 +45,13 @@ class StoreRow extends Pix_Table_Row
         $tables_info = $this->create_tables_info(array('version' => $version));
         return $tables_info;
     }
+
+    public function getCurrentEvents()
+    {
+        $now = time();
+        $events = $this->events->search("`start_at` <= {$now} AND (`end_at` = 0 OR `end_at` > {$now})");
+        return $events;
+    }
 }
 
 class Store extends Pix_Table

@@ -14,7 +14,7 @@ var $submit_page = $('#submit');
 var $bill_page = $('#bill');
 var $tmpl_item_tr = $('#tmpl-item-tr');
 var $all_items = $('#all-items');
-var $subtotal = $('#subtotal');
+var $subtotal = $('.subtotal');
 
 var display_page = function(page_id){
     $('.page').hide();
@@ -58,6 +58,7 @@ var display_table_page = function(){
 
 var display_submit_page = function(table){
     $submit_page.data('table', table);
+    $submit_page.find('.navbar-title').text(table);
     display_page('submit');
 };
 
@@ -146,8 +147,8 @@ $('#nav-category').find('a').click(function(e){
 
 /* 計算總價 */
 var addTotalPrice = function(price){
-    var subtotal = parseInt($subtotal.text());
-    $subtotal.text(subtotal + parseInt(price));
+    var subtotal = parseInt($subtotal.first().text()) + parseInt(price);
+    $subtotal.text(subtotal);
 };
 
 /* 加數量 */
@@ -237,19 +238,18 @@ $submit_page.find('.back-to-pos').click(function(e){
     display_pos_page(current_table);
 });
 
-$submit_page.find('.select-custermers').click(function(e){
+$submit_page.find('.custermers-button').click(function(e){
     e.preventDefault();
-    var $this = $(this);
     $('.custermers-button').removeClass('selected');
-    $this.find('button').addClass('selected');
+    $(this).addClass('selected');
 });
 
 $('#submit_bill').click(function(e){
     e.preventDefault();
     var $this = $(this);
     $this.attr('disabled', 'disabled');
-    var custermers = $('.custermers-button.selected').text();
-    if ('' == custermers) {
+    var custermers = $('.custermers-button.selected').data('value');
+    if ('undefined' == typeof custermers) {
         alert('請選擇人數');
         return;
     }
@@ -263,7 +263,6 @@ $('#submit_bill').click(function(e){
     };
     $('.custermers-button.selected').removeClass('selected');
     $('select[name=event_id]')[0].selectedIndex = 0;
-    $('select[name=event_id]').selectmenu('refresh', true);
     $.post('ajax_submit.php', data, function(rtn){
         var bill_id = rtn;
         delete all_table_datas[table];

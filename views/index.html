@@ -101,7 +101,7 @@
                     <?php } ?>
                 </ul>
             </div>
-            <span class="navbar-brand">小計 $ <span id="subtotal"></span></span>
+            <span class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></span>
             <button id="to-submit-page" class="navbar-toggle navbar-btn"><span class="glyphicon glyphicon-usd"></span></button>
         </div>
     </nav>
@@ -126,30 +126,47 @@
 
 <!-- submit -->
 <div class="page" id="submit" style="display:none;">
-    <div data-theme="a" data-role="header">
-        <button class="back-to-pos">返回</button>
-        <h5><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</h5>
-    </div>
-    <div data-role="content">
-        <div class="submit_content">
-            <form method="post">
-                <h1>人數</h1>
-                <?php for ($i = 1; $i <= 20; $i ++) { ?>
-                <span class="grid-small select-custermers"><button class="custermers-button" data-role="none"><span><?= $i ?></span></button></span>
-                <?php } ?>
-                <br>
-                <h1>折扣選擇</h1>
-                <select name="event_id" data-native-menu="false">
-                    <option value="0" selected>無</option>
-                    <option value="3">9折</option>
-                    <option value="4">5折</option>
-                    <option value="0" disabled>外帶折扣自動計算不需選擇</option>
-                </select>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle navbar-left navbar-btn back-to-pos"><span class="glyphicon glyphicon-chevron-left"></span></button>
+            <div class="navbar-header">
+                <span class="navbar-brand navbar-title"></span>
+            </div>
+        </div>
+    </nav>
+    <div>
+        <div class="submit-content">
+            <div class="form-group">
+                <div class="form-control-label h2">人數</div>
+                <div class="btn-group btn-group-lg" role="group" aria-label="Large button group">
+                    <?php for ($i = 1; $i <= 9; $i ++) { ?>
+                    <button class="btn btn-default custermers-button" data-value="<?= $i ?>"><?= $i ?></button>
+                    <?php } ?>
+                </div>
                 <br><br>
-                <input type="button" id="submit_bill" value="確認結帳" />
-            </form>
+                <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                    <?php for ($i = 10; $i <= 20; $i ++) { ?>
+                    <button class="btn btn-default custermers-button" data-value="<?= $i ?>"><?= $i ?></button>
+                    <?php } ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-control-label h2">折扣選擇</div>
+                <select name="event_id" class="form-control select-event" multiple>
+                    <option value="0" selected>無</option>
+                    <?php foreach ($events as $event) { ?>
+                    <option value="<?= intval($event->id) ?>"><?= htmlspecialchars($event->title) ?></option>
+                    <?php } ?>
+                </select>
+            </div>
         </div>
     </div>
+    <nav class="navbar navbar-inverse navbar-fixed-bottom">
+        <div class="navbar-header">
+            <span class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></span>
+            <button type="button" class="navbar-toggle navbar-btn" id="submit_bill"><span class="glyphicon glyphicon-ok"></span></button>
+        </div>
+    </nav>
 </div>
 
 <!-- bill -->
