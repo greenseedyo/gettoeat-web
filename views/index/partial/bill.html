@@ -1,0 +1,71 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle navbar-left navbar-btn back-to-table"><span class="glyphicon glyphicon-home"></span></button>
+        <a class="navbar-brand" href="#"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</a>
+        <?php if ($bill) { ?>
+        <button type="button" class="navbar-toggle navbar-btn" id="delete_bill" data-id="<?= intval($bill->id) ?>"><span class="glyphicon glyphicon-trash"></span></button>
+        <?php } ?>
+    </div>
+</nav>
+
+<?php if ($bill) { ?>
+<div class="container">
+    <div class="alert alert-info table-info">
+        <strong><?= htmlspecialchars($bill->table) ?>: </strong>
+        點餐時間 <?= date('H:i:s', $bill->ordered_at) ?>,
+        結帳時間 <?= date('H:i:s', $bill->paid_at) ?>,
+        人數 <?= intval($bill->custermers) ?>
+    </div>
+    <table class="table table-striped">
+        <tr>
+            <th>品名</th>
+            <th>單價</th>
+            <th>數量</th>
+            <th>總計</th>
+        </tr>
+        <?php foreach ($bill->items as $item) { ?>
+        <tr class="success">
+            <td><?= htmlspecialchars($item->product->name) ?></td>
+            <td><?= intval($item->product->price) ?></td>
+            <td><?= intval($item->amount) ?></td>
+            <td><?= intval($item->product->price * $item->amount) ?></td>
+        </tr>
+        <?php } ?>
+        <?php foreach ($bill->discounts as $discount) { ?>
+        <tr class="danger">
+            <td><?= htmlspecialchars($discount->event->title) ?></td>
+            <td></td>
+            <td></td>
+            <td>-<?= intval($discount->value) ?></td>
+        </tr>
+        <?php } ?>
+        <tr class="warning">
+            <th></th>
+            <th></th>
+            <th></th>
+            <th><?= intval($bill->price) ?></th>
+        </tr>
+    </ul>
+</div>
+<?php } else { ?>
+<div>
+    <ul>
+        <li>無帳單資訊</li>
+    </ul>
+</div>
+<?php } ?>
+
+    </div>
+</div>
+
+<nav class="navbar navbar-inverse navbar-fixed-bottom">
+    <div class="navbar-header">
+        <?php if ($prev_bill_id) { ?>
+        <button id="prev_bill" class="navbar-toggle navbar-left navbar-btn" data-prev-id="<?= intval($prev_bill_id) ?>"><span class="glyphicon glyphicon-circle-arrow-left"></span></button>
+        <?php } ?>
+        <span class="navbar-brand">本日業績 $ <span id="today_total"></span></span>
+        <?php if ($next_bill_id) { ?>
+        <button id="next_bill" class="navbar-toggle navbar-btn" data-next-id="<?= intval($next_bill_id) ?>"><span class="glyphicon glyphicon-circle-arrow-right"></span></button>
+        <?php } ?>
+    </div>
+</nav>

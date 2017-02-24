@@ -55,36 +55,6 @@ class BillRow extends Pix_Table_Row
         }
         $this->update(array('price' => $price, 'paid_at' => time()));
     }
-
-    public function getTableName()
-    {
-        switch ($this->table) {
-        case 'outer_1': return '戶外1';
-        case 'outer_2': return '戶外2';
-        case 'outer_3': return '戶外3';
-        case 'sofa_1': return '沙1';
-        case 'sofa_2': return '沙2';
-        case 'left_1': return '左1';
-        case 'left_2': return '左2';
-        case 'left_3': return '左3';
-        case 'left_4': return '左4';
-        case 'middle_1': return '中1';
-        case 'middle_2': return '中2';
-        case 'middle_3': return '中3';
-        case 'right_1': return '右1';
-        case 'right_2': return '右2';
-        case 'bar_1': return '吧1';
-        case 'bar_2': return '吧2';
-        case 'bar_3': return '吧3';
-        case 'bar_4': return '吧4';
-        case 'bar_5': return '吧5';
-        case 'takeout_1': return '外帶1';
-        case 'takeout_2': return '外帶2';
-        case 'takeout_3': return '外帶3';
-        case 'takeout_4': return '外帶4';
-        case 'takeout_5': return '外帶5';
-        }
-    }
 }
 
 class Bill extends Pix_Table

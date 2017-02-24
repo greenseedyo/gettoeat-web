@@ -132,6 +132,10 @@ body {
     font-size: 20px;
 }
 
+#bill .table-info {
+    margin-top: 20px;
+}
+
 
 /* manage tables page */
 #tables-inactive {
