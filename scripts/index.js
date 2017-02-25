@@ -247,12 +247,12 @@ $submit_page.find('.custermers-button').click(function(e){
 $('#submit_bill').click(function(e){
     e.preventDefault();
     var $this = $(this);
-    $this.attr('disabled', 'disabled');
     var custermers = $('.custermers-button.selected').data('value');
     if ('undefined' == typeof custermers) {
         alert('請選擇人數');
         return;
     }
+    $this.attr('disabled', 'disabled');
     var table = $submit_page.data('table');
     var data = {
         table: table,
