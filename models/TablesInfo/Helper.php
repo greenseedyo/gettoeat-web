@@ -5,6 +5,9 @@ class TablesInfo_Helper
     private $_pix_tabel_row;
     private $_data;
 
+    const DEFAULT_TOTAL_WIDTH = 600;
+    const DEFAULT_TOTAL_HEIGHT = 400;
+
     public function __construct(TablesInfoRow $tables_info)
     {
         $this->_pix_tabel_row = $tables_info;
@@ -42,12 +45,12 @@ class TablesInfo_Helper
 
     public function getTotalHeight()
     {
-        return $this->_data->totalHeight;
+        return $this->_data->totalHeight ?? self::DEFAULT_TOTAL_HEIGHT;
     }
 
     public function getTotalWidth()
     {
-        return $this->_data->totalWidth;
+        return $this->_data->totalWidth ?? self::DEFAULT_TOTAL_WIDTH;
     }
 
     public function save(string $data)
