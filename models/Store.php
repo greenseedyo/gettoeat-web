@@ -34,7 +34,7 @@ class StoreRow extends Pix_Table_Row
 
     public function getTablesInfo()
     {
-        if (!$tables_info = $this->tables_info) {
+        if (!$tables_info = $this->tables_infos->order('`version` DESC')->first()) {
             $tables_info = $this->createTablesInfoWithVersion(1);
         }
         return $tables_info;
@@ -42,7 +42,7 @@ class StoreRow extends Pix_Table_Row
 
     public function createTablesInfoWithVersion($version)
     {
-        $tables_info = $this->create_tables_info(array('version' => $version));
+        $tables_info = $this->create_tables_infos(array('version' => $version));
         return $tables_info;
     }
 
@@ -75,7 +75,7 @@ class Store extends Pix_Table
         $this->_relations['products'] = array('rel' => 'has_many', 'type' => 'Product', 'foreign_key' => 'store_id');
         $this->_relations['bills'] = array('rel' => 'has_many', 'type' => 'Bill', 'foreign_key' => 'store_id');
         $this->_relations['events'] = array('rel' => 'has_many', 'type' => 'Event', 'foreign_key' => 'store_id');
-        $this->_relations['tables_info'] = array('rel' => 'has_one', 'type' => 'TablesInfo', 'foreign_key' => 'id');
+        $this->_relations['tables_infos'] = array('rel' => 'has_many', 'type' => 'TablesInfo', 'foreign_key' => 'store_id');
 	}
 
     public static function getByAccount($account)
