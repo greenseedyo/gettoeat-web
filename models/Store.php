@@ -52,21 +52,27 @@ class StoreRow extends Pix_Table_Row
         $events = $this->events->search("`start_at` <= {$now} AND (`end_at` = 0 OR `end_at` > {$now})");
         return $events;
     }
+
+    public function getCashier()
+    {
+        $cashier = new Store\Cashier($this);
+        return $cashier;
+    }
 }
 
 class Store extends Pix_Table
 {
     public $_rowClass = 'StoreRow';
 
-	public function init()
-	{
-		$this->_name = 'store';
-		$this->_primary = array('id');
+    public function init()
+    {
+        $this->_name = 'store';
+        $this->_primary = array('id');
 
-		$this->_columns['id'] = array('type' => 'int', 'auto_increment' => true, 'unsigned' => true);
-		$this->_columns['account'] = array('type' => 'varchar', 'size' => 20);
-		$this->_columns['name'] = array('type' => 'varchar', 'size' => 20);
-		$this->_columns['nickname'] = array('type' => 'varchar', 'size' => 10);
+        $this->_columns['id'] = array('type' => 'int', 'auto_increment' => true, 'unsigned' => true);
+        $this->_columns['account'] = array('type' => 'varchar', 'size' => 20);
+        $this->_columns['name'] = array('type' => 'varchar', 'size' => 20);
+        $this->_columns['nickname'] = array('type' => 'varchar', 'size' => 10);
 
         $this->addIndex('account', array('account'));
         $this->addIndex('name', array('name'));
@@ -76,7 +82,7 @@ class Store extends Pix_Table
         $this->_relations['bills'] = array('rel' => 'has_many', 'type' => 'Bill', 'foreign_key' => 'store_id');
         $this->_relations['events'] = array('rel' => 'has_many', 'type' => 'Event', 'foreign_key' => 'store_id');
         $this->_relations['tables_infos'] = array('rel' => 'has_many', 'type' => 'TablesInfo', 'foreign_key' => 'store_id');
-	}
+    }
 
     public static function getByAccount($account)
     {

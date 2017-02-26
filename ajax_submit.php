@@ -7,25 +7,44 @@ if (!$store instanceof StoreRow) {
     die('找不到此帳號');
 }
 
-$item_datas = $_POST['item_datas'];
 $ordered_at = substr($_POST['ordered_at'], 0, 10);
 if (date('H', $ordered_at) > 6) {
     $date = strtotime('today', $ordered_at);
 } else {
     $date = strtotime('yesterday', $ordered_at);
 }
-$data = array(
-    'year' => date('Y', $date),
-    'month' => date('m', $date),
-    'date' => date('d', $date),
-    'day' => date('N', $date),
-    'price' => 0,
-    'ordered_at' => $ordered_at,
-    'paid_at' => 0,
-    'table' => $_POST['table'],
-    'custermers' => $_POST['custermers'],
-);
+$cashier = $store->getCashier();
+$cashier
+    ->setDate($date)
+    ->setTable($_POST['table'])
+    ->setOrderedAt($ordered_at)
+    ->setCustermers($_POST['custermers']);
 
-$bill = $store->create_bills($data);
-$bill->pay($item_datas, $_POST['event_id']);
+$item_datas = $_POST['item_datas'];
+foreach ($item_datas as $item_data) {
+    $cart_item = new Store\Cashier\CartItem($item_data['product_id'], $item_data['amount']);
+    $cashier->addItem($cart_item);
+}
+$event_ids = $_POST['event_ids'];
+foreach ($event_ids as $event_id) {
+    if ($event = Event::find(intval($event_id))) {
+        $cashier->addEvent($event);
+    }
+}
+
+//$preview = $cashier->getPreviewData(); echo $preview;exit;
+
+$link = Pix_Table::getDefaultDb();
+$link->query("SET autocommit=0");
+$link->query("START TRANSACTION");
+try {
+    $bill = $cashier->createBill();
+    $link->query("COMMIT");
+} catch (Exception $e) {
+    $link->query("ROLLBACK");
+    echo $e->getMessage();
+    exit;
+}
+$link->query("SET autocommit=1");
+
 echo $bill->id;

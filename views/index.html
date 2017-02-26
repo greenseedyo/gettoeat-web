@@ -148,7 +148,7 @@
             </div>
             <div class="form-group">
                 <div class="form-control-label h2">折扣選擇</div>
-                <select name="event_id" class="form-control select-event" multiple>
+                <select name="event_ids" class="form-control select-event" multiple>
                     <option value="0" selected>無</option>
                     <?php foreach ($events as $event) { ?>
                     <option value="<?= intval($event->id) ?>"><?= htmlspecialchars($event->title) ?></option>

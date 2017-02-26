@@ -257,12 +257,12 @@ $('#submit_bill').click(function(e){
     var data = {
         table: table,
         custermers: custermers,
-        event_id: $('select[name=event_id]').val(),
+        event_ids: $('select[name=event_ids]').val(),
         item_datas: all_table_datas[table].item_datas,
         ordered_at: all_table_datas[table].ordered_at
     };
     $('.custermers-button.selected').removeClass('selected');
-    $('select[name=event_id]')[0].selectedIndex = 0;
+    $('select[name=event_ids]')[0].selectedIndex = 0;
     $.post('ajax_submit.php', data, function(rtn){
         var bill_id = rtn;
         delete all_table_datas[table];
