@@ -106,7 +106,6 @@ class Cashier
     public function createBill()
     {
         $this->setReceiptItems();
-        print_r($this->getPreviewData());exit;
         $data = array(
             'year' => date('Y', $this->date),
             'month' => date('m', $this->date),
