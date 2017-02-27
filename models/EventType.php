@@ -16,5 +16,12 @@ class EventType extends Pix_Table
         $this->_columns['id'] = array('type' => 'int', 'auto_increment' => true, 'unsigned' => true);
         $this->_columns['name'] = array('type' => 'varchar', 'size' => 255);
         $this->_columns['description'] = array('type' => 'varchar', 'size' => 255);
+
+        $this->addIndex('name', array('name'), 'unique');
+    }
+
+    public function getByName($name)
+    {
+        return EventType::search(array('name' => $name))->first();
     }
 }

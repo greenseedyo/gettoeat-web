@@ -2,15 +2,52 @@
 
 class StoreRow extends Pix_Table_Row
 {
+    public function postInsert()
+    {
+        $this->createDefaultEvents();
+    }
+
+    public function createDefaultEvents()
+    {
+        // 自行輸入折扣金額
+        $event_type = EventType::getByName('PriceOff');
+        $data = array(
+            'type_id' => $event_type->id,
+            'title' => '自行輸入折扣金額',
+            'note' => '系統預設折扣活動',
+        );
+        $this->create_events();
+    }
+
+    public function getDateChangeAt()
+    {
+        return 6;
+    }
+
+    public function getDayStartAt(DateTime $date)
+    {
+        $date_change_at = $this->getDateChangeAt();
+        $start_at = mktime($date_change_at, 0, 0, date('m', $date->getTimestamp()), date('d', $date->getTimestamp()), date('Y', $date->getTimestamp()));
+        return $start_at;
+    }
+
+    public function getDayEndAt(DateTime $date)
+    {
+        $date_change_at = $this->getDateChangeAt();
+        $end_at = mktime($date_change_at, 0, 0, date('m', $date->getTimestamp()), date('d', $date->getTimestamp()) + 1, date('Y', $date->getTimestamp()));
+        return $end_at;
+    }
+
     public function getTodayPaidBills()
     {
-        if (date('H') > 6) {
-            $start_at = mktime(6, 0, 0, date('m'), date('d'), date('Y'));
-            $end_at = mktime(6, 0, 0, date('m'), date('d') + 1, date('Y'));
+        $date_change_at = $this->getDateChangeAt();
+        if (date('H') > $date_change_at) {
+            $date = new DateTime();
         } else {
-            $start_at = mktime(6, 0, 0, date('m'), date('d') - 1, date('Y'));
-            $end_at = mktime(6, 0, 0, date('m'), date('d'), date('Y'));
+            $date = new DateTime('+1 day');
         }
+        $start_at = $this->getDayStartAt($date);
+        $end_at = $this->getDayEndAt($date);
         return $this->bills->search("paid_at > 0 AND ordered_at >= {$start_at} AND ordered_at < {$end_at}");
     }
 
@@ -57,6 +94,12 @@ class StoreRow extends Pix_Table_Row
     {
         $cashier = new Store\Cashier($this);
         return $cashier;
+    }
+
+    public function getEventById($event_id)
+    {
+        $event = $this->events->search(array('id' => $event_id))->first();
+        return $event;
     }
 }
 

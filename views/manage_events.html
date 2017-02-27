@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?= htmlspecialchars($store->nickname) ?> 折扣活動管理</title>
+    <?php include(VIEWS_DIR . "/include/static_common.html"); ?>
+    <?php include(VIEWS_DIR . "/include/bootstrap_datepicker.html"); ?>
+</head>
+
+<body>
+<?php include(VIEWS_DIR . "/include/manage_nav.html"); ?>
+<div class="container">
+    <div>
+        <h1><?= htmlspecialchars($store->nickname) ?> 折扣活動管理</h1>
+    </div>
+
+    <?php if (is_array($event_datas)) { ?>
+    <div>
+        <div class="page-header">
+            <h2>分類</h2>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">現有折扣活動列表</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <tr>
+                        <th>類型</th>
+                        <th>名稱</th>
+                        <th>開始時間</th>
+                        <th>結束時間</th>
+                        <th>備註</th>
+                        <th>管理</th>
+                    </tr>
+                    <?php if (!empty($event_datas)) { ?>
+                    <?php foreach ($event_datas as $event_data) { ?>
+                    <tr>
+                        <td><?= htmlspecialchars($event_data['type_description']) ?></td>
+                        <td><?= htmlspecialchars($event_data['title']) ?></td>
+                        <td><?= htmlspecialchars($event_data['start_date'] ? $event_data['start_date'] : '無限制') ?></td>
+                        <td><?= htmlspecialchars($event_data['end_date'] ? $event_data['end_date'] : '無限制') ?></td>
+                        <td><?= htmlspecialchars($event_data['note']) ?></td>
+                        <td>
+                            <a href="manage_events.php?id=<?= intval($event_data['id']) ?>"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span></button></a>
+                        </td>
+                    </tr>
+                    <?php } ?>
+                    <?php } else { ?>
+                    <tr>
+                        <td colspan="5">目前無任何折扣活動</td>
+                    </tr>
+                    <?php } ?>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">新增折扣活動</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-add-event" method="post">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label for="type">折扣活動類型</label>
+                            <select name="type_id" class="form-control select-type">
+                                <option value="0">請選擇類型</option>
+                                <?php foreach ($event_type_datas as $event_type_data) { ?>
+                                <option value="<?= intval($event_type_data['id']) ?>"><?= htmlspecialchars($event_type_data['description']) ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="form-by-type"></div>
+                    </div>
+                    <input type="hidden" name="form_name" value="add_event" />
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php } elseif (is_array($event_data)) { ?>
+    <div>
+        <div class="page-header">
+            <h2>編輯折扣活動: <?= htmlspecialchars($event->title) ?></h2>
+            <input type="button" class="btn btn-default" value="回上頁" onclick="document.location.href='manage_events.php';" />
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">更新資訊</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-edit-event" method="post">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label for="type">折扣活動類型</label>
+                            <select name="type_id" class="form-control select-type" data-id="<?= intval($event_data['id']) ?>">
+                                <option value="0">請選擇類型</option>
+                                <?php foreach ($event_type_datas as $event_type_data) { ?>
+                                <option value="<?= intval($event_type_data['id']) ?>" <?= $event_type_data['selected'] ? 'selected' : '' ?>><?= htmlspecialchars($event_type_data['description']) ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="form-by-type"></div>
+                    </div>
+                    <input type="hidden" name="form_name" value="edit_event" />
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php } elseif ($product) { ?>
+    <div>
+        <div class="page-header">
+            <h2>編輯項目: <?= htmlspecialchars($product->name) ?></h2>
+            <input type="button" class="btn btn-default" value="回上頁" onclick="document.location.href='manage_items.php?category_id=<?= intval($product->category_id) ?>';" />
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">更新資訊</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-edit-product" method="post">
+                    <div class="form-group">
+                        <label>名稱</label>
+                        <input type="text" class="form-control" name="name" placeholder="請輸入名稱" value="<?= htmlspecialchars($product->name) ?>" /><br>
+                    </div>
+                    <div class="form-group">
+                        <label>價格</label>
+                        <input type="text" class="form-control" name="price" placeholder="請輸入價格" value="<?= htmlspecialchars($product->price) ?>" /><br>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-default" value="更新" />
+                        <input type="hidden" name="id" value="<?= intval($product->id) ?>" /><br>
+                        <input type="hidden" name="form_name" value="edit_product" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php } ?>
+</div>
+
+<script type="text/javascript" src="/scripts/manage_events.js?v=<?= STATIC_VERSION ?>"></script>
+</body>
+</html>
+
+

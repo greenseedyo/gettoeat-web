@@ -5,34 +5,45 @@ namespace Event\Helper;
 class PercentOff extends AbstractHelper
 {
     public $event;
-    public $cart_items = array();
 
     public function __construct($event)
     {
         $this->event = $event;
     }
 
-    public function setCartItems(array $cart_items)
+    public function generateDiscountItems($data = null)
     {
-        foreach ($cart_items as $cart_item) {
-            if (!$cart_item instanceof \Store\Cashier\CartItem) {
-                throw new Exception('needs to be an instanceof \Store\Cashier\CartItem');
-            }
+        $total_price = 0;
+        foreach ($this->cart_items as $cart_item) {
+            $total_price += $cart_item->getSubtotalPrice();
         }
-        $this->cart_items = $cart_items;
-    }
-
-    public function generateDiscountItems()
-    {
-        $value = 0;
-        foreach ($this->items as $item) {
-            $value += $item->getSubtotalPrice();
-        }
+        $percent_off = $this->getData()['percent'] / 100;
+        $value = intval($total_price * $percent_off);
         $discount_item = new \Store\Cashier\DiscountItem();
         $discount_item->unit_price = $value * (-1);
         $discount_item->quantity = 1;
 
         return array($discount_item);
+    }
+
+    public function setData($data = null)
+    {
+        if ($percent_reversed = $data['percent_reversed']) {
+            $percent_reversed = floatval("0.{$percent_reversed}") * 100;
+            $percent = 100 - $percent_reversed;
+        } elseif ($percent = $data['percent']) {
+            $percent_reversed = 100 - $percent;
+        }
+        $new_data = array(
+            'percent' => $percent,
+            'percent_reversed' => $percent_reversed,
+        );
+        $this->event->update(array('data' => json_encode($new_data)));
+    }
+
+    public function getData()
+    {
+        return json_decode($this->event->data, 1);
     }
 }
 
