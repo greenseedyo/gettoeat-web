@@ -4,23 +4,16 @@ namespace Store\Cashier;
 
 class DiscountItem extends AbstractReceiptItem
 {
-    public $event_id;
+    public $event;
 
-    protected function getEvent()
+    public function __construct(\EventRow $event)
     {
-        if ($this->event) {
-            return $this->event;
-        }
-        if (!$event = Event::find(intval($this->event_id))) {
-            throw new Exception("event not found, id: {$this->event_id}");
-        }
         $this->event = $event;
-        return $this->event;
     }
 
     public function getTitle()
     {
-        return $this->getEvent()->title;
+        return $this->event->title;
     }
 
     public function getQuantity()

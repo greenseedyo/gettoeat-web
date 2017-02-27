@@ -58,9 +58,7 @@ class Cashier
     public function setReceiptItems()
     {
         $this->generateDiscountItems();
-        $receipt_items = array();
-        $receipt_items += $this->cart_items;
-        $receipt_items += $this->discount_items;
+        $receipt_items = array_merge($this->cart_items, $this->discount_items);
         $this->receipt_items = $receipt_items;
         return $this;
     }
@@ -71,7 +69,7 @@ class Cashier
         foreach ($this->events as $event) {
             $event_helper = $event->getHelper();
             $event_helper->setCartItems($this->cart_items);
-            $discount_items += $event_helper->generateDiscountItems();
+            $discount_items = array_merge($discount_items, $event_helper->generateDiscountItemsArray()->getArrayCopy());
         }
         $this->discount_items = $discount_items;
     }
@@ -108,6 +106,7 @@ class Cashier
     public function createBill()
     {
         $this->setReceiptItems();
+        print_r($this->getPreviewData());exit;
         $data = array(
             'year' => date('Y', $this->date),
             'month' => date('m', $this->date),
@@ -127,9 +126,12 @@ class Cashier
             $data = array('product_id' => $cart_item->product_id, 'amount' => $cart_item->quantity);
             $item = $bill->create_items($data);
         }
-        foreach ($this->discount_items as $discount_items) {
+        foreach ($this->discount_items as $discount_item) {
             /* create bill item */
-            $data = array('event_id' => $discount_item->event_id, 'value' => $discount_item->getSubtotalPrice());
+            $data = array(
+                'event_id' => $discount_item->event_id,
+                'value' => $discount_item->getSubtotalPrice() * (-1),
+            );
             $item = $bill->create_discounts($data);
         }
 

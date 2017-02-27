@@ -16,7 +16,7 @@ abstract class AbstractHelper
         $this->cart_items = $cart_items;
     }
 
-    abstract public function generateDiscountItems($data = null);
+    abstract public function generateDiscountItemsArray($data = null): \Store\Cashier\DiscountItemsArray;
     abstract public function setData($data = null);
     abstract public function getData();
 }

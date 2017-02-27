@@ -11,7 +11,7 @@ class PercentOff extends AbstractHelper
         $this->event = $event;
     }
 
-    public function generateDiscountItems($data = null)
+    public function generateDiscountItemsArray($data = null): \Store\Cashier\DiscountItemsArray
     {
         $total_price = 0;
         foreach ($this->cart_items as $cart_item) {
@@ -19,11 +19,14 @@ class PercentOff extends AbstractHelper
         }
         $percent_off = $this->getData()['percent'] / 100;
         $value = intval($total_price * $percent_off);
-        $discount_item = new \Store\Cashier\DiscountItem();
+        $discount_item = new \Store\Cashier\DiscountItem($this->event);
         $discount_item->unit_price = $value * (-1);
         $discount_item->quantity = 1;
 
-        return array($discount_item);
+        $discount_items = new \Store\Cashier\DiscountItemsArray();
+        $discount_items->append($discount_item);
+
+        return $discount_items;
     }
 
     public function setData($data = null)
