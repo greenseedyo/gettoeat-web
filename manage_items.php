@@ -1,11 +1,6 @@
 <?php
 require_once 'config.php';
 
-$store = Store::getByAccount($_SESSION['store_account']);
-if (!$store instanceof StoreRow) {
-    die('找不到此帳號');
-}
-
 if ($_POST) {
     if ('add_category' == $_POST['form_name']) {
         $category = $store->create_categories($_POST);
