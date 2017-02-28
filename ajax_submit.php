@@ -25,10 +25,10 @@ foreach ($item_datas as $item_data) {
     $cart_item = new Store\Cashier\CartItem($item_data['product_id'], $item_data['amount']);
     $cashier->addItem($cart_item);
 }
-$event_ids = $_POST['event_ids'];
-foreach ($event_ids as $event_id) {
+$event_options = json_decode($_POST['event_options'], 1);
+foreach ($event_options as $event_id => $options) {
     if ($event = Event::find(intval($event_id))) {
-        $cashier->addEvent($event);
+        $cashier->addEvent($event, $options);
     }
 }
 

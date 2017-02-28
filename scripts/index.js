@@ -244,6 +244,16 @@ $submit_page.find('.custermers-button').click(function(e){
     $(this).addClass('selected');
 });
 
+$submit_page.find('.select-event').on('change', function(e){
+    var $this = $(this);
+    var id = $this.val();
+    if (0 == id) {
+        return;
+    }
+    var url = '/ajax_get_event_form.php?id=' + id;
+    $('.form-by-event-id').eq($this.index() - 1).data('id', id).load(url);
+});
+
 $('#submit_bill').click(function(e){
     e.preventDefault();
     var $this = $(this);
@@ -254,15 +264,27 @@ $('#submit_bill').click(function(e){
     }
     $this.attr('disabled', 'disabled');
     var table = $submit_page.data('table');
+    var event_options = {};
+    $('.select-event').each(function(index){
+        var $select = $(this);
+        var $form = $('.form-by-event-id').eq(index);
+        var options = {};
+        $form.find(':input').each(function(){
+            var key = $(this).attr('name');
+            var value = $(this).val();
+            options[key] = value;
+        });
+        event_options[$select.val()] = options;
+        $select[0].selectedIndex = 0;
+    });
     var data = {
         table: table,
         custermers: custermers,
-        event_ids: $('select[name=event_ids]').val(),
+        event_options: JSON.stringify(event_options),
         item_datas: all_table_datas[table].item_datas,
         ordered_at: all_table_datas[table].ordered_at
     };
     $('.custermers-button.selected').removeClass('selected');
-    $('select[name=event_ids]')[0].selectedIndex = 0;
     $.post('ajax_submit.php', data, function(rtn){
         var bill_id = rtn;
         delete all_table_datas[table];

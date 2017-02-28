@@ -11,7 +11,7 @@ class Cashier
     public $custermers;
     public $cart_items = array();
     public $discount_items = array();
-    public $events = array();
+    public $event_datas = array();
     public $receipt_items = array();
 
     public function __construct(\StoreRow $store)
@@ -49,9 +49,12 @@ class Cashier
         return $this;
     }
 
-    public function addEvent(\EventRow $event)
+    public function addEvent(\EventRow $event, $options = null)
     {
-        $this->events[] = $event;
+        $this->event_datas[] = array(
+            'event' => $event,
+            'options' => $options,
+        );
         return $this;
     }
 
@@ -66,10 +69,10 @@ class Cashier
     protected function generateDiscountItems()
     {
         $discount_items = array();
-        foreach ($this->events as $event) {
-            $event_helper = $event->getHelper();
+        foreach ($this->event_datas as $event_data) {
+            $event_helper = $event_data['event']->getHelper();
             $event_helper->setCartItems($this->cart_items);
-            $discount_items = array_merge($discount_items, $event_helper->generateDiscountItemsArray()->toArray());
+            $discount_items = array_merge($discount_items, $event_helper->generateDiscountItemsArray($event_data['options'])->toArray());
         }
         $this->discount_items = $discount_items;
     }
