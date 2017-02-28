@@ -16,7 +16,17 @@ class StoreRow extends Pix_Table_Row
             'title' => '自行輸入折扣金額',
             'note' => '系統預設折扣活動',
         );
-        $this->create_events();
+        $this->create_events($data);
+
+        // 9折
+        $event_type = EventType::getByName('PercentOff');
+        $data = array(
+            'type_id' => $event_type->id,
+            'title' => '9折',
+            'note' => '系統預設折扣活動',
+            'data' => json_encode(array('percent' => 10, 'percent_reversed' => 90)),
+        );
+        $this->create_events($data);
     }
 
     public function getDateChangeAt()
