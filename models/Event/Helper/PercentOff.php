@@ -24,7 +24,7 @@ class PercentOff extends AbstractHelper
         $discount_item->quantity = 1;
 
         $discount_items = new \Store\Cashier\DiscountItemsArray();
-        $discount_items->append($discount_item);
+        $discount_items[] = $discount_item;
 
         return $discount_items;
     }

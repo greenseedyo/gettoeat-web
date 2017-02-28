@@ -69,7 +69,7 @@ class Cashier
         foreach ($this->events as $event) {
             $event_helper = $event->getHelper();
             $event_helper->setCartItems($this->cart_items);
-            $discount_items = array_merge($discount_items, $event_helper->generateDiscountItemsArray()->getArrayCopy());
+            $discount_items = array_merge($discount_items, $event_helper->generateDiscountItemsArray()->toArray());
         }
         $this->discount_items = $discount_items;
     }
