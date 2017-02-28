@@ -2,15 +2,12 @@
 
 namespace Store\Cashier;
 
-abstract class AbstractReceiptItem
+interface AbstractReceiptItem
 {
-    public $unit_price;
-    public $quantity;
-
-    abstract public function getTitle();
-    abstract public function getQuantity();
-    abstract public function getUnitPrice();
-    abstract public function getSubtotalPrice();
+    public function getTitle();
+    public function getQuantity();
+    public function getUnitPrice();
+    public function getSubtotalPrice();
 }
 
 

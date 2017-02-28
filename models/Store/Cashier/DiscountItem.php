@@ -2,13 +2,25 @@
 
 namespace Store\Cashier;
 
-class DiscountItem extends AbstractReceiptItem
+class DiscountItem implements AbstractReceiptItem
 {
-    public $event;
+    protected $event;
+    protected $quantity;
+    protected $unit_price;
 
     public function __construct(\EventRow $event)
     {
         $this->event = $event;
+    }
+
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+    }
+
+    public function setUnitPrice($unit_price)
+    {
+        $this->unit_price = $unit_price;
     }
 
     public function getTitle()
@@ -29,6 +41,11 @@ class DiscountItem extends AbstractReceiptItem
     public function getSubtotalPrice()
     {
         return $this->getUnitPrice() * $this->getQuantity();
+    }
+
+    public function getEvent()
+    {
+        return $this->event;
     }
 }
 

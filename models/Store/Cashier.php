@@ -122,13 +122,13 @@ class Cashier
 
         foreach ($this->cart_items as $cart_item) {
             /* create bill item */
-            $data = array('product_id' => $cart_item->product_id, 'amount' => $cart_item->quantity);
+            $data = array('product_id' => $cart_item->getProduct()->id, 'amount' => $cart_item->getQuantity());
             $item = $bill->create_items($data);
         }
         foreach ($this->discount_items as $discount_item) {
             /* create bill item */
             $data = array(
-                'event_id' => $discount_item->event_id,
+                'event_id' => $discount_item->getEvent()->id,
                 'value' => $discount_item->getSubtotalPrice() * (-1),
             );
             $item = $bill->create_discounts($data);

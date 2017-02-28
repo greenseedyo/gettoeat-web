@@ -4,7 +4,14 @@ namespace Event\Helper;
 
 abstract class AbstractHelper
 {
-    public $cart_items = array();
+    protected $cart_items = array();
+    protected $event;
+
+    public function __construct(\EventRow $event)
+    {
+        $this->event = $event;
+        $this->event_id = $event->id;
+    }
 
     public function setCartItems(array $cart_items)
     {
@@ -14,6 +21,16 @@ abstract class AbstractHelper
             }
         }
         $this->cart_items = $cart_items;
+    }
+
+    public function getCartItems()
+    {
+        return $this->cart_items;
+    }
+
+    public function getEvent()
+    {
+        return $this->event;
     }
 
     abstract public function generateDiscountItemsArray($data = null): \Store\Cashier\DiscountItemsArray;

@@ -12,8 +12,8 @@
 <div class="container">
     <div class="alert alert-info table-info">
         <strong><?= htmlspecialchars($bill->table) ?>: </strong>
-        點餐時間 <?= date('H:i:s', $bill->ordered_at) ?>,
-        結帳時間 <?= date('H:i:s', $bill->paid_at) ?>,
+        點餐時間 <?= date('H:i', $bill->ordered_at) ?>,
+        結帳時間 <?= date('H:i', $bill->paid_at) ?>,
         人數 <?= intval($bill->custermers) ?>
     </div>
     <table class="table table-striped">

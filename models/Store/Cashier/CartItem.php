@@ -2,9 +2,10 @@
 
 namespace Store\Cashier;
 
-class CartItem extends AbstractReceiptItem
+class CartItem implements AbstractReceiptItem
 {
-    public $product_id;
+    protected $product_id;
+    protected $quantity;
 
     public function __construct($product_id, $quantity)
     {
@@ -12,7 +13,7 @@ class CartItem extends AbstractReceiptItem
         $this->quantity = $quantity;
     }
 
-    protected function getProduct()
+    public function getProduct()
     {
         if ($this->product) {
             return $this->product;
