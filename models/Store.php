@@ -54,7 +54,7 @@ class StoreRow extends Pix_Table_Row
         if (date('H') > $date_change_at) {
             $date = new DateTime();
         } else {
-            $date = new DateTime('+1 day');
+            $date = new DateTime('-1 day');
         }
         $start_at = $this->getDayStartAt($date);
         $end_at = $this->getDayEndAt($date);
