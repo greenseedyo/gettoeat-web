@@ -4,7 +4,7 @@ namespace Event\Helper;
 
 class PercentOff extends AbstractHelper
 {
-    public function generateDiscountItemsArray($data = null): \Store\Cashier\DiscountItemsArray
+    public function generateDiscountItemsArray($options = null): \Store\Cashier\DiscountItemsArray
     {
         $total_price = 0;
         foreach ($this->cart_items as $cart_item) {

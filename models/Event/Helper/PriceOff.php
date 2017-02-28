@@ -4,10 +4,10 @@ namespace Event\Helper;
 
 class PriceOff extends AbstractHelper
 {
-    public function generateDiscountItemsArray($data = null): \Store\Cashier\DiscountItemsArray
+    public function generateDiscountItemsArray($options = null): \Store\Cashier\DiscountItemsArray
     {
         $discount_item = new \Store\Cashier\DiscountItem($this->event);
-        $discount_item->setUnitPrice($data['price'] * (-1));
+        $discount_item->setUnitPrice($options['price'] * (-1));
         $discount_item->setQuantity(1);
 
         $discount_items = new \Store\Cashier\DiscountItemsArray();

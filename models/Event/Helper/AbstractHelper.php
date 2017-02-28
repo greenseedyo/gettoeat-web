@@ -33,7 +33,7 @@ abstract class AbstractHelper
         return $this->event;
     }
 
-    abstract public function generateDiscountItemsArray($data = null): \Store\Cashier\DiscountItemsArray;
+    abstract public function generateDiscountItemsArray($options = null): \Store\Cashier\DiscountItemsArray;
     abstract public function setData($data = null);
     abstract public function getData();
 }
