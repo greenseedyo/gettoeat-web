@@ -31,7 +31,7 @@ if ($_POST) {
             $event = Event::find(intval($_GET['id']));
             $event->update($data);
         } elseif ('add_event' == $_POST['form_name']) {
-            $event = $store->create_events($_POST);
+            $event = $store->create_events($data);
         }
         $event->getHelper()->setData(array(
             'percent' => $_POST['percent'],
