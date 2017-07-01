@@ -18,9 +18,14 @@ body {
     margin: auto;
 }
 
+.navbar-header {
+    width: 100%;
+}
+
 /* navbar menu */
 .navbar-toggle {
     z-index:3;
+    display: inline-block;
 }
 
 /* navbar button */
