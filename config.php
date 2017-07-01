@@ -1,24 +1,19 @@
 <?php
 
-$env_config = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/../config/env.json'), 1);
-$environment = $env_config['environment'];
-define('DEBUG_ENV', 'development' == $environment ? true : false);
+$environment = getenv("ENV");
 
 switch ($environment) {
 case 'development':
     error_reporting(E_ALL & ~E_NOTICE);
     ini_set('display_errors', true);
+    define('STATIC_VERSION', time());
     break;
+case 'production':
 default:
     error_reporting(E_ERROR & E_WARNING);
     ini_set('display_errors', false);
-    break;
-}
-
-if (DEBUG_ENV) {
-    define('STATIC_VERSION', time());
-} else {
     define('STATIC_VERSION', md5(file_get_contents(__DIR__ . '/fingerprint.txt')));
+    break;
 }
 
 session_start();
@@ -30,7 +25,9 @@ include(ROOT_DIR . '/pixframework/Pix/Loader.php');
 set_include_path(ROOT_DIR . '/pixframework/' . PATH_SEPARATOR . ROOT_DIR . '/models/');
 Pix_Loader::registerAutoload();
 
-$db_config = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/../config/db.json'), 1);
+define('CONFIG_PATH', __DIR__ . "/../config/{$environment}");
+
+$db_config = json_decode(file_get_contents(CONFIG_PATH . '/db.json'), 1);
 $link = new Mysqli;
 $link->connect($db_config['host'], $db_config['user'], $db_config['password'], $db_config['database']);
 $link->set_charset("utf8");
