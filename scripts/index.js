@@ -129,6 +129,7 @@ $('#select-change-table').find('li').on('click', function(){
         return;
     }
     var table = $pos_page.data('table');
+    saveItemDatas(table);
     var tmp_data = all_table_datas[table];
     delete all_table_datas[table];
     all_table_datas[new_table] = tmp_data;
