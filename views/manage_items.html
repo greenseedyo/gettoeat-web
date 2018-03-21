@@ -52,6 +52,29 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
+                <h3 class="panel-title">分類狀態</h3>
+            </div>
+            <div class="panel-body">
+                <form id="form-delete-category" method="post">
+                    <?php if ($category->off) { ?>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger">隱藏中</button>
+                        <button type="submit" class="btn btn-default">顯示分類</button>
+                    </div>
+                    <?php } else { ?>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success">顯示中</button>
+                        <button type="submit" class="btn btn-default">隱藏分類</button>
+                    </div>
+                    <?php } ?>
+                    <input type="hidden" name="id" value="<?= intval($category->id) ?>" />
+                    <input type="hidden" name="form_name" value="toggle_category" />
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
                 <h3 class="panel-title">新增項目</h3>
             </div>
             <div class="panel-body">

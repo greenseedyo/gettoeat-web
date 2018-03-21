@@ -12,6 +12,17 @@ if ($_POST) {
         }
         $category->update($_POST);
         header('Location: manage_items.php?category_id=' . $category->id);
+    } elseif ('toggle_category' == $_POST['form_name']) {
+        $category = $store->getCategoryById($_POST['id']);
+        if (!$category instanceof CategoryRow) {
+            die('bad session.');
+        }
+        if ($category->isOnline()) {
+            $category->setOffline();
+        } else {
+            $category->setOnline();
+        }
+        header('Location: manage_items.php?category_id=' . $category->id);
     } elseif ('products_order' == $_POST['form_name']) {
         $data = json_decode($_POST['data'], true);
         foreach ($data['on'] as $id => $position) {

@@ -8,7 +8,7 @@ if (!$store instanceof StoreRow) {
 $events = $store->getCurrentEvents();
 $tables_file = "{$_SERVER['DOCUMENT_ROOT']}/tables/{$store->account}.html";
 
-$categories = $store->categories;
+$categories = $store->getOnlineCategories();
 $tables_info = $store->getTablesInfo();
 $helper = $tables_info->getHelper();
 $total_height = $helper->getTotalHeight();

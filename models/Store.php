@@ -111,6 +111,11 @@ class StoreRow extends Pix_Table_Row
         $event = $this->events->search(array('id' => $event_id))->first();
         return $event;
     }
+
+    public function getOnlineCategories()
+    {
+        return $this->categories->search(array('off' => 0));
+    }
 }
 
 class Store extends Pix_Table
