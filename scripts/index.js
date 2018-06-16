@@ -122,7 +122,8 @@ $pos_page.find('.back-to-table').on('click', function(e){
     display_table_page();
 });
 
-$('#select-change-table').find('li').on('click', function(){
+$('#select-change-table').find('li').on('click', function(e){
+    e.preventDefault();
     var new_table = $(this).data('value');
     if ('undefined' !== typeof all_table_datas[new_table]) {
         alert('此桌目前有客人！');
@@ -133,7 +134,7 @@ $('#select-change-table').find('li').on('click', function(){
     var tmp_data = all_table_datas[table];
     delete all_table_datas[table];
     all_table_datas[new_table] = tmp_data;
-    display_pos_page(new_table);
+    display_table_page();
 });
 
 /* 切換分類 */
