@@ -7,16 +7,6 @@ class BillItemRow extends Pix_Table_Row
         return $this->product->category;
     }
 
-    public function isFood()
-    {
-        return in_array($this->getCategory(), array(2,3,4));
-    }
-
-    public function isDrink()
-    {
-        return in_array($this->getCategory(), array(1,5));
-    }
-
     public function getPrice()
     {
         return $this->product->price;
