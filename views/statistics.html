@@ -15,14 +15,24 @@
     <div>
         <h1><?= htmlspecialchars($store->nickname) ?> 統計數據</h1>
     </div>
-
+    <ul class="nav nav-pills">
+        <li role="presentation" <?php if (!$_GET['type']) { ?>class="active"<?php } ?>><a href="/statistics.php">總覽</a></li>
+        <li role="presentation" <?php if ('category' == $_GET['type']) { ?>class="active"<?php } ?>><a href="/statistics.php?type=category">分類</a></li>
+    </ul>
     <div id="month_chart" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
     <div id="date_chart" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
 </div>
 
 <script>
 var chart;
-var highchart = function(title, renderTo, categories, turnover, discount){
+var highchart = function(title, renderTo, categories, datasets) {
+    var series = [];
+    for (let i in datasets) {
+        series.push({
+            'name': i,
+            'data': datasets[i]
+        });
+    }
     var char_options = {
         chart: {
             renderTo: renderTo,
@@ -70,15 +80,8 @@ var highchart = function(title, renderTo, categories, turnover, discount){
             verticalalign: 'middle',
             borderwidth: 0
         },
-        series: [{
-            name: '總營收'
-        }, {
-            name: '折扣'
-        }]
+        series: series
     };
-
-    char_options.series[0].data = $.parseJSON(turnover);
-    char_options.series[1].data = $.parseJSON(discount);
 
     chart = new Highcharts.Chart(char_options);
 };
@@ -86,17 +89,15 @@ var highchart = function(title, renderTo, categories, turnover, discount){
 highchart(
     '月營收狀況',
     'month_chart',
-    [<?= implode(',', array_map('json_encode', $month_names)) ?>],
-    "[<?= implode(',', array_map('json_encode', $month_turnovers)) ?>]",
-    "[<?= implode(',', array_map('json_encode', $month_discounts)) ?>]"
+    <?= json_encode($month_names) ?>,
+    <?= json_encode($month_datasets) ?>
 );
 
 highchart(
     '30天內營收狀況',
     'date_chart',
-    [<?= implode(',', array_map('json_encode', $date_names)) ?>],
-    "[<?= implode(',', array_map('json_encode', $date_turnovers)) ?>]",
-    "[<?= implode(',', array_map('json_encode', $date_discounts)) ?>]"
+    <?= json_encode($date_names) ?>,
+    <?= json_encode($date_datasets) ?>
 );
 </script>
 </body>

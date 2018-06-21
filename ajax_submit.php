@@ -8,7 +8,7 @@ if (!$store instanceof StoreRow) {
 }
 
 $ordered_at = substr($_POST['ordered_at'], 0, 10);
-if (date('H', $ordered_at) > 6) {
+if (date('H', $ordered_at) > $store->getDateChangeAt()) {
     $date = strtotime('today', $ordered_at);
 } else {
     $date = strtotime('yesterday', $ordered_at);

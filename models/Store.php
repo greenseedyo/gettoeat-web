@@ -31,7 +31,7 @@ class StoreRow extends Pix_Table_Row
 
     public function getDateChangeAt()
     {
-        return 6;
+        return $this->date_change_at;
     }
 
     public function getDayStartAt(DateTime $date)
@@ -131,6 +131,7 @@ class Store extends Pix_Table
         $this->_columns['account'] = array('type' => 'varchar', 'size' => 20);
         $this->_columns['name'] = array('type' => 'varchar', 'size' => 20);
         $this->_columns['nickname'] = array('type' => 'varchar', 'size' => 10);
+        $this->_columns['date_change_at'] = array('type' => 'int', 'size' => 10);
 
         $this->addIndex('account', array('account'));
         $this->addIndex('name', array('name'));
