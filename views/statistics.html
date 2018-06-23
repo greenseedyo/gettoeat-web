@@ -16,8 +16,8 @@
         <h1><?= htmlspecialchars($store->nickname) ?> 統計數據</h1>
     </div>
     <ul class="nav nav-pills">
-        <li role="presentation" <?php if (!$_GET['type']) { ?>class="active"<?php } ?>><a href="/statistics.php">總覽</a></li>
-        <li role="presentation" <?php if ('category' == $_GET['type']) { ?>class="active"<?php } ?>><a href="/statistics.php?type=category">分類</a></li>
+        <li role="presentation" <?php if ('overview' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php">總覽</a></li>
+        <li role="presentation" <?php if ('category' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=category">分類</a></li>
     </ul>
     <div id="month_chart" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
     <div id="date_chart" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
@@ -65,8 +65,7 @@ var highchart = function(title, renderTo, categories, datasets) {
             line: {
                 dataLabels: {
                     enabled: true
-                },
-                enableMouseTracking: false
+                }
             }
         },
         tooltip: {

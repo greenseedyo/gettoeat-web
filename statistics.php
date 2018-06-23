@@ -1,71 +1,40 @@
 <?php
 require_once 'config.php';
+require_once(ROOT_DIR . '/helpers/StatHelper.php');
 
-class StatHelper
-{
-    public function __construct(StoreRow $store, $start_at, $end_at)
-    {
-        $this->store = $store;
-        $this->start_at = $start_at;
-        $this->end_at = $end_at;
-    }
-
-    public function getTurnoverSum()
-    {
-        $bills = $this->store->bills->search("`ordered_at` BETWEEN {$this->start_at} AND {$this->end_at}");
-        $turnover = $bills->sum('price');
-        return $turnover;
-    }
-
-    public function getDiscountSum()
-    {
-        $bills = $this->store->bills->search("`ordered_at` BETWEEN {$this->start_at} AND {$this->end_at}");
-        $bill_discounts = BillDiscount::search(1)->searchIn('bill_id', $bills->toArray('id'));
-        $discount = $bill_discounts->sum('value');
-        return $discount;
-    }
-}
+$topic = $_GET['topic'] ?: 'overview';
+$day_change_interval = new DateInterval("PT{$store->getDateChangeAt()}H");
 
 /* 月營收資料 */
-$month_names = array();
-$month_datasets = array(
-    '總營收' => array(),
-    '折扣' => array(),
-);
-for ($i = 11; $i >= 0; $i --) {
-    $yearmonth = mktime(0, 0, 0, date('m') - $i, 1, date('Y'));
-    $year = date('Y', $yearmonth);
-    $month = date('m', $yearmonth);
-    $yearmonth = "{$year}-{$month}";
-    $month_names[] = $yearmonth;
-    $start_date = new DateTime($yearmonth);
-    $start_at = $store->getDayStartAt($start_date);
-    $end_date = new DateTime("{$yearmonth} +1month -1day");
-    $end_at = $store->getDayEndAt($end_date);
-    $helper = new StatHelper($store, $start_at, $end_at);
-    $month_datasets['總營收'][] = $helper->getTurnoverSum();
-    $month_datasets['折扣'][] = $helper->getDiscountSum();
-}
+$start_month = $_GET['start_month'] ?: date('Y-m', strtotime('-11month'));
+$end_month = $_GET['end_month'] ?: date('Y-m', strtotime('this month'));
+$period_interval = new DateInterval('P1M');
+$start_datetime = (new Datetime($start_month))->add($day_change_interval);
+$end_datetime = (new Datetime($end_month))->add($period_interval)->add($day_change_interval);
 
-/* 每日營收資料 */
-$date_names = array();
-$date_datasets = array(
-    '總營收' => array(),
-    '折扣' => array(),
-);
-for ($i = 30; $i >= 0; $i--) {
-    $date_timestamp = mktime(0, 0, 0, date('m'), date('d') - $i, date('Y'));
-    $year = date('Y', $date_timestamp);
-    $month = date('m', $date_timestamp);
-    $date = date('d', $date_timestamp);
-    $day = date('D', $date_timestamp);
-    $date_names[] = "{$month}-{$date}({$day})";
-    $datetime = new DateTime("{$year}-{$month}-{$date}");
-    $start_at = $store->getDayStartAt($datetime);
-    $end_at = $store->getDayEndAt($datetime);
-    $helper = new StatHelper($store, $start_at, $end_at);
-    $date_datasets['總營收'][] = $helper->getTurnoverSum();
-    $date_datasets['折扣'][] = $helper->getDiscountSum();
-}
+$helper = new StatHelper($store);
+$helper->setTopic($topic);
+$helper->setInterval($period_interval);
+$helper->setStartDatetime($start_datetime);
+$helper->setEndDatetime($end_datetime);
+$stat_result = $helper->getStatResult();
+$month_names = $stat_result->getPeriodNames();
+$month_datasets = $stat_result->getDataSets();
+
+/* 日營收資料 */
+$start_day = $_GET['start_day'] ?: date('Y-m-d', strtotime('-29days'));
+$end_day = $_GET['end_day'] ?: date('Y-m-d', strtotime('today'));
+$period_interval = new DateInterval('P1D');
+$start_datetime = (new Datetime($start_day))->add($day_change_interval);
+$end_datetime = (new Datetime($end_day))->add($period_interval)->add($day_change_interval);
+
+$helper = new StatHelper($store);
+$helper->setTopic($topic);
+$helper->setInterval($period_interval);
+$helper->setStartDatetime($start_datetime);
+$helper->setEndDatetime($end_datetime);
+$stat_result = $helper->getStatResult();
+$date_names = $stat_result->getPeriodNames();
+$date_datasets = $stat_result->getDataSets();
 
 include(VIEWS_DIR . '/statistics.html');

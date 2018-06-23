@@ -9,7 +9,12 @@ class BillItemRow extends Pix_Table_Row
 
     public function getPrice()
     {
-        return $this->product->price;
+        return $this->unit_price;
+    }
+
+    public function getTotalPrice()
+    {
+        return $this->unit_price * $this->amount;
     }
 }
 
@@ -25,6 +30,7 @@ class BillItem extends Pix_Table
         $this->_columns['id'] = array('type' => 'int', 'auto_increment' => true, 'unsigned' => true);
         $this->_columns['bill_id'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['product_id'] = array('type' => 'int', 'unsigned' => true);
+        $this->_columns['unit_price'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['amount'] = array('type' => 'tinyint', 'unsigned' => true); // FIXME: rename to quantity
 
         $this->addIndex('bill_id', array('bill_id', 'product_id'));
