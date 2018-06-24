@@ -125,7 +125,11 @@ class Cashier
 
         foreach ($this->cart_items as $cart_item) {
             /* create bill item */
-            $data = array('product_id' => $cart_item->getProduct()->id, 'amount' => $cart_item->getQuantity());
+            $data = array(
+                'product_id' => $cart_item->getProduct()->id,
+                'unit_price' => $cart_item->getUnitPrice(),
+                'amount' => $cart_item->getQuantity(),
+            );
             $item = $bill->create_items($data);
         }
         foreach ($this->discount_items as $discount_item) {
