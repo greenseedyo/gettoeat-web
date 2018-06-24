@@ -61,7 +61,7 @@ class StatHelper
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
             $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
-            $period_name = date('Y-m-d H:i', $tmp_start_at);
+            $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
             $price_sum = 0;
             $discount_sum = 0;
             foreach ($bill_datasets as $i => $bill_data) {
@@ -121,7 +121,7 @@ class StatHelper
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
             $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
-            $period_name = date('Y-m-d H:i', $tmp_start_at);
+            $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
             $turnover_dataset = array_fill_keys($stat_items, 0);
             $quantity_dataset = array_fill_keys($stat_items, 0);
             foreach ($bill_datasets as $i => $bill_data) {
