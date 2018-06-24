@@ -5,7 +5,7 @@ require_once(ROOT_DIR . '/helpers/StatHelper.php');
 $topic = $_GET['topic'] ?: 'overview';
 $day_change_interval = new DateInterval("PT{$store->getDateChangeAt()}H");
 
-/* 月營收資料 */
+/* 按月統計 */
 $start_month = $_GET['start_month'] ?: date('Y-m', strtotime('-11month'));
 $end_month = $_GET['end_month'] ?: date('Y-m', strtotime('this month'));
 $period_interval = new DateInterval('P1M');
@@ -17,11 +17,9 @@ $helper->setTopic($topic);
 $helper->setInterval($period_interval);
 $helper->setStartDatetime($start_datetime);
 $helper->setEndDatetime($end_datetime);
-$stat_result = $helper->getStatResult();
-$month_names = $stat_result->getPeriodNames();
-$month_datasets = $stat_result->getDataSets();
+$month_stat_result = $helper->getStatResult();
 
-/* 日營收資料 */
+/* 按日統計 */
 $start_day = $_GET['start_day'] ?: date('Y-m-d', strtotime('-29days'));
 $end_day = $_GET['end_day'] ?: date('Y-m-d', strtotime('today'));
 $period_interval = new DateInterval('P1D');
@@ -33,8 +31,6 @@ $helper->setTopic($topic);
 $helper->setInterval($period_interval);
 $helper->setStartDatetime($start_datetime);
 $helper->setEndDatetime($end_datetime);
-$stat_result = $helper->getStatResult();
-$date_names = $stat_result->getPeriodNames();
-$date_datasets = $stat_result->getDataSets();
+$date_stat_result = $helper->getStatResult();
 
 include(VIEWS_DIR . '/statistics.html');

@@ -19,8 +19,12 @@
         <li role="presentation" <?php if ('overview' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php">總覽</a></li>
         <li role="presentation" <?php if ('category' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=category">分類</a></li>
     </ul>
-    <div id="month_chart" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
-    <div id="date_chart" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
+    <?php foreach ($month_stat_result->getCharts() as $index => $chart) { ?>
+    <div id="month_chart_<?= intval($index) ?>" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
+    <?php } ?>
+    <?php foreach ($date_stat_result->getCharts() as $index => $chart) { ?>
+    <div id="date_chart_<?= intval($index) ?>" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
+    <?php } ?>
 </div>
 
 <script>
@@ -85,19 +89,23 @@ var highchart = function(title, renderTo, categories, datasets) {
     chart = new Highcharts.Chart(char_options);
 };
 
+<?php foreach ($month_stat_result->getCharts() as $index => $chart) { ?>
 highchart(
-    '月營收狀況',
-    'month_chart',
-    <?= json_encode($month_names) ?>,
-    <?= json_encode($month_datasets) ?>
+    '按月統計 - ' + <?= json_encode($chart->getTitle()) ?>,
+    'month_chart_<?= json_encode($index) ?>',
+    <?= json_encode($chart->getPeriodNames()) ?>,
+    <?= json_encode($chart->getDataSets()) ?>
 );
+<?php } ?>
 
+<?php foreach ($date_stat_result->getCharts() as $index => $chart) { ?>
 highchart(
-    '30天內營收狀況',
-    'date_chart',
-    <?= json_encode($date_names) ?>,
-    <?= json_encode($date_datasets) ?>
+    '按日統計 - ' + <?= json_encode($chart->getTitle()) ?>,
+    'date_chart_<?= json_encode($index) ?>',
+    <?= json_encode($chart->getPeriodNames()) ?>,
+    <?= json_encode($chart->getDataSets()) ?>
 );
+<?php } ?>
 </script>
 </body>
 </html>
