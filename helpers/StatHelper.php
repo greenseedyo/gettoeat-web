@@ -31,6 +31,7 @@ class StatHelper
     {
         switch ($this->topic) {
         case 'category':
+            return $this->getCategoryStatResult();
         case 'overview':
         default:
             return $this->getOverviewStatResult();
@@ -51,7 +52,8 @@ class StatHelper
         $bill_item_datasets = BillItem::search(1)->searchIn('bill_id', $bill_ids)->toArray();
         $bill_discount_datasets = BillDiscount::search(1)->searchIn('bill_id', $bill_ids)->toArray();
 
-        $stat_result = new StatResult('總營收', '折扣');
+        $stat_items = array('總營收', '折扣');
+        $stat_result = new StatResult($stat_items);
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
@@ -79,7 +81,10 @@ class StatHelper
                 }
                 unset($bill_datasets[$i]);
             }
-            $dataset = array($price_sum, $discount_sum);
+            $dataset = array(
+                '總營收' => $price_sum,
+                '折扣' => $discount_sum
+            );
             $stat_result->append($period_name, $dataset);
 
             $tmp_start_datetime = $tmp_end_datetime;
@@ -88,31 +93,53 @@ class StatHelper
         return $stat_result;
     }
 
-    private function getCategorySum()
+    private function getCategoryStatResult(): StatResult
     {
-        $bills = $this->store->bills->search("`ordered_at` BETWEEN {$this->start_at} AND {$this->end_at}");
-        $bill_ids = $bills->toArray('id');
-        $bill_items = BillItem::search(1)->searchIn('bill_id', $bill_ids);
-        $product_datasets = $this->store->products->toArray(array('id', 'category_id'));
-
-        $categories = $store->categories;
-        $category_datasets = array();
-        foreach ($categories as $category) {
-            $dataset = array(
-                'id' => $category->id,
-                'name' => $category->name,
-                'off' => $category->off,
-                'sum' => $sum,
-            );
-            $category_datasets[$category->id] = $dataset;
+        if (!isset($this->interval)) {
+            throw new StatHelperException('interval not set');
         }
 
-        foreach ($bill_items as $bill_item) {
-            $category_id = $product_datasets[$bill_item->product_id]['category_id'];
-            $category_datasets[$category_id]['sum'] += $bill_item->getTotalPrice();
+        $start_at = $this->start_datetime->getTimestamp();
+        $end_at = $this->end_datetime->getTimestamp();
+        $bills = $this->store->bills->search("`ordered_at` BETWEEN {$start_at} AND {$end_at}")->order('ordered_at ASC');
+        $bill_datasets = $bills->toArray();
+        $bill_ids = array_keys($bill_datasets);
+        $bill_item_datasets = BillItem::search(1)->searchIn('bill_id', $bill_ids)->toArray();
+        $product_category_ids = $this->store->products->toArray('category_id');
+
+        $categories = $this->store->categories;
+        $category_names = $categories->toArray('name');
+
+        $stat_items = $category_names;
+        $stat_result = new StatResult($stat_items);
+
+        while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
+            $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
+            $tmp_start_at = $tmp_start_datetime->getTimestamp();
+            $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            $tmp_end_at = $tmp_end_datetime->getTimestamp();
+            $period_name = date('Y-m-d H:i', $tmp_start_at);
+            $dataset = array_fill_keys($stat_items, 0);
+            foreach ($bill_datasets as $i => $bill_data) {
+                if ($bill_data['ordered_at'] > $tmp_end_at) {
+                    break;
+                }
+                foreach ($bill_item_datasets as $j => $item_data) {
+                    if ($item_data['bill_id'] == $bill_data['id']) {
+                        $category_id = $product_category_ids[$item_data['product_id']];
+                        $category_name = $category_names[$category_id];
+                        $dataset[$category_name] += $item_data['unit_price'] * $item_data['amount'];
+                        unset($bill_item_datasets[$j]);
+                    }
+                }
+                unset($bill_datasets[$i]);
+            }
+            $stat_result->append($period_name, $dataset);
+
+            $tmp_start_datetime = $tmp_end_datetime;
         }
 
-        return $category_datasets;
+        return $stat_result;
     }
 }
 
@@ -123,7 +150,7 @@ class StatResult
     private $datasets = array();
     private $stat_items = array();
 
-    public function __construct(string ...$stat_items)
+    public function __construct(array $stat_items)
     {
         $this->stat_items = $stat_items;
         foreach ($stat_items as $stat_item) {
@@ -137,8 +164,7 @@ class StatResult
             throw new StatHelperException('the quantity of dataset not matches stat items');
         }
         $this->period_names[] = $period_name;
-        foreach ($dataset as $index => $data) {
-            $stat_item = $this->stat_items[$index];
+        foreach ($dataset as $stat_item => $data) {
             $this->datasets[$stat_item][] = $data;
         }
     }
