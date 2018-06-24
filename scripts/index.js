@@ -48,6 +48,9 @@ var display_pos_page = function(table){
 var display_table_page = function(){
     $table_page.find('.table-grid').removeClass('taken');
     for (var table in all_table_datas) {
+        if ('undefined' === typeof all_table_datas[table]) {
+            continue;
+        }
         var item_datas = all_table_datas[table].item_datas || {};
         if (item_datas.length) {
             $('#table-button-' + table).addClass('taken');
