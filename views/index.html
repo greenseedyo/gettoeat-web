@@ -56,7 +56,7 @@
         <ul class="nav nav-tabs nav-justified">
             <?php foreach ($categories as $category) { ?>
             <li>
-                <a href="#page<?= intval($category->id) ?>" data-transition="fade" data-theme="" data-icon="star" <?= 1 == $category->id ? 'class="ui-btn-active ui-state-persist"' : '' ?> data-category_id="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a>
+                <a href="#page<?= intval($category->id) ?>" data-transition="fade" data-theme="" data-icon="star" data-category_id="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a>
             </li>
             <?php } ?>
         </ul>
@@ -74,7 +74,7 @@
 
         <div id="pos-right-column">
             <?php foreach ($categories as $category) { ?>
-            <div class="list-div" id="category-<?= intval($category->id) ?>" <?= 1 == $category->id ? '' : 'style="display:none;"' ?>>
+            <div class="list-div" id="category-<?= intval($category->id) ?>">
                 <?php foreach ($category->getCurrentProducts()->order('position ASC') as $product) { ?>
                 <span class="grid">
                     <button data-product_id="<?= intval($product->id) ?>">
