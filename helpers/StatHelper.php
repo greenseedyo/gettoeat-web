@@ -73,8 +73,8 @@ class StatHelper
             }
 
             $dataset = array(
-                '總營收(不含折扣)' => $price_sum,
-                '總營收(含折扣)' => $real_price_sum,
+                '總營收(折扣前)' => $price_sum,
+                '總營收(折扣後)' => $real_price_sum,
                 '折扣' => $discount_sum
             );
             $stat_chart->append($period_name, $dataset);
