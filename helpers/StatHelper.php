@@ -47,7 +47,7 @@ class StatHelper
         }
 
         $stat_result = new StatResult();
-        $stat_items = array('總營收(不含折扣)', '總營收(含折扣)', '折扣');
+        $stat_items = array('總營收(折扣前)', '總營收(折扣後)', '折扣');
         $stat_chart = $stat_result->createChart('總覽', $stat_items);
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
