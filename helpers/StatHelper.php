@@ -47,7 +47,7 @@ class StatHelper
         }
 
         $stat_result = new StatResult();
-        $stat_items = array('總營收(折扣前)', '總營收(折扣後)', '折扣');
+        $stat_items = array('總營收', '折扣');
         $stat_chart = $stat_result->createChart('總覽', $stat_items);
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
@@ -56,25 +56,19 @@ class StatHelper
             $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
             $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
-            $price_sum = 0;
             $discount_sum = 0;
 
             $bills = $this->store->bills->search("`ordered_at` BETWEEN {$tmp_start_at} AND {$tmp_end_at}");
-            $real_price_sum = $bills->sum('price');
+            $price_sum = $bills->sum('price');
             $bill_ids = $bills->toArray('id');
-            $bill_items = BillItem::search(1)->searchIn('bill_id', $bill_ids);
             $bill_discounts = BillDiscount::search(1)->searchIn('bill_id', $bill_ids);
 
-            foreach ($bill_items as $bill_item) {
-                $price_sum += $bill_item->getTotalPrice();
-            }
             foreach ($bill_discounts as $bill_discount) {
                 $discount_sum += $bill_discount->value;
             }
 
             $dataset = array(
-                '總營收(折扣前)' => $price_sum,
-                '總營收(折扣後)' => $real_price_sum,
+                '總營收' => $price_sum,
                 '折扣' => $discount_sum
             );
             $stat_chart->append($period_name, $dataset);
