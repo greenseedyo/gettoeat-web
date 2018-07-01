@@ -22,6 +22,7 @@ class BillDiscount extends Pix_Table
         $this->addIndex('event_id', array('event_id'));
 
         $this->_relations['event'] = array('rel' => 'has_one', 'type' => 'Event', 'foreign_key' => 'event_id');
+        $this->_relations['bill'] = array('rel' => 'has_one', 'type' => 'Bill', 'foreign_key' => 'bill_id');
     }
 }
 
