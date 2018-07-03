@@ -101,6 +101,9 @@ var saveItemDatas = function(table){
 
 var setCategoryActive = function($li){
     $li.addClass('active').siblings('li').removeClass('active');
+    var cid = $li.find('a').data('category_id');
+    $pos_page.find('.list-div').hide();
+    $('#category-' + cid).show();
 };
 
 /* -------- talbe 頁設定 -------- */
@@ -145,9 +148,6 @@ $('#nav-category').find('a').click(function(e){
     e.preventDefault();
     var $this = $(this);
     setCategoryActive($this.closest('li'));
-    var cid = $this.data('category_id');
-    $pos_page.find('.list-div').hide();
-    $('#category-' + cid).show();
 });
 
 /* 計算總價 */

@@ -74,7 +74,7 @@
 
         <div id="pos-right-column">
             <?php foreach ($categories as $category) { ?>
-            <div class="list-div" id="category-<?= intval($category->id) ?>">
+            <div class="list-div" id="category-<?= intval($category->id) ?>" style="display:none">
                 <?php foreach ($category->getCurrentProducts()->order('position ASC') as $product) { ?>
                 <span class="grid">
                     <button data-product_id="<?= intval($product->id) ?>">
