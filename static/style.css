@@ -79,6 +79,8 @@ body {
     height: 100%;
     display: inline-block;
     vertical-align: top;
+    height: -webkit-fill-available;
+    overflow: scroll;
 }
 #pos-left-column table tr td {
     border-bottom: 1px solid gray;
@@ -100,6 +102,8 @@ body {
     display: inline-block;
     vertical-align: top;
     width: 68%;
+    height: -webkit-fill-available;
+    overflow: scroll;
 }
 #pos-right-column .list-div {
     text-align: center;
