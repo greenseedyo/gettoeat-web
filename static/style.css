@@ -1,10 +1,12 @@
 body { 
+    /* fixed nav height */
+    padding-top: 50px; 
     /* Margin bottom by footer height */
     padding-bottom: 50px;
 }
 
-.navbar {
-    border-radius: 0px;
+.navbar-header {
+    padding-left: 15px;
 }
 /* centered navbar title */
 .navbar-brand {
