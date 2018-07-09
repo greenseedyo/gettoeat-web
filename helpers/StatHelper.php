@@ -51,6 +51,7 @@ class StatHelper
         $stat_result = new StatResult();
         $stat_items = array('總營收', '折扣');
         $stat_chart = $stat_result->createChart('總覽', $stat_items);
+        $stat_chart->setYAxisTitle('金額');
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
@@ -89,7 +90,9 @@ class StatHelper
 
         $stat_result = new StatResult();
         $count_stat_chart = $stat_result->createChart('來客數統計', array('總來客數'));
+        $count_stat_chart->setYAxisTitle('人次');
         $avg_stat_chart = $stat_result->createChart('平均客單價', array('平均客單價'));
+        $avg_stat_chart->setYAxisTitle('金額');
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
@@ -129,7 +132,9 @@ class StatHelper
         $stat_result = new StatResult();
         $stat_items = $category_names;
         $turnover_chart = $stat_result->createChart('分類營收', $stat_items);
+        $turnover_chart->setYAxisTitle('金額');
         $quantity_chart = $stat_result->createChart('分類銷售數量', $stat_items);
+        $quantity_chart->setYAxisTitle('數量');
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
@@ -171,7 +176,9 @@ class StatHelper
         $stat_result = new StatResult();
         $stat_items = $event_titles;
         $value_chart = $stat_result->createChart('折扣活動金額統計', $stat_items);
+        $value_chart->setYAxisTitle('金額');
         $quantity_chart = $stat_result->createChart('折扣活動次數統計', $stat_items);
+        $quantity_chart->setYAxisTitle('次數');
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
@@ -222,6 +229,7 @@ class StatResult
 class StatChart
 {
     private $title;
+    private $y_axis_title;
     private $period_names = array();
     private $datasets = array();
     private $stat_items = array();
@@ -233,6 +241,16 @@ class StatChart
         foreach ($stat_items as $stat_item) {
             $this->datasets[$stat_item] = array();
         }
+    }
+
+    public function setYAxisTitle($y_axis_title)
+    {
+        $this->y_axis_title = $y_axis_title;
+    }
+
+    public function getYAxisTitle()
+    {
+        return $this->y_axis_title;
     }
 
     public function append($period_name, $dataset)
