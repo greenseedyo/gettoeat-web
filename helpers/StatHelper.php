@@ -128,6 +128,7 @@ class StatHelper
 
         $categories = $this->store->categories;
         $category_names = $categories->toArray('name');
+        $product_category_ids = $this->store->products->toArray('category_id');
 
         $stat_result = new StatResult();
         $stat_items = $category_names;
@@ -147,7 +148,6 @@ class StatHelper
 
             $bill_ids = $this->store->bills->search("`ordered_at` BETWEEN {$tmp_start_at} AND {$tmp_end_at}")->toArray('id');
             $bill_items = BillItem::search(1)->searchIn('bill_id', $bill_ids);
-            $product_category_ids = $this->store->products->toArray('category_id');
 
             foreach ($bill_items as $key => $bill_item) {
                 $category_id = $product_category_ids[$bill_item->product_id];
