@@ -81,8 +81,7 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
             }
         },
         tooltip: {
-            pointformat: '{series.name}: <b>{point.y}</b><br/>',
-            valuesuffix: ' 元',
+            pointFormat: '{series.name}: <b>{point.y} ({point.percentage}%)</b><br/>',
             shared: true
         },
         legend: {
@@ -103,7 +102,7 @@ highchart(
     'month_chart_<?= json_encode($index) ?>',
     <?= json_encode($chart->getPeriodNames()) ?>,
     <?= json_encode($chart->getYAxisTitle()) ?>,
-    <?= json_encode($chart->getDataSets()) ?>
+    <?= json_encode($chart->getFormattedDataSets()) ?>
 );
 <?php } ?>
 
@@ -113,7 +112,7 @@ highchart(
     'date_chart_<?= json_encode($index) ?>',
     <?= json_encode($chart->getPeriodNames()) ?>,
     <?= json_encode($chart->getYAxisTitle()) ?>,
-    <?= json_encode($chart->getDataSets()) ?>
+    <?= json_encode($chart->getFormattedDataSets()) ?>
 );
 <?php } ?>
 </script>

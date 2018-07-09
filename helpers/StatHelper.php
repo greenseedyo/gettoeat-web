@@ -269,9 +269,34 @@ class StatChart
         return $this->period_names;
     }
 
-    public function getDataSets()
+    public function getFormattedDataSets()
     {
-        return $this->datasets;
+        $raw_datasets = $this->datasets;
+        $formatted_datasets = array();
+
+        $totals = array();
+        foreach ($raw_datasets as $stat_item => $dataset) {
+            foreach ($dataset as $index => $value) {
+                $totals[$index] += $value;
+            }
+        }
+
+        foreach ($raw_datasets as $stat_item => $dataset) {
+            $formatted_dataset = array();
+            foreach ($dataset as $index => $value) {
+                if ($totals[$index] > 0) {
+                    $percentage = round($value / $totals[$index] * 100, 2);
+                } else {
+                    $percentage = '--';
+                }
+                $formatted_dataset[$index] = array(
+                    'y' => $value,
+                    'percentage' => $percentage,
+                );
+            }
+            $formatted_datasets[$stat_item] = $formatted_dataset;
+        }
+        return $formatted_datasets;
     }
 
     public function getTitle()
