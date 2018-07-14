@@ -24,15 +24,13 @@
     </ul>
     <div class="bordered-block">
         <h2>按月統計</h2>
-        <?php foreach ($month_stat_result->getCharts() as $index => $chart) { ?>
-        <div id="month_chart_<?= htmlspecialchars($index) ?>"></div>
-        <?php } ?>
+        <div id="month_chart_turnover"></div>
+        <div id="month_chart_quantity"></div>
     </div>
     <div class="bordered-block">
         <h2>按日統計</h2>
-        <?php foreach ($date_stat_result->getCharts() as $index => $chart) { ?>
-        <div id="date_chart_<?= htmlspecialchars($index) ?>"></div>
-        <?php } ?>
+        <div id="date_chart_turnover"></div>
+        <div id="date_chart_quantity"></div>
     </div>
 </div>
 
@@ -60,8 +58,11 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
             formatted_dataset.push({y: value, percentage: percentage});
         }
         series.push({
-            'name': stat_item,
-            'data': formatted_dataset
+            name: stat_item,
+            data: formatted_dataset,
+            tooltip: {
+                valuePrefix: '$'
+            }
         });
     }
     var char_options = {
@@ -85,9 +86,16 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
             }
         },
         plotOptions: {
-            'line': {
+            line: {
                 dataLabels: {
-                    enabled: true
+                    enabled: true,
+                    formatter: function() {
+                        if ('金額' === yAxisTitle) {
+                            return '$' + this.y;
+                        } else {
+                            return this.y;
+                        }
+                    }
                 }
             }
         },
@@ -98,8 +106,7 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
         legend: {
             layout: 'vertical',
             align: 'right',
-            verticalalign: 'middle',
-            borderwidth: 0
+            verticalAlign: 'middle'
         },
         series: series
     };
@@ -107,25 +114,39 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
     chart = new Highcharts.Chart(char_options);
 };
 
-<?php foreach ($month_stat_result->getCharts() as $index => $chart) { ?>
+<?php $chart = $month_stat_result->getChart('分類營收'); ?>
 highchart(
     <?= json_encode($chart->getTitle()) ?>,
-    'month_chart_' + <?= json_encode($index) ?>,
+    'month_chart_turnover',
     <?= json_encode($chart->getXAxisCategories()) ?>,
-    <?= json_encode($chart->getYAxisTitle()) ?>,
+    '金額',
     <?= json_encode($chart->getDataSets()) ?>
 );
-<?php } ?>
+<?php $chart = $month_stat_result->getChart('分類銷售數量'); ?>
+highchart(
+    <?= json_encode($chart->getTitle()) ?>,
+    'month_chart_quantity',
+    <?= json_encode($chart->getXAxisCategories()) ?>,
+    '數量',
+    <?= json_encode($chart->getDataSets()) ?>
+);
 
-<?php foreach ($date_stat_result->getCharts() as $index => $chart) { ?>
+<?php $chart = $date_stat_result->getChart('分類營收'); ?>
 highchart(
     <?= json_encode($chart->getTitle()) ?>,
-    'date_chart_' + <?= json_encode($index) ?>,
+    'date_chart_turnover',
     <?= json_encode($chart->getXAxisCategories()) ?>,
-    <?= json_encode($chart->getYAxisTitle()) ?>,
+    '金額',
     <?= json_encode($chart->getDataSets()) ?>
 );
-<?php } ?>
+<?php $chart = $date_stat_result->getChart('分類銷售數量'); ?>
+highchart(
+    <?= json_encode($chart->getTitle()) ?>,
+    'date_chart_quantity',
+    <?= json_encode($chart->getXAxisCategories()) ?>,
+    '數量',
+    <?= json_encode($chart->getDataSets()) ?>
+);
 </script>
 </body>
 </html>

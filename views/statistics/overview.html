@@ -24,21 +24,17 @@
     </ul>
     <div class="bordered-block">
         <h2>按月統計</h2>
-        <?php foreach ($month_stat_result->getCharts() as $index => $chart) { ?>
-        <div id="month_chart_<?= htmlspecialchars($index) ?>"></div>
-        <?php } ?>
+        <div id="month_chart"></div>
     </div>
     <div class="bordered-block">
         <h2>按日統計</h2>
-        <?php foreach ($date_stat_result->getCharts() as $index => $chart) { ?>
-        <div id="date_chart_<?= htmlspecialchars($index) ?>"></div>
-        <?php } ?>
+        <div id="date_chart"></div>
     </div>
 </div>
 
 <script>
 var chart;
-var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
+var highchart = function(renderTo, categories, datasets) {
     var series = [];
     var totals = {};
     for (let stat_item in datasets) {
@@ -60,16 +56,20 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
             formatted_dataset.push({y: value, percentage: percentage});
         }
         series.push({
-            'name': stat_item,
-            'data': formatted_dataset
+            name: stat_item,
+            data: formatted_dataset,
+            tooltip: {
+                valuePrefix: '$'
+            }
         });
     }
     var char_options = {
         chart: {
-            renderTo: renderTo
+            renderTo: renderTo,
+            type: 'column'
         },
         title: {
-            text: title,
+            text: '總覽',
             x: -20 //center
         },
         subtitle: {
@@ -81,13 +81,14 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
         },
         yAxis: {
             title: {
-                text: yAxisTitle
+                text: '金額'
             }
         },
         plotOptions: {
-            'line': {
+            'column': {
                 dataLabels: {
-                    enabled: true
+                    enabled: true,
+                    format: '${point.y}'
                 }
             }
         },
@@ -98,8 +99,7 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
         legend: {
             layout: 'vertical',
             align: 'right',
-            verticalalign: 'middle',
-            borderwidth: 0
+            verticalAlign: 'middle'
         },
         series: series
     };
@@ -109,20 +109,16 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
 
 <?php foreach ($month_stat_result->getCharts() as $index => $chart) { ?>
 highchart(
-    <?= json_encode($chart->getTitle()) ?>,
-    'month_chart_' + <?= json_encode($index) ?>,
+    'month_chart',
     <?= json_encode($chart->getXAxisCategories()) ?>,
-    <?= json_encode($chart->getYAxisTitle()) ?>,
     <?= json_encode($chart->getDataSets()) ?>
 );
 <?php } ?>
 
 <?php foreach ($date_stat_result->getCharts() as $index => $chart) { ?>
 highchart(
-    <?= json_encode($chart->getTitle()) ?>,
-    'date_chart_' + <?= json_encode($index) ?>,
+    'date_chart',
     <?= json_encode($chart->getXAxisCategories()) ?>,
-    <?= json_encode($chart->getYAxisTitle()) ?>,
     <?= json_encode($chart->getDataSets()) ?>
 );
 <?php } ?>
