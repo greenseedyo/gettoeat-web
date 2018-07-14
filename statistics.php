@@ -33,4 +33,4 @@ $helper->setStartDatetime($start_datetime);
 $helper->setEndDatetime($end_datetime);
 $date_stat_result = $helper->getStatResult();
 
-include(VIEWS_DIR . '/statistics.html');
+include(VIEWS_DIR . "/statistics/{$topic}.html");

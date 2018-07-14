@@ -18,19 +18,20 @@
     <ul class="nav nav-pills">
         <li role="presentation" <?php if ('overview' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php">總覽</a></li>
         <li role="presentation" <?php if ('customers' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=customers">來客</a></li>
+        <li role="presentation" <?php if ('product' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=product">商品</a></li>
         <li role="presentation" <?php if ('category' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=category">分類</a></li>
         <li role="presentation" <?php if ('event' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=event">折扣活動</a></li>
     </ul>
     <div class="bordered-block">
         <h2>按月統計</h2>
         <?php foreach ($month_stat_result->getCharts() as $index => $chart) { ?>
-        <div id="month_chart_<?= intval($index) ?>" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
+        <div id="month_chart_<?= htmlspecialchars($index) ?>"></div>
         <?php } ?>
     </div>
     <div class="bordered-block">
         <h2>按日統計</h2>
         <?php foreach ($date_stat_result->getCharts() as $index => $chart) { ?>
-        <div id="date_chart_<?= intval($index) ?>" style="min-width: 310px; height: 400px; margin: 0 auto 30px auto"></div>
+        <div id="date_chart_<?= htmlspecialchars($index) ?>"></div>
         <?php } ?>
     </div>
 </div>
@@ -39,18 +40,33 @@
 var chart;
 var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
     var series = [];
-    for (let i in datasets) {
+    var totals = {};
+    for (let stat_item in datasets) {
+        dataset = datasets[stat_item];
+        for (let index in dataset) {
+            totals[index] = totals[index] || 0;
+            totals[index] += dataset[index];
+        }
+    }
+    for (let stat_item in datasets) {
+        dataset = datasets[stat_item];
+        let formatted_dataset = [];
+        for (let index in dataset) {
+            let value = dataset[index];
+            let percentage = '--';
+            if (totals[index] > 0) {
+                percentage = (value / totals[index] * 100).toFixed(2);
+            }
+            formatted_dataset.push({y: value, percentage: percentage});
+        }
         series.push({
-            'name': i,
-            'data': datasets[i]
+            'name': stat_item,
+            'data': formatted_dataset
         });
     }
     var char_options = {
         chart: {
-            renderTo: renderTo,
-            type: 'line',
-            marginRight: 130,
-            marginBottom: 25
+            renderTo: renderTo
         },
         title: {
             text: title,
@@ -66,15 +82,10 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
         yAxis: {
             title: {
                 text: yAxisTitle
-            },
-            plotlines: [{
-            value: 0,
-            width: 1,
-            color: '#808080'
-            }]
+            }
         },
         plotOptions: {
-            line: {
+            'line': {
                 dataLabels: {
                     enabled: true
                 }
@@ -99,20 +110,20 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
 <?php foreach ($month_stat_result->getCharts() as $index => $chart) { ?>
 highchart(
     <?= json_encode($chart->getTitle()) ?>,
-    'month_chart_<?= json_encode($index) ?>',
-    <?= json_encode($chart->getPeriodNames()) ?>,
+    'month_chart_' + <?= json_encode($index) ?>,
+    <?= json_encode($chart->getXAxisCategories()) ?>,
     <?= json_encode($chart->getYAxisTitle()) ?>,
-    <?= json_encode($chart->getFormattedDataSets()) ?>
+    <?= json_encode($chart->getDataSets()) ?>
 );
 <?php } ?>
 
 <?php foreach ($date_stat_result->getCharts() as $index => $chart) { ?>
 highchart(
     <?= json_encode($chart->getTitle()) ?>,
-    'date_chart_<?= json_encode($index) ?>',
-    <?= json_encode($chart->getPeriodNames()) ?>,
+    'date_chart_' + <?= json_encode($index) ?>,
+    <?= json_encode($chart->getXAxisCategories()) ?>,
     <?= json_encode($chart->getYAxisTitle()) ?>,
-    <?= json_encode($chart->getFormattedDataSets()) ?>
+    <?= json_encode($chart->getDataSets()) ?>
 );
 <?php } ?>
 </script>

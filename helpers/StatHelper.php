@@ -30,6 +30,8 @@ class StatHelper
     public function getStatResult(): StatResult
     {
         switch ($this->topic) {
+        case 'product':
+            return $this->getProductStatResult();
         case 'category':
             return $this->getCategoryStatResult();
         case 'customers':
@@ -164,6 +166,45 @@ class StatHelper
         return $stat_result;
     }
 
+    private function getProductStatResult(): StatResult
+    {
+        if (!isset($this->interval)) {
+            throw new StatHelperException('interval not set');
+        }
+
+        $products = $this->store->products;
+        $product_names = $products->toArray('name');
+
+        $stat_result = new StatResult();
+        $turnover_chart = $stat_result->createChart('商品營收', array('金額'));
+        $turnover_chart->setYAxisTitle('金額');
+        $quantity_chart = $stat_result->createChart('商品銷售數量', array('數量'));
+        $quantity_chart->setYAxisTitle('數量');
+
+        $start_at = $this->start_datetime->getTimestamp();
+        $end_at = $this->end_datetime->getTimestamp();
+        $period_name = sprintf('%s - %s', date('Y-m-d(D) H:i', $start_at), date('Y-m-d(D) H:i', $end_at));
+
+        $bill_ids = $this->store->bills->search("`ordered_at` BETWEEN {$start_at} AND {$end_at}")->toArray('id');
+        $bill_items = BillItem::search(1)->searchIn('bill_id', $bill_ids);
+
+        foreach ($bill_items as $key => $bill_item) {
+            $product_name = $product_names[$bill_item->product_id];
+            $turnover_dataset[$product_name] += $bill_item->getTotalPrice();
+            $quantity_dataset[$product_name] += $bill_item->amount;
+        }
+        arsort($turnover_dataset);
+        arsort($quantity_dataset);
+        foreach ($turnover_dataset as $product_name => $total_price) {
+            $turnover_chart->append($product_name, array('金額' => $total_price));
+        }
+        foreach ($quantity_dataset as $product_name => $quantity) {
+            $quantity_chart->append($product_name, array('數量' => $quantity));
+        }
+
+        return $stat_result;
+    }
+
     private function getEventStatResult(): StatResult
     {
         if (!isset($this->interval)) {
@@ -215,8 +256,13 @@ class StatResult
     public function createChart(string $title, array $stat_items)
     {
         $stat_chart = new StatChart($title, $stat_items);
-        $this->charts[] = $stat_chart;
+        $this->charts[$title] = $stat_chart;
         return $stat_chart;
+    }
+
+    public function getChart($name)
+    {
+        return $this->charts[$name];
     }
 
     public function getCharts()
@@ -253,50 +299,25 @@ class StatChart
         return $this->y_axis_title;
     }
 
-    public function append($period_name, $dataset)
+    public function append($x_axis_category, $dataset)
     {
         if (count($dataset) != count($this->stat_items)) {
             throw new StatHelperException('the quantity of dataset not matches stat items');
         }
-        $this->period_names[] = $period_name;
+        $this->x_axis_categories[] = $x_axis_category;
         foreach ($dataset as $stat_item => $data) {
             $this->datasets[$stat_item][] = $data;
         }
     }
 
-    public function getPeriodNames()
+    public function getXAxisCategories()
     {
-        return $this->period_names;
+        return $this->x_axis_categories;
     }
 
-    public function getFormattedDataSets()
+    public function getDataSets()
     {
-        $raw_datasets = $this->datasets;
-        $formatted_datasets = array();
-
-        $totals = array();
-        foreach ($raw_datasets as $stat_item => $dataset) {
-            foreach ($dataset as $index => $value) {
-                $totals[$index] += $value;
-            }
-        }
-
-        foreach ($raw_datasets as $stat_item => $dataset) {
-            $formatted_dataset = array();
-            foreach ($dataset as $index => $value) {
-                if ($totals[$index] > 0) {
-                    $percentage = round($value / $totals[$index] * 100, 2);
-                } else {
-                    $percentage = '--';
-                }
-                $formatted_dataset[$index] = array(
-                    'y' => $value,
-                    'percentage' => $percentage,
-                );
-            }
-            $formatted_datasets[$stat_item] = $formatted_dataset;
-        }
-        return $formatted_datasets;
+        return $this->datasets;
     }
 
     public function getTitle()
