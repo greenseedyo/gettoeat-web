@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title><?= htmlspecialchars($store->nickname) ?> 統計數據</title>
     <?php include(VIEWS_DIR . "/include/static_common.html"); ?>
-    <script type="text/javascript" src="static/highcharts.src.js"></script>
+    <?php include(VIEWS_DIR . "/statistics/include_static.html"); ?>
 </head>
 
 <body>
@@ -15,29 +15,15 @@
     <div>
         <h1><?= htmlspecialchars($store->nickname) ?> 統計數據</h1>
     </div>
-    <ul class="nav nav-pills">
-        <li role="presentation" <?php if ('overview' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php">總覽</a></li>
-        <li role="presentation" <?php if ('customers' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=customers">來客</a></li>
-        <li role="presentation" <?php if ('product' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=product">商品</a></li>
-        <li role="presentation" <?php if ('category' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=category">分類</a></li>
-        <li role="presentation" <?php if ('event' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=event">折扣活動</a></li>
-    </ul>
-    <div class="bordered-block">
-        <h2>按月統計</h2>
-        <div id="month_chart"></div>
-    </div>
-    <div class="bordered-block">
-        <h2>按日統計</h2>
-        <div id="date_chart"></div>
-    </div>
+    <?php include(VIEWS_DIR . "/statistics/include_subnav.html"); ?>
+    <?php include(VIEWS_DIR . "/statistics/include_main.html"); ?>
 </div>
 
 <script>
 var chart;
-var highchart = function(title, renderTo, categories, count_datasets, avg_datasets) {
+var highchart = function(renderTo, title, categories, count_datasets, avg_datasets) {
     var series = [];
-    series.push({
-        type: 'column',
+    series.push({ type: 'column',
         name: '總來客數',
         data: count_datasets['總來客數']
     }, {
@@ -113,21 +99,18 @@ var highchart = function(title, renderTo, categories, count_datasets, avg_datase
     chart = new Highcharts.Chart(char_options);
 };
 
-highchart(
-    '總來客數與平均客單價',
-    'month_chart',
-    <?= json_encode($month_stat_result->getChart('來客數統計')->getXAxisCategories()) ?>,
-    <?= json_encode($month_stat_result->getChart('來客數統計')->getDataSets()) ?>,
-    <?= json_encode($month_stat_result->getChart('平均客單價')->getDataSets()) ?>
-);
-
-highchart(
-    '總來客數與平均客單價',
-    'date_chart',
-    <?= json_encode($date_stat_result->getChart('來客數統計')->getXAxisCategories()) ?>,
-    <?= json_encode($date_stat_result->getChart('來客數統計')->getDataSets()) ?>,
-    <?= json_encode($date_stat_result->getChart('平均客單價')->getDataSets()) ?>
-);
+var renderByAjaxRtn = function(renderTo, rtn) {
+    var count_chart = rtn['來客數統計'];
+    var avg_chart = rtn['平均客單價'];
+    var xAxisCategories = count_chart.xAxisCategories;
+    highchart(
+        renderTo,
+        '總來客數與平均客單價',
+        xAxisCategories,
+        count_chart.datasets,
+        avg_chart.datasets
+    );
+}
 </script>
 </body>
 </html>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title><?= htmlspecialchars($store->nickname) ?> 統計數據</title>
     <?php include(VIEWS_DIR . "/include/static_common.html"); ?>
-    <script type="text/javascript" src="static/highcharts.src.js"></script>
+    <?php include(VIEWS_DIR . "/statistics/include_static.html"); ?>
 </head>
 
 <body>
@@ -15,28 +15,13 @@
     <div>
         <h1><?= htmlspecialchars($store->nickname) ?> 統計數據</h1>
     </div>
-    <ul class="nav nav-pills">
-        <li role="presentation" <?php if ('overview' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php">總覽</a></li>
-        <li role="presentation" <?php if ('customers' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=customers">來客</a></li>
-        <li role="presentation" <?php if ('product' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=product">商品</a></li>
-        <li role="presentation" <?php if ('category' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=category">分類</a></li>
-        <li role="presentation" <?php if ('event' == $topic) { ?>class="active"<?php } ?>><a href="/statistics.php?topic=event">折扣活動</a></li>
-    </ul>
-    <div class="bordered-block">
-        <h2>按月統計</h2>
-        <div id="month_chart_turnover"></div>
-        <div id="month_chart_quantity"></div>
-    </div>
-    <div class="bordered-block">
-        <h2>按日統計</h2>
-        <div id="date_chart_turnover"></div>
-        <div id="date_chart_quantity"></div>
-    </div>
+    <?php include(VIEWS_DIR . "/statistics/include_subnav.html"); ?>
+    <?php include(VIEWS_DIR . "/statistics/include_main.html"); ?>
 </div>
 
 <script>
 var chart;
-var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
+var highchart = function(renderTo, title, categories, yAxisTitle, datasets) {
     var series = [];
     var totals = {};
     for (let stat_item in datasets) {
@@ -114,39 +99,26 @@ var highchart = function(title, renderTo, categories, yAxisTitle, datasets) {
     chart = new Highcharts.Chart(char_options);
 };
 
-<?php $chart = $month_stat_result->getChart('分類營收'); ?>
-highchart(
-    <?= json_encode($chart->getTitle()) ?>,
-    'month_chart_turnover',
-    <?= json_encode($chart->getXAxisCategories()) ?>,
-    '金額',
-    <?= json_encode($chart->getDataSets()) ?>
-);
-<?php $chart = $month_stat_result->getChart('分類銷售數量'); ?>
-highchart(
-    <?= json_encode($chart->getTitle()) ?>,
-    'month_chart_quantity',
-    <?= json_encode($chart->getXAxisCategories()) ?>,
-    '數量',
-    <?= json_encode($chart->getDataSets()) ?>
-);
-
-<?php $chart = $date_stat_result->getChart('分類營收'); ?>
-highchart(
-    <?= json_encode($chart->getTitle()) ?>,
-    'date_chart_turnover',
-    <?= json_encode($chart->getXAxisCategories()) ?>,
-    '金額',
-    <?= json_encode($chart->getDataSets()) ?>
-);
-<?php $chart = $date_stat_result->getChart('分類銷售數量'); ?>
-highchart(
-    <?= json_encode($chart->getTitle()) ?>,
-    'date_chart_quantity',
-    <?= json_encode($chart->getXAxisCategories()) ?>,
-    '數量',
-    <?= json_encode($chart->getDataSets()) ?>
-);
+var renderByAjaxRtn = function(renderTo, rtn) {
+    var $turnover_chart_div = $('<div>').appendTo('#' + renderTo).prop('id', renderTo + '_turnover');
+    var $quantity_chart_div = $('<div>').appendTo('#' + renderTo).prop('id', renderTo + '_quantity');
+    var turnover_chart = rtn['分類營收'];
+    var quantity_chart = rtn['分類銷售數量'];
+    highchart(
+        $turnover_chart_div.prop('id'),
+        turnover_chart.title,
+        turnover_chart.xAxisCategories,
+        '金額',
+        turnover_chart.datasets
+    );
+    highchart(
+        $quantity_chart_div.prop('id'),
+        quantity_chart.title,
+        quantity_chart.xAxisCategories,
+        '數量',
+        quantity_chart.datasets
+    );
+}
 </script>
 </body>
 </html>
