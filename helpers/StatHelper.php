@@ -58,6 +58,9 @@ class StatHelper
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
             $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            if ($tmp_end_datetime > $this->end_datetime) {
+                $tmp_end_datetime = $this->end_datetime;
+            }
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
             $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
             $discount_sum = 0;
