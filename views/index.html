@@ -18,11 +18,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</a>
+            <span class="navbar-brand"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</span>
         </div>
         <div id="navbar-menu" class="collapse nav-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#" class="to-bill-page">已結帳單</a></li>
+                <li class="active"><a href="" class="to-bill-page">已結帳單</a></li>
             </ul>
         </div>
     </nav>
@@ -56,7 +56,7 @@
         <ul class="nav nav-tabs nav-justified">
             <?php foreach ($categories as $category) { ?>
             <li>
-                <a href="#page<?= intval($category->id) ?>" data-transition="fade" data-theme="" data-icon="star" data-category_id="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a>
+                <a href="" data-transition="fade" data-theme="" data-icon="star" data-category_id="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></a>
             </li>
             <?php } ?>
         </ul>

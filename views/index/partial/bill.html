@@ -1,7 +1,7 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle navbar-left navbar-btn back-to-table"><span class="glyphicon glyphicon-home"></span></button>
-        <a class="navbar-brand" href="#"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</a>
+        <span class="navbar-brand"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</span>
         <?php if ($bill) { ?>
         <button type="button" class="navbar-toggle navbar-btn" id="delete_bill" data-id="<?= intval($bill->id) ?>"><span class="glyphicon glyphicon-trash"></span></button>
         <?php } ?>
