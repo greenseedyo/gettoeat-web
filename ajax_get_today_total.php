@@ -6,9 +6,6 @@ if (!$store instanceof StoreRow) {
     die('找不到此帳號');
 }
 
-$today_total = 0;
-foreach ($store->getTodayPaidBills() as $bill) {
-    $today_total += $bill->price;
-}
+$today_total = $store->getTodayPaidBills()->sum('price');
 echo $today_total;
 

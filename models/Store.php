@@ -116,6 +116,11 @@ class StoreRow extends Pix_Table_Row
     {
         return $this->categories->search(array('off' => 0));
     }
+
+    public function getCurrentUsers()
+    {
+        return $this->users->search(array('activated' => true));
+    }
 }
 
 class Store extends Pix_Table
@@ -140,6 +145,8 @@ class Store extends Pix_Table
         $this->_relations['products'] = array('rel' => 'has_many', 'type' => 'Product', 'foreign_key' => 'store_id');
         $this->_relations['bills'] = array('rel' => 'has_many', 'type' => 'Bill', 'foreign_key' => 'store_id');
         $this->_relations['events'] = array('rel' => 'has_many', 'type' => 'Event', 'foreign_key' => 'store_id');
+        $this->_relations['shifts'] = array('rel' => 'has_many', 'type' => 'Shift', 'foreign_key' => 'store_id');
+        $this->_relations['users'] = array('rel' => 'has_many', 'type' => 'User', 'foreign_key' => 'store_id');
         $this->_relations['tables_infos'] = array('rel' => 'has_many', 'type' => 'TablesInfo', 'foreign_key' => 'store_id');
     }
 

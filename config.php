@@ -19,7 +19,7 @@ default:
 session_start();
 date_default_timezone_set('Asia/Taipei');
 define('VIEWS_DIR', $_SERVER['DOCUMENT_ROOT'] . "/views");
-define('ROOT_DIR', $_SERVER['DOCUMENT_ROOT']);
+define('ROOT_DIR', $_SERVER['DOCUMENT_ROOT'] ?: __DIR__);
 error_reporting(E_ERROR | E_WARNING);
 include(ROOT_DIR . '/pixframework/Pix/Loader.php');
 set_include_path(ROOT_DIR . '/pixframework/' . PATH_SEPARATOR . ROOT_DIR . '/models/');
@@ -36,10 +36,13 @@ Pix_Table::setDefaultDb(new Pix_Table_Db_Adapter_Mysqli($link));
 $store_account = explode('.', $_SERVER['HTTP_HOST'])[0];
 $_SESSION['store_account'] = $store_account;
 
-$store = Store::getByAccount($_SESSION['store_account']);
-if (!$store instanceof StoreRow) {
-    die('找不到此帳號');
+if ($store_account) {
+    $store = Store::getByAccount($_SESSION['store_account']);
+    if (!$store instanceof StoreRow) {
+        die('找不到此帳號');
+    }
 }
+$currency_symbol = '$';
 
 /*
 if (!getenv('DATABASE_URL')) {

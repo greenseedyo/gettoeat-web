@@ -1,6 +1,7 @@
 var GTE = GTE || {};
 GTE.common.initTableGrid($(".table-grid"));
 GTE.common.setMapSize($(".map"));
+var currencySymbol = GTE.currencySymbol || '$';
 
 var LS = localStorage;
 LS.all_table_datas = LS.all_table_datas || '{}';
@@ -12,6 +13,7 @@ var $table_page = $('#table');
 var $pos_page = $('#pos');
 var $submit_page = $('#submit');
 var $bill_page = $('#bill');
+var $summary_page = $('#summary');
 var $tmpl_item_tr = $('#tmpl-item-tr');
 var $all_items = $('#all-items');
 var $subtotal = $('.subtotal');
@@ -79,6 +81,13 @@ var display_bill_page = function(bill_id){
     });
 };
 
+var display_summary_page = function(){
+    $.get('ajax_summary.php', function(rtn){
+        $summary_page.html(rtn).trigger('create');
+        display_page('summary');
+    });
+};
+
 var saveItemDatas = function(table){
     var item_datas = [];
     $all_items.find('tr.item').each(function(){
@@ -116,6 +125,11 @@ $table_page.delegate('.table-grid', 'click', function(e){
 $table_page.delegate('.to-bill-page', 'click', function(e){
     e.preventDefault();
     display_bill_page();
+});
+
+$table_page.delegate('.to-summary-page', 'click', function(e){
+    e.preventDefault();
+    display_summary_page();
 });
 
 
@@ -334,3 +348,65 @@ $(window).on("unload", function(){
     LS.all_table_datas = JSON.stringify(all_table_datas);
 });
 
+
+/* -------- summary page -------- */
+$summary_page.delegate('.back-to-table', 'click', function(e) {
+    e.preventDefault();
+    display_table_page();
+});
+
+$summary_page.delegate('.check-group', 'change', function(e) {
+    e.preventDefault();
+    var cash_sales = parseInt($('#cash_sales').text().substr(1)) || 0;
+    var open_amount = parseInt($('#open_amount').val()) || 0;
+    var close_amount = parseInt($('#close_amount').val()) || 0;
+    var paid_in = parseInt($('#paid_in').val()) || 0;
+    var paid_out = parseInt($('#paid_out').val()) || 0;
+    var expected_amount = open_amount + cash_sales + paid_in - paid_out;
+    var difference = close_amount - expected_amount;
+    var formatted_difference = '';
+    if (difference < 0) {
+        formatted_difference = '-' + currencySymbol + (difference * (-1).toString());
+        color = 'red';
+    } else {
+        formatted_difference = currencySymbol + difference.toString();
+        color = 'green';
+    }
+    $('#expected_amount').text(currencySymbol + expected_amount.toString());
+    $('#difference').text(formatted_difference).css('color', color);
+});
+
+$summary_page.delegate('.adjustment-group', 'change', function(e) {
+    var close_amount = parseInt($('#close_amount').val()) || 0;
+    var $adjustment_amount = $(':input[name=adjustment_amount]');
+    var adjustment_type = $(':input[name=adjustment_type]:checked').val();
+    var adjustment_amount;
+    var float;
+    if (GTE.common.shift.adjustmentType.takeout === adjustment_type) {
+        adjustment_amount = parseInt($adjustment_amount.val()) || 0;
+    } else if (GTE.common.shift.adjustmentType.add === adjustment_type) {
+        adjustment_amount = (parseInt($adjustment_amount.val()) || 0) * (-1);
+    } else {
+        adjustment_amount = 0;
+    }
+    if (close_amount - adjustment_amount < 0) {
+        alert('現金匯出金額不可超過錢櫃結餘總額');
+        $adjustment_amount.val("");
+        $('#float').text(currencySymbol + close_amount.toString());
+    } else {
+        float = close_amount - adjustment_amount;
+        $('#float').text(currencySymbol + float.toString());
+    }
+});
+
+$summary_page.delegate(':input[name=adjustment_type]', 'change', function(e) {
+    e.preventDefault();
+    var disabled;
+    if (GTE.common.shift.adjustmentType.pass === $(this).val()) {
+        disabled = true;
+    } else {
+        disabled = false;
+    }
+    $(':input[name=adjustment_amount]').prop('disabled', disabled);
+    $(':input[name=adjustment_by]').prop('disabled', disabled);
+});

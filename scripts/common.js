@@ -38,3 +38,11 @@ GTE.common.setMapSize = function($map) {
             return $(this).data("width")
         });
 }
+
+GTE.common.shift = {
+    adjustmentType: {
+        pass: "0",
+        takeout: "1",
+        add: "2"
+    }
+};

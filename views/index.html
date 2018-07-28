@@ -22,7 +22,8 @@
         </div>
         <div id="navbar-menu" class="collapse nav-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="" class="to-bill-page">已結帳單</a></li>
+                <li><a href="" class="to-bill-page">已結帳單</a></li>
+                <li><a href="" class="to-summary-page">關帳</a></li>
             </ul>
         </div>
     </nav>
@@ -170,8 +171,15 @@
 <div class="page" id="bill" style="display:none;">
 </div>
 
+<!-- summary -->
+<div class="page" id="summary" style="display:none;">
+</div>
+
 <script type="text/javascript" src="/scripts/common.js?v=<?= STATIC_VERSION ?>"></script>
 <script type="text/javascript" src="/scripts/index.js?v=<?= STATIC_VERSION ?>"></script>
+<script>
+GTE.currencySymbol = <?= json_encode($currency_symbol) ?>;
+</script>
 <script>
 $(function(){
     $('.do-not-remove-me').next('div').remove();
