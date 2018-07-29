@@ -1,16 +1,16 @@
 <?php
 
-class UserRow extends Pix_Table_Row
+class StaffRow extends Pix_Table_Row
 {
 }
 
-class User extends Pix_Table
+class Staff extends Pix_Table
 {
-    public $_rowClass = 'UserRow';
+    public $_rowClass = 'StaffRow';
 
     public function init()
     {
-        $this->_name = 'user';
+        $this->_name = 'staff';
         $this->_primary = array('id');
 
         $this->_columns['id'] = array('type' => 'int', 'auto_increment' => true, 'unsigned' => true);

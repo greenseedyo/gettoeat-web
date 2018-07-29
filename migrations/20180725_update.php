@@ -8,7 +8,7 @@ $mysqli->set_charset("utf8");
 $link = new Pix_Table_Db_Adapter_Mysqli($mysqli);
 
 $sql = "
-CREATE TABLE `user` (
+CREATE TABLE `staff` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `store_id` int(10) unsigned NOT NULL,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,

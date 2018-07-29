@@ -17,7 +17,7 @@ if ($previous_shift) {
 $sales = $bills->sum('price');
 $open_amount = $previous_shift ? $previous_shift->getFloat() : "";
 
-$user_names = $store->getCurrentUsers()->toArray('name');
+$staff_names = $store->getCurrentStaffs()->toArray('name');
 
 include(VIEWS_DIR . '/index/partial/summary.html');
 
