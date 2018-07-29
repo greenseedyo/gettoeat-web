@@ -48,7 +48,7 @@ class StoreRow extends Pix_Table_Row
         return $end_at;
     }
 
-    public function getTodayPaidBills()
+    public function getTodayPaidBills(DateTime $datetime = null)
     {
         $date_change_at = $this->getDateChangeAt();
         if (date('H') > $date_change_at) {

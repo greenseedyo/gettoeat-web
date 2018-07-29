@@ -51,6 +51,7 @@ var display_table_page = function(){
     $table_page.find('.table-grid').removeClass('taken');
     for (var table in all_table_datas) {
         if ('undefined' === typeof all_table_datas[table]) {
+            delete all_table_datas[table];
             continue;
         }
         var item_datas = all_table_datas[table].item_datas || {};
@@ -82,6 +83,11 @@ var display_bill_page = function(bill_id){
 };
 
 var display_summary_page = function(){
+    if (Object.keys(all_table_datas).length > 0) {
+        if (!confirm('仍有未結帳單，是否繼續關帳？')) {
+            return;
+        }
+    }
     $.get('ajax_summary.php', function(rtn){
         $summary_page.html(rtn).trigger('create');
         display_page('summary');
@@ -120,6 +126,10 @@ $table_page.delegate('.table-grid', 'click', function(e){
     e.preventDefault();
     current_table = $(this).attr('id').replace('table-button-', '');
     display_pos_page(current_table);
+});
+
+$table_page.delegate('#navbar-menu li', 'click', function(e){
+    $('#navbar-toggle-button').click();
 });
 
 $table_page.delegate('.to-bill-page', 'click', function(e){
@@ -166,7 +176,7 @@ $('#nav-category').find('a').click(function(e){
 
 /* 計算總價 */
 var addTotalPrice = function(price){
-    var subtotal = parseInt($subtotal.first().text()) + parseInt(price);
+    var subtotal = parseFloat($subtotal.first().text()) + parseFloat(price);
     $subtotal.text(subtotal);
 };
 
@@ -176,7 +186,7 @@ var amountPlus = function($item_tr){
     $amount.text(function(){
 	return parseInt($(this).text()) + 1;
     });
-    var price = parseInt($item_tr.data('price'));
+    var price = parseFloat($item_tr.data('price'));
     addTotalPrice(price);
 };
 
@@ -186,7 +196,7 @@ var amountMinus = function($item_tr){
     $amount.text(function(){
 	return parseInt($(this).text()) - 1;
     });
-    var price = parseInt($item_tr.data('price'));
+    var price = parseFloat($item_tr.data('price'));
     addTotalPrice(-price);
     if (0 === parseInt($amount.text())) {
 	$item_tr.remove();
@@ -203,7 +213,7 @@ $pos_page.delegate('.list-div button', 'click', function(e){
     setTimeout(function(){
         $this.css('background-color', '#f9f9f9');
     }, 100);
-    var price = parseInt($this.find('.price').text().substring(1));
+    var price = parseFloat($this.find('.price').text().substring(1));
     var product_id = $this.data('product_id');
     var $item_tr = $('#item-' + product_id);
     var name = $this.find('.name').text();
@@ -350,6 +360,135 @@ $(window).on("unload", function(){
 
 
 /* -------- summary page -------- */
+var summaryPage = {
+    getSalesValue: function() {
+        return parseFloat($('#sales').text().substr(1)) || 0;
+    },
+
+    getOpenAmountValue: function() {
+        return parseFloat($('#open_amount').val()) || 0;
+    },
+
+    getCloseAmountValue: function() {
+        return parseFloat($('#close_amount').val()) || 0;
+    },
+
+    getPaidInValue: function() {
+        return parseFloat($('#paid_in').val()) || 0;
+    },
+
+    getPaidOutValue: function() {
+        return parseFloat($('#paid_out').val()) || 0;
+    },
+
+    getExpectedAmount: function() {
+        var sales = summaryPage.getSalesValue();
+        var open_amount = summaryPage.getOpenAmountValue();
+        var paid_in = summaryPage.getPaidInValue();
+        var paid_out = summaryPage.getPaidOutValue();
+        return open_amount + sales + paid_in - paid_out;
+    },
+
+    getDifferenceValue: function() {
+        var close_amount = summaryPage.getCloseAmountValue();
+        var expected_amount = summaryPage.getExpectedAmount();
+        return close_amount - expected_amount;
+    },
+
+    getDifferenceText: function() {
+        var difference_value = summaryPage.getDifferenceValue();
+        if (difference_value < 0) {
+            return '-' + currencySymbol + (difference_value * (-1).toString());
+        } else {
+            return '+' + currencySymbol + difference_value.toString();
+        }
+    },
+
+    getAdjustmentAmountValue: function() {
+        return parseFloat($(':input[name=adjustment_amount]').val()) || 0;
+    },
+
+    getAdjustmentTypeValue: function() {
+        return parseInt($(':input[name=adjustment_type]:checked').val());
+    },
+
+    getAdjustmentByInText: function() {
+        var $adjustment_by = $(':input[name=adjustment_by]');
+        if (0 === $adjustment_by.length) {
+            return "";
+        }
+        if ("0" === $adjustment_by.val()) {
+            return "";
+        }
+        return $adjustment_by.find(':selected').text();
+    },
+
+    getFloatValue: function() {
+        var close_amount = summaryPage.getCloseAmountValue();
+        var adjustment_type = summaryPage.getAdjustmentTypeValue();
+        var adjustment_amount = summaryPage.getAdjustmentAmountValue();
+        if (GTE.common.shift.adjustmentType.takeout === adjustment_type) {
+            float = close_amount - adjustment_amount;
+        } else if (GTE.common.shift.adjustmentType.add === adjustment_type) {
+            float = close_amount + adjustment_amount;
+        } else {
+            float = close_amount;
+        }
+        return float;
+    },
+
+    checkValidNumberInput: function(input) {
+        var parsedValue = parseFloat(input);
+        if (isNaN(parsedValue)) {
+            return false;
+        }
+        if (parsedValue < 0) {
+            return false;
+        }
+        return true;
+    },
+
+    checkAdjustmentBy: function() {
+        var $adjustment_by = $(':input[name=adjustment_by]');
+        if (0 === $adjustment_by.length) {  // 不須選擇
+            return true;
+        }
+        var $adjustment_type = $(':input[name=adjustment_type]:checked');
+        if ("0" == $adjustment_type.val()) {  // 略過取出/補款
+            return true;
+        }
+        if ("0" == $adjustment_by.val()) {  // 未選擇
+            return false;
+        }
+        return true;
+    },
+
+    getConfirmSummaryContent: function() {
+        var confirm_content = "==確認關帳資訊==\n";
+        confirm_content += ("錢櫃初始金額: " + currencySymbol + summaryPage.getOpenAmountValue().toString() + "\n");
+        confirm_content += ("錢櫃結餘總額: " + currencySymbol + summaryPage.getCloseAmountValue().toString() + "\n");
+        confirm_content += ("臨時支出: " + currencySymbol + summaryPage.getPaidOutValue().toString() + "\n");
+        confirm_content += ("臨時收入: " + currencySymbol + summaryPage.getPaidInValue().toString() + "\n");
+        confirm_content += ("現金短溢: " + summaryPage.getDifferenceText() + "\n");
+        var adjustment_type = summaryPage.getAdjustmentTypeValue();
+        var adjustment_amount = summaryPage.getAdjustmentAmountValue();
+        var adjustment_by = summaryPage.getAdjustmentByInText();
+        if (GTE.common.shift.adjustmentType.takeout === adjustment_type) {
+            confirm_content += ("營收取出: " + currencySymbol + adjustment_amount + "\n");
+            if (adjustment_by.length > 0) {
+                confirm_content += ("取出人: " + adjustment_by + "\n");
+            }
+        } else if (GTE.common.shift.adjustmentType.add === adjustment_type) {
+            confirm_content += ("錢櫃補款: " + currencySymbol + adjustment_amount + "\n");
+            if (adjustment_by.length > 0) {
+                confirm_content += ("補款人: " + adjustment_by + "\n");
+            }
+        }
+        confirm_content += ("錢櫃留存現金: " + currencySymbol + summaryPage.getFloatValue().toString() + "\n");
+        return confirm_content;
+    }
+}
+
 $summary_page.delegate('.back-to-table', 'click', function(e) {
     e.preventDefault();
     display_table_page();
@@ -357,56 +496,74 @@ $summary_page.delegate('.back-to-table', 'click', function(e) {
 
 $summary_page.delegate('.check-group', 'change', function(e) {
     e.preventDefault();
-    var cash_sales = parseInt($('#cash_sales').text().substr(1)) || 0;
-    var open_amount = parseInt($('#open_amount').val()) || 0;
-    var close_amount = parseInt($('#close_amount').val()) || 0;
-    var paid_in = parseInt($('#paid_in').val()) || 0;
-    var paid_out = parseInt($('#paid_out').val()) || 0;
-    var expected_amount = open_amount + cash_sales + paid_in - paid_out;
-    var difference = close_amount - expected_amount;
-    var formatted_difference = '';
-    if (difference < 0) {
-        formatted_difference = '-' + currencySymbol + (difference * (-1).toString());
+    var $this = $(this);
+    if (!summaryPage.checkValidNumberInput($this.val())) {
+        alert('此欄位須輸入大於或等於 0 的數字');
+        $this.val("");
+    }
+    var expected_amount = summaryPage.getExpectedAmount();
+    var difference_value = summaryPage.getDifferenceValue();
+    var difference_text = summaryPage.getDifferenceText();
+    if (difference_value < 0) {
         color = 'red';
     } else {
-        formatted_difference = currencySymbol + difference.toString();
         color = 'green';
     }
     $('#expected_amount').text(currencySymbol + expected_amount.toString());
-    $('#difference').text(formatted_difference).css('color', color);
+    $('#difference').text(difference_text).css('color', color);
 });
 
 $summary_page.delegate('.adjustment-group', 'change', function(e) {
-    var close_amount = parseInt($('#close_amount').val()) || 0;
-    var $adjustment_amount = $(':input[name=adjustment_amount]');
-    var adjustment_type = $(':input[name=adjustment_type]:checked').val();
-    var adjustment_amount;
-    var float;
-    if (GTE.common.shift.adjustmentType.takeout === adjustment_type) {
-        adjustment_amount = parseInt($adjustment_amount.val()) || 0;
-    } else if (GTE.common.shift.adjustmentType.add === adjustment_type) {
-        adjustment_amount = (parseInt($adjustment_amount.val()) || 0) * (-1);
-    } else {
-        adjustment_amount = 0;
+    e.preventDefault();
+    var $this = $(this);
+    if (!summaryPage.checkValidNumberInput($this.val())) {
+        alert('此欄位須輸入大於或等於 0 的數字');
+        $this.val("");
     }
-    if (close_amount - adjustment_amount < 0) {
-        alert('現金匯出金額不可超過錢櫃結餘總額');
-        $adjustment_amount.val("");
-        $('#float').text(currencySymbol + close_amount.toString());
+    var float = summaryPage.getFloatValue();
+    if (float < 0) {
+        alert('營收取出金額不可超過錢櫃結餘總額');
+        $(':input[name=adjustment_amount]').val("");
+        $('#float').text("");
     } else {
-        float = close_amount - adjustment_amount;
         $('#float').text(currencySymbol + float.toString());
     }
 });
 
 $summary_page.delegate(':input[name=adjustment_type]', 'change', function(e) {
     e.preventDefault();
+    var adjustment_type = summaryPage.getAdjustmentTypeValue();
     var disabled;
-    if (GTE.common.shift.adjustmentType.pass === $(this).val()) {
+    if (GTE.common.shift.adjustmentType.pass === adjustment_type) {
         disabled = true;
     } else {
         disabled = false;
     }
     $(':input[name=adjustment_amount]').prop('disabled', disabled);
     $(':input[name=adjustment_by]').prop('disabled', disabled);
+});
+
+$summary_page.delegate('#submit_summary', 'click', function(e) {
+    e.preventDefault();
+    if (!summaryPage.checkAdjustmentBy()) {
+        alert("請選擇取出/補款人");
+        return;
+    }
+    var $this = $(this);
+    var confirm_content = summaryPage.getConfirmSummaryContent();
+    if (!confirm(confirm_content)) {
+        return;
+    }
+    $this.prop('disabled', true);
+    var data = $this.closest('form').serializeArray();
+    $.post('ajax_create_summary.php', data, function(rtn){
+        if (rtn.message) {
+            alert(rtn.message);
+        }
+        if (rtn.error) {
+            return;
+        }
+        $this.prop('disabled', false);
+        display_table_page();
+    });
 });

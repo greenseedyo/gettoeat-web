@@ -41,8 +41,8 @@ GTE.common.setMapSize = function($map) {
 
 GTE.common.shift = {
     adjustmentType: {
-        pass: "0",
-        takeout: "1",
-        add: "2"
+        pass: 0,
+        takeout: 1,
+        add: 2
     }
 };

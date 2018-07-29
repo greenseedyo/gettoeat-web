@@ -7,29 +7,29 @@
 
 <div class="container">
     <h1>關帳</h1>
-    <h2>本日營業額統計</h2>
+    <h2>營業資訊</h2>
     <form class="form-horizontal">
         <div class="form-group form-group-lg">
-            <label class="col-sm-2 control-label">現金</label>
+            <label class="col-sm-2 control-label">前次關帳時間</label>
             <div class="col-sm-10">
-                <p class="form-control-static" id="cash_sales"><?= htmlspecialchars($currency_symbol) ?><?= intval($cash_sales) ?></p>
+                <p class="form-control-static"><?= $previous_shift ? date('Y-m-d H:i:s', $previous_shift->created_at) : '無' ?></p>
             </div>
         </div>
         <div class="form-group form-group-lg">
-            <label class="col-sm-2 control-label">信用卡</label>
+            <label class="col-sm-2 control-label">本日營業額</label>
             <div class="col-sm-10">
-                <p class="form-control-static" id="card_sales"><?= htmlspecialchars($currency_symbol) ?><?= intval($card_sales) ?></p>
+                <p class="form-control-static"><?= htmlspecialchars($currency_symbol) ?><?= floatval($today_sales) ?></p>
             </div>
         </div>
         <div class="form-group form-group-lg">
-            <label class="col-sm-2 control-label text-danger">總計</label>
+            <label class="col-sm-2 control-label text-danger">累積未關帳金額</label>
             <div class="col-sm-10">
-                <p class="form-control-static text-danger" id="card_sales"><?= htmlspecialchars($currency_symbol) ?><?= intval($net_sales) ?></p>
+                <p class="form-control-static text-danger" id="sales"><?= htmlspecialchars($currency_symbol) ?><?= floatval($sales) ?></p>
             </div>
         </div>
     </form>
     <h2>現金點收</h2>
-    <form name="cash" class="form-horizontal">
+    <form class="form-horizontal">
         <div class="form-group form-group-lg">
             <label for="open_amount" class="col-sm-2 control-label">錢櫃初始金額</label>
             <div class="col-sm-10">
@@ -45,13 +45,13 @@
         <div class="form-group form-group-lg">
             <label for="paid_out" class="col-sm-2 control-label">臨時支出</label>
             <div class="col-sm-10">
-                <input type="nubmer" class="form-control check-group" id="paid_out" name="paid_out" placeholder="請輸入金額">
+                <input type="number" class="form-control check-group" id="paid_out" name="paid_out" placeholder="請輸入金額">
             </div>
         </div>
         <div class="form-group form-group-lg">
             <label for="paid_in" class="col-sm-2 control-label">臨時收入</label>
             <div class="col-sm-10">
-                <input type="nubmer" class="form-control check-group" id="paid_in" name="paid_in" placeholder="請輸入金額">
+                <input type="number" class="form-control check-group" id="paid_in" name="paid_in" placeholder="請輸入金額">
             </div>
         </div>
         <div class="form-group form-group-lg">
@@ -61,19 +61,19 @@
             </div>
         </div>
         <div class="form-group form-group-lg">
-            <label for="short_and_over" class="col-sm-2 control-label">短溢</label>
+            <label for="short_and_over" class="col-sm-2 control-label">現金短溢</label>
             <div class="col-sm-10">
                 <p class="form-control-static" id="difference"></p>
             </div>
         </div>
         <div class="form-group form-group-lg">
-            <label for="adjustment_type" class="col-sm-2 control-label">現金匯出/補款</label>
+            <label for="adjustment_type" class="col-sm-2 control-label">結餘處理</label>
             <div class="btn-group btn-group-lg col-sm-10" data-toggle="buttons">
                 <label class="btn btn-default active">
-                    <input type="radio" class="adjustment-group" name="adjustment_type" value="<?= intval(Shift::ADJUSTMENT_TAKEOUT) ?>" autocomplete="off" checked>匯出
+                    <input type="radio" class="adjustment-group" name="adjustment_type" value="<?= intval(Shift::ADJUSTMENT_TAKEOUT) ?>" autocomplete="off" checked>營收取出
                 </label>
                 <label class="btn btn-default">
-                    <input type="radio" class="adjustment-group" name="adjustment_type" value="<?= intval(Shift::ADJUSTMENT_ADD) ?>" autocomplete="off">補款
+                    <input type="radio" class="adjustment-group" name="adjustment_type" value="<?= intval(Shift::ADJUSTMENT_ADD) ?>" autocomplete="off">錢櫃補款
                 </label>
                 <label class="btn btn-default">
                     <input type="radio" class="adjustment-group" name="adjustment_type" value="<?= intval(Shift::ADJUSTMENT_PASS) ?>" autocomplete="off">略過
@@ -83,12 +83,12 @@
         <div class="form-group form-group-lg">
             <label for="adjustment_amount" class="col-sm-2 control-label"></label>
             <div class="col-sm-10">
-                <input type="nubmer" class="form-control adjustment-group" name="adjustment_amount" placeholder="請輸入金額">
+                <input type="number" class="form-control adjustment-group" name="adjustment_amount" placeholder="請輸入金額">
             </div>
         </div>
         <?php if (count($user_names) > 0) { ?>
         <div class="form-group form-group-lg">
-            <label for="closed_by" class="col-sm-2 control-label">取款/補款人</label>
+            <label for="adjustment_by" class="col-sm-2 control-label">取出/補款人</label>
             <div class="col-sm-10">
                 <select name="adjustment_by" class="form-control select-event">
                     <option value="0" selected>請選擇...</option>
@@ -100,14 +100,14 @@
         </div>
         <?php } ?>
         <div class="form-group form-group-lg">
-            <label for="stored" class="col-sm-2 control-label">錢櫃留存</label>
+            <label for="stored" class="col-sm-2 control-label">錢櫃留存現金</label>
             <div class="col-sm-10">
                 <p class="form-control-static" id="float"></p>
             </div>
         </div>
         <div class="form-group form-group-lg">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-default">確認</button>
+                <button type="button" class="btn btn-default" id="submit_summary">確認</button>
             </div>
         </div>
     </form>

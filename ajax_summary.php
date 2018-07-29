@@ -6,11 +6,16 @@ if (!$store instanceof StoreRow) {
     die('找不到此帳號');
 }
 
-$net_sales = $store->getTodayPaidBills()->sum('price');
-$card_sales = 0;
-$cash_sales = $net_sales;
+$today_sales = $store->getTodayPaidBills()->sum('price');
 $previous_shift = $store->shifts->search(1)->order('created_at DESC')->first();
-$open_amount = $previous_shift ? $previous_shift->float : "";
+if ($previous_shift) {
+    $now = time();
+    $bills = $store->bills->search("`paid_at` BETWEEN {$previous_shift->created_at} AND {$now}");
+} else {
+    $bills = $store->getTodayPaidBills();
+}
+$sales = $bills->sum('price');
+$open_amount = $previous_shift ? $previous_shift->getFloat() : "";
 
 $user_names = $store->getCurrentUsers()->toArray('name');
 
