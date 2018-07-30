@@ -39,18 +39,20 @@ var formatDataset = function(datasets) {
     }
     return formatted_dataset;
 }
-var highchart = function(renderTo, title, categories, turnover_datasets, quantity_datasets) {
+var highchart = function(renderTo, title, categories, adjustment_datasets, quantity_datasets) {
+    console.log(adjustment_datasets);
+    console.log(quantity_datasets);
     var series = [];
-    var formatted_turnover_dataset = formatDataset(turnover_datasets);
+    var formatted_adjustment_dataset = formatDataset(adjustment_datasets);
     var formatted_quantity_dataset = formatDataset(quantity_datasets);
     series.push({
         name: '金額',
-        data: formatted_turnover_dataset,
+        data: formatted_adjustment_dataset,
         tooltip: {
             valuePrefix: '$'
         }
     }, {
-        name: '數量',
+        name: '次數',
         yAxis: 1,
         data: formatted_quantity_dataset
     });
@@ -83,7 +85,7 @@ var highchart = function(renderTo, title, categories, turnover_datasets, quantit
             opposite: true
         }, {
             title: {
-                text: '數量'
+                text: '次數'
             },
             labels: {
                 style: {
@@ -122,14 +124,14 @@ var highchart = function(renderTo, title, categories, turnover_datasets, quantit
 };
 
 var renderByAjaxRtn = function(renderTo, rtn) {
-    var turnover_chart = rtn['商品營收'];
-    var quantity_chart = rtn['商品銷售數量'];
-    var xAxisCategories = turnover_chart.xAxisCategories;
+    var adjustment_chart = rtn['結餘處理淨額'];
+    var quantity_chart = rtn['結餘處理次數'];
+    var xAxisCategories = adjustment_chart.xAxisCategories;
     highchart(
         renderTo,
-        '商品營收與銷售數量',
+        '結餘處理淨額及次數',
         xAxisCategories,
-        turnover_chart.datasets,
+        adjustment_chart.datasets,
         quantity_chart.datasets
     );
 }

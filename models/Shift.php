@@ -29,6 +29,18 @@ class ShiftRow extends Pix_Table_Row
             return $close_amount + $this->adjustment_amount;
         }
     }
+
+    public function getAdjustmentValue()
+    {
+        switch ($this->adjustment_type) {
+        case Shift::ADJUSTMENT_PASS:
+            return 0;
+        case Shift::ADJUSTMENT_TAKEOUT:
+            return $this->adjustment_amount;
+        case Shift::ADJUSTMENT_ADD:
+            return $this->adjustment_amount * (-1);
+        }
+    }
 }
 
 class Shift extends Pix_Table

@@ -16,7 +16,7 @@ if (Shift::ADJUSTMENT_TAKEOUT === $_POST['adjustment_type']
 
 // 檢查 user 是否存在
 if (isset($_POST['adjustment_by'])) {
-    $user = $store->getCurrentUsers()->search(array('id' => $_POST['adjustment_by']))->first();
+    $user = $store->getCurrentStaffs()->search(array('id' => $_POST['adjustment_by']))->first();
     if (!$user) {
         $rtn_data = array('error' => true, 'message' => '此人員不存在');
         die(json_encode($rtn_data));

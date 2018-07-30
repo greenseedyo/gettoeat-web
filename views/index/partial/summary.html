@@ -86,19 +86,21 @@
                 <input type="number" class="form-control adjustment-group" name="adjustment_amount" placeholder="請輸入金額">
             </div>
         </div>
-        <?php if (count($staff_names) > 0) { ?>
         <div class="form-group form-group-lg">
             <label for="adjustment_by" class="col-sm-2 control-label">取出/補款人</label>
             <div class="col-sm-10">
+                <?php if (count($staff_names) > 0) { ?>
                 <select name="adjustment_by" class="form-control select-event">
                     <option value="0" selected>請選擇...</option>
                     <?php foreach ($staff_names as $id => $name) { ?>
                     <option value="<?= intval($id) ?>"><?= htmlspecialchars($name) ?></option>
                     <?php } ?>
                 </select>
+                <?php } else { ?>
+                <p class="form-control-static">請先至後台設定</p>
+                <?php } ?>
             </div>
         </div>
-        <?php } ?>
         <div class="form-group form-group-lg">
             <label for="stored" class="col-sm-2 control-label">錢櫃留存現金</label>
             <div class="col-sm-10">

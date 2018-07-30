@@ -30,6 +30,8 @@ class StatHelper
     public function getStatResult(): StatResult
     {
         switch ($this->topic) {
+        case 'shift':
+            return $this->getShiftStatResult();
         case 'product':
             return $this->getProductStatResult();
         case 'category':
@@ -196,6 +198,44 @@ class StatHelper
         }
         foreach ($quantity_dataset as $product_name => $quantity) {
             $quantity_chart->append($product_name, array('數量' => $quantity));
+        }
+
+        return $stat_result;
+    }
+
+    private function getShiftStatResult(): StatResult
+    {
+        if (!isset($this->interval)) {
+            throw new StatHelperException('interval not set');
+        }
+
+        $staffs = $this->store->staffs;
+        $staff_names = $staffs->toArray('name');
+
+        $stat_result = new StatResult();
+        $adjustment_chart = $stat_result->createChart('結餘處理淨額', array('金額'));
+        $quantity_chart = $stat_result->createChart('結餘處理次數', array('次數'));
+
+        $start_at = $this->start_datetime->getTimestamp();
+        $end_at = $this->end_datetime->getTimestamp();
+        $period_name = sprintf('%s - %s', date('Y-m-d(D) H:i', $start_at), date('Y-m-d(D) H:i', $end_at));
+
+        $shifts = $this->store->shifts->search("`created_at` BETWEEN {$start_at} AND {$end_at}");
+        $adjustment_dataset = array();
+        $quantity_dataset = array();
+
+        foreach ($shifts as $shift) {
+            $staff_name = $staff_names[$shift->adjustment_by] ?: '無名氏';
+            $adjustment_dataset[$staff_name] += $shift->getAdjustmentValue();
+            $quantity_dataset[$staff_name] += 1;
+        }
+        arsort($adjustment_dataset);
+        arsort($quantity_dataset);
+        foreach ($adjustment_dataset as $staff_name => $total_price) {
+            $adjustment_chart->append($staff_name, array('金額' => $total_price));
+        }
+        foreach ($quantity_dataset as $staff_name => $quantity) {
+            $quantity_chart->append($staff_name, array('次數' => $quantity));
         }
 
         return $stat_result;

@@ -11,15 +11,32 @@ $sql = "
 CREATE TABLE `staff` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `store_id` int(10) unsigned NOT NULL,
+  `group_id` int(10) unsigned NOT NULL,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `phone` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `activated` tinyint(4) NOT NULL,
+  `off` tinyint(3) unsigned NOT NULL,
   `created_at` int(10) unsigned NOT NULL,
+  `created_by` int(10) unsigned NOT NULL,
   `updated_at` int(10) unsigned NOT NULL,
   `updated_by` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `store_id_activated` (`store_id`,`activated`)
+  KEY `store_id_off` (`store_id`,`off`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+";
+$link->query($sql);
+
+$sql = "
+CREATE TABLE `staff_group` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `store_id` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
+  `created_by` int(10) unsigned NOT NULL,
+  `updated_at` int(10) unsigned NOT NULL,
+  `updated_by` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `store_id` (`store_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 ";
 $link->query($sql);
@@ -43,6 +60,6 @@ CREATE TABLE `shift` (
   KEY `adjustment_by` (`adjustment_by`),
   KEY `closed_by` (`closed_by`),
   KEY `created_at` (`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 ";
 $link->query($sql);

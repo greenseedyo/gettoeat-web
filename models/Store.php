@@ -119,7 +119,19 @@ class StoreRow extends Pix_Table_Row
 
     public function getCurrentStaffs()
     {
-        return $this->staffs->search(array('activated' => true));
+        return $this->staffs->search(array('off' => 0));
+    }
+
+    public function getStaffGroupById($group_id)
+    {
+        $staff_group = $this->staff_groups->search(array('id' => $group_id))->first();
+        return $staff_group;
+    }
+
+    public function getStaffById($staff_id)
+    {
+        $staff = $this->staffs->search(array('id' => $staff_id))->first();
+        return $staff;
     }
 }
 
@@ -147,6 +159,7 @@ class Store extends Pix_Table
         $this->_relations['events'] = array('rel' => 'has_many', 'type' => 'Event', 'foreign_key' => 'store_id');
         $this->_relations['shifts'] = array('rel' => 'has_many', 'type' => 'Shift', 'foreign_key' => 'store_id');
         $this->_relations['staffs'] = array('rel' => 'has_many', 'type' => 'Staff', 'foreign_key' => 'store_id');
+        $this->_relations['staff_groups'] = array('rel' => 'has_many', 'type' => 'StaffGroup', 'foreign_key' => 'store_id');
         $this->_relations['tables_infos'] = array('rel' => 'has_many', 'type' => 'TablesInfo', 'foreign_key' => 'store_id');
     }
 

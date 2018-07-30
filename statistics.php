@@ -9,6 +9,7 @@ $selected_period = $_GET['period'] ?: 'daily';
 
 switch ($topic) {
 case 'product':
+case 'shift':
     $valid_periods = array(
         'throughout' => '加總',
     );
