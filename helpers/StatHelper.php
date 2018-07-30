@@ -225,7 +225,7 @@ class StatHelper
         $quantity_dataset = array();
 
         foreach ($shifts as $shift) {
-            $staff_name = $staff_names[$shift->adjustment_by] ?: '無名氏';
+            $staff_name = $staff_names[$shift->adjustment_by] ?: '老闆';
             $adjustment_dataset[$staff_name] += $shift->getAdjustmentValue();
             $quantity_dataset[$staff_name] += 1;
         }
