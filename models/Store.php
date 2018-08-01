@@ -57,9 +57,12 @@ class StoreRow extends Pix_Table_Row
 
     public function getTodayPaidBills(DateTime $datetime = null)
     {
+        if (!$datetime) {
+            $datetime = new Datetime('now');
+        }
         $date_change_at = $this->getDateChangeAt();
-        $start_at = $this->getDayStartAt($date);
-        $end_at = $this->getDayEndAt($date);
+        $start_at = $this->getDayStartAt($datetime);
+        $end_at = $this->getDayEndAt($datetime);
         return $this->bills->search("paid_at > 0 AND ordered_at >= {$start_at} AND ordered_at < {$end_at}");
     }
 
