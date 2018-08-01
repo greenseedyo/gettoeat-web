@@ -45,10 +45,10 @@
                     <td>營業日</td>
                     <td>營業額</td>
                     <td>錢櫃初始金額</td>
-                    <td>錢櫃結餘總額</td>
                     <td>臨時支出</td>
                     <td>臨時收入</td>
                     <td>錢櫃應有現金</td>
+                    <td>錢櫃實際現金</td>
                     <td>現金短溢</td>
                     <td>結餘處理</td>
                     <td>結餘處理人</td>
@@ -62,10 +62,10 @@
                     <td><?= htmlspecialchars($dataset['business_date']) ?></td>
                     <td><?= $currency_symbol . floatval($dataset['sales']) ?></td>
                     <td><?= $currency_symbol . floatval($dataset['open_amount']) ?></td>
-                    <td><?= $currency_symbol . floatval($dataset['close_amount']) ?></td>
                     <td><?= $currency_symbol . floatval($dataset['paid_out']) ?></td>
                     <td><?= $currency_symbol . floatval($dataset['paid_in']) ?></td>
                     <td><?= $currency_symbol . floatval($dataset['expected_amount']) ?></td>
+                    <td><?= $currency_symbol . floatval($dataset['close_amount']) ?></td>
                     <td><?= sprintf('%s%s%s', $dataset['difference'] > 0 ? '+' : '-', $currency_symbol, abs(floatval($dataset['difference']))) ?></td>
                     <td><?= htmlspecialchars($dataset['adjustment_type_text']) ?> <?= $currency_symbol . floatval($dataset['adjustment_amount']) ?></td>
                     <td><?= htmlspecialchars($dataset['adjustment_by']) ?></td>

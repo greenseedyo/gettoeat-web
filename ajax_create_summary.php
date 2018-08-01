@@ -7,10 +7,10 @@ if (!$store instanceof StoreRow) {
     die('找不到此帳號');
 }
 
-// 營收取出金額不可超過錢櫃結餘總額
+// 營收取出金額不可超過錢櫃實際現金
 if (Shift::ADJUSTMENT_TAKEOUT === $_POST['adjustment_type']
     and $_POST['adjustment_amount'] > $_POST['close_amount']) {
-    $rtn_data = array('error' => true, 'message' => '營收取出金額不可超過錢櫃結餘總額');
+    $rtn_data = array('error' => true, 'message' => '營收取出金額不可超過錢櫃實際現金');
     die(json_encode($rtn_data));
 }
 

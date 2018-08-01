@@ -467,7 +467,7 @@ var summaryPage = {
     getConfirmSummaryContent: function() {
         var confirm_content = "==確認關帳資訊==\n";
         confirm_content += ("錢櫃初始金額: " + currencySymbol + summaryPage.getOpenAmountValue().toString() + "\n");
-        confirm_content += ("錢櫃結餘總額: " + currencySymbol + summaryPage.getCloseAmountValue().toString() + "\n");
+        confirm_content += ("錢櫃實際現金: " + currencySymbol + summaryPage.getCloseAmountValue().toString() + "\n");
         confirm_content += ("臨時支出: " + currencySymbol + summaryPage.getPaidOutValue().toString() + "\n");
         confirm_content += ("臨時收入: " + currencySymbol + summaryPage.getPaidInValue().toString() + "\n");
         confirm_content += ("現金短溢: " + summaryPage.getDifferenceText() + "\n");
@@ -523,7 +523,7 @@ $summary_page.delegate('.adjustment-group', 'change', function(e) {
     }
     var float = summaryPage.getFloatValue();
     if (float < 0) {
-        alert('營收取出金額不可超過錢櫃結餘總額');
+        alert('營收取出金額不可超過錢櫃實際現金');
         $(':input[name=adjustment_amount]').val("");
         $('#float').text("");
     } else {
