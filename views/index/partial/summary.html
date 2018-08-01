@@ -69,15 +69,11 @@
         <div class="form-group form-group-lg">
             <label for="adjustment_type" class="col-sm-2 control-label">結餘處理</label>
             <div class="btn-group btn-group-lg col-sm-10" data-toggle="buttons">
-                <label class="btn btn-default active">
-                    <input type="radio" class="adjustment-group" name="adjustment_type" value="<?= intval(Shift::ADJUSTMENT_TAKEOUT) ?>" autocomplete="off" checked>營收取出
-                </label>
+                <?php foreach ($adjustment_types as $key => $text) { ?>
                 <label class="btn btn-default">
-                    <input type="radio" class="adjustment-group" name="adjustment_type" value="<?= intval(Shift::ADJUSTMENT_ADD) ?>" autocomplete="off">錢櫃補款
+                    <input type="radio" class="adjustment-group" name="adjustment_type" value="<?= intval($key) ?>" autocomplete="off"><?= htmlspecialchars($text) ?>
                 </label>
-                <label class="btn btn-default">
-                    <input type="radio" class="adjustment-group" name="adjustment_type" value="<?= intval(Shift::ADJUSTMENT_PASS) ?>" autocomplete="off">略過
-                </label>
+                <?php } ?>
             </div>
         </div>
         <div class="form-group form-group-lg">

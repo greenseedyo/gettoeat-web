@@ -91,6 +91,7 @@ var display_summary_page = function(){
     $.get('ajax_summary.php', function(rtn){
         $summary_page.html(rtn).trigger('create');
         display_page('summary');
+        $(':input[name=adjustment_type]:eq(0)').click();
     });
 };
 

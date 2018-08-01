@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once(ROOT_DIR . '/helpers/ShiftHelper.php');
 
 $store = Store::getByAccount($_SESSION['store_account']);
 if (!$store instanceof StoreRow) {
@@ -18,6 +19,12 @@ $sales = $bills->sum('price');
 $open_amount = $previous_shift ? $previous_shift->getFloat() : "";
 
 $staff_names = $store->getCurrentStaffs()->toArray('name');
+
+$adjustment_types = array(
+    Shift::ADJUSTMENT_TAKEOUT => ShiftHelper::getAdjustmentTypeText(Shift::ADJUSTMENT_TAKEOUT),
+    Shift::ADJUSTMENT_ADD => ShiftHelper::getAdjustmentTypeText(Shift::ADJUSTMENT_ADD),
+    Shift::ADJUSTMENT_PASS => ShiftHelper::getAdjustmentTypeText(Shift::ADJUSTMENT_PASS),
+);
 
 include(VIEWS_DIR . '/index/partial/summary.html');
 

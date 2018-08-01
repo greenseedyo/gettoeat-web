@@ -29,33 +29,35 @@ class StoreRow extends Pix_Table_Row
         $this->create_events($data);
     }
 
+    public function getBusinessDateByDatetime(DateTime $datetime, $format = 'Y-m-d')
+    {
+        $start_at = $this->getDayStartAt($datetime);
+        return date($format, $start_at);
+    }
+
     public function getDateChangeAt()
     {
         return $this->date_change_at;
     }
 
-    public function getDayStartAt(DateTime $date)
+    public function getDayStartAt(DateTime $datetime)
     {
-        $date_change_at = $this->getDateChangeAt();
-        $start_at = mktime($date_change_at, 0, 0, date('m', $date->getTimestamp()), date('d', $date->getTimestamp()), date('Y', $date->getTimestamp()));
+        $shift_secs = $this->getDateChangeAt() * 60 * 60;
+        $shifted_timestamp = $datetime->getTimestamp() - $shift_secs;
+        $shifted_datetime = new Datetime(date('c', $shifted_timestamp));
+        $start_date = $shifted_datetime->format('Y-m-d');
+        $start_at = strtotime($start_date) + $shift_secs;
         return $start_at;
     }
 
-    public function getDayEndAt(DateTime $date)
+    public function getDayEndAt(DateTime $datetime)
     {
-        $date_change_at = $this->getDateChangeAt();
-        $end_at = mktime($date_change_at, 0, 0, date('m', $date->getTimestamp()), date('d', $date->getTimestamp()) + 1, date('Y', $date->getTimestamp()));
-        return $end_at;
+        return $this->getDayStartAt($datetime) + 86400;
     }
 
     public function getTodayPaidBills(DateTime $datetime = null)
     {
         $date_change_at = $this->getDateChangeAt();
-        if (date('H') > $date_change_at) {
-            $date = new DateTime();
-        } else {
-            $date = new DateTime('-1 day');
-        }
         $start_at = $this->getDayStartAt($date);
         $end_at = $this->getDayEndAt($date);
         return $this->bills->search("paid_at > 0 AND ordered_at >= {$start_at} AND ordered_at < {$end_at}");

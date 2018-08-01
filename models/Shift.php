@@ -41,6 +41,11 @@ class ShiftRow extends Pix_Table_Row
             return $this->adjustment_amount * (-1);
         }
     }
+
+    public function getAdjustmentByInText()
+    {
+        return Staff::find($this->adjustment_by)->name;
+    }
 }
 
 class Shift extends Pix_Table
