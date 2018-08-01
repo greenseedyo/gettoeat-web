@@ -39,9 +39,7 @@ var formatDataset = function(datasets) {
     }
     return formatted_dataset;
 }
-var highchart = function(renderTo, title, categories, adjustment_datasets, quantity_datasets) {
-    console.log(adjustment_datasets);
-    console.log(quantity_datasets);
+var staffchart = function(renderTo, title, categories, adjustment_datasets, quantity_datasets) {
     var series = [];
     var formatted_adjustment_dataset = formatDataset(adjustment_datasets);
     var formatted_quantity_dataset = formatDataset(quantity_datasets);
@@ -123,13 +121,79 @@ var highchart = function(renderTo, title, categories, adjustment_datasets, quant
     chart = new Highcharts.Chart(char_options);
 };
 
+var shiftchart = function(renderTo, categories, datasets) {
+    var series = [];
+    for (let stat_item in datasets) {
+        dataset = datasets[stat_item];
+        series.push({
+            name: stat_item,
+            data: dataset,
+            tooltip: {
+                valuePrefix: '$'
+            }
+        });
+    }
+    var char_options = {
+        chart: {
+            renderTo: renderTo,
+            type: 'line'
+        },
+        title: {
+            text: '關帳統計',
+            x: -20 //center
+        },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+            categories: categories
+        },
+        yAxis: {
+            title: {
+                text: '關帳統計'
+            }
+        },
+        plotOptions: {
+            'line': {
+                dataLabels: {
+                    enabled: true,
+                    format: '${point.y}'
+                }
+            }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b><br/>',
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+        series: series
+    };
+
+    chart = new Highcharts.Chart(char_options);
+};
+
 var renderByAjaxRtn = function(renderTo, rtn) {
-    var adjustment_chart = rtn['結餘處理淨額'];
-    var quantity_chart = rtn['結餘處理次數'];
+    var $shift_chart_div = $('<div>').appendTo('#' + renderTo).prop('id', renderTo + '_shift');
+    var $staff_chart_div = $('<div>').appendTo('#' + renderTo).prop('id', renderTo + '_staff');
+
+    var shift_chart = rtn['關帳統計'];
+    shiftchart(
+        $shift_chart_div.prop('id'),
+        shift_chart.xAxisCategories,
+        shift_chart.datasets
+    );
+
+    var adjustment_chart = rtn['收款人結餘金額'];
+    var quantity_chart = rtn['收款人處理次數'];
     var xAxisCategories = adjustment_chart.xAxisCategories;
-    highchart(
-        renderTo,
-        '結餘處理淨額及次數',
+    staffchart(
+        $staff_chart_div.prop('id'),
+        '收款人統計 (開始至結束不分周期)',
         xAxisCategories,
         adjustment_chart.datasets,
         quantity_chart.datasets

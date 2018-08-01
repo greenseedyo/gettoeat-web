@@ -213,29 +213,48 @@ class StatHelper
         $staff_names = $staffs->toArray('name');
 
         $stat_result = new StatResult();
-        $adjustment_chart = $stat_result->createChart('結餘處理淨額', array('金額'));
-        $quantity_chart = $stat_result->createChart('結餘處理次數', array('次數'));
+        // $staff_adjustment_chart 跟 $staff_quantity_chart 是加總圖表不分周期
+        $staff_adjustment_chart = $stat_result->createChart('收款人結餘金額', array('金額'));
+        $staff_quantity_chart = $stat_result->createChart('收款人處理次數', array('次數'));
+        $staff_adjustment_dataset = array();
+        $staff_quantity_dataset = array();
+        // shift_chart 要分周期
+        $shift_stat_items = array('結餘金額', '臨時支出', '臨時收入', '短溢');
+        $shift_chart = $stat_result->createChart('關帳統計', $shift_stat_items);
 
         $start_at = $this->start_datetime->getTimestamp();
         $end_at = $this->end_datetime->getTimestamp();
-        $period_name = sprintf('%s - %s', date('Y-m-d(D) H:i', $start_at), date('Y-m-d(D) H:i', $end_at));
 
-        $shifts = $this->store->shifts->search("`created_at` BETWEEN {$start_at} AND {$end_at}");
-        $adjustment_dataset = array();
-        $quantity_dataset = array();
+        while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
+            $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
+            $tmp_start_at = $tmp_start_datetime->getTimestamp();
+            $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            $tmp_end_at = $tmp_end_datetime->getTimestamp();
+            $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
 
-        foreach ($shifts as $shift) {
-            $staff_name = $staff_names[$shift->adjustment_by] ?: '老闆';
-            $adjustment_dataset[$staff_name] += $shift->getAdjustmentValue();
-            $quantity_dataset[$staff_name] += 1;
+            $shift_dataset = array_fill_keys($shift_stat_items, 0);
+
+            $shifts = $this->store->shifts->search("`created_at` BETWEEN {$tmp_start_at} AND {$tmp_end_at}");
+            foreach ($shifts as $shift) {
+                $staff_name = $staff_names[$shift->adjustment_by] ?: '老闆';
+                $staff_adjustment_dataset[$staff_name] += $shift->getAdjustmentValue();
+                $staff_quantity_dataset[$staff_name] += 1;
+                $shift_dataset['結餘金額'] += $shift->getAdjustmentValue();
+                $shift_dataset['臨時支出'] += $shift->paid_out;
+                $shift_dataset['臨時收入'] += $shift->paid_in;
+                $shift_dataset['短溢'] += $shift->getDifference();
+            }
+            $shift_chart->append($period_name, $shift_dataset);
+
+            $tmp_start_datetime = $tmp_end_datetime;
         }
-        arsort($adjustment_dataset);
-        arsort($quantity_dataset);
-        foreach ($adjustment_dataset as $staff_name => $total_price) {
-            $adjustment_chart->append($staff_name, array('金額' => $total_price));
+        arsort($staff_adjustment_dataset);
+        arsort($staff_quantity_dataset);
+        foreach ($staff_adjustment_dataset as $staff_name => $total_price) {
+            $staff_adjustment_chart->append($staff_name, array('金額' => $total_price));
         }
-        foreach ($quantity_dataset as $staff_name => $quantity) {
-            $quantity_chart->append($staff_name, array('次數' => $quantity));
+        foreach ($staff_quantity_dataset as $staff_name => $quantity) {
+            $staff_quantity_chart->append($staff_name, array('次數' => $quantity));
         }
 
         return $stat_result;
