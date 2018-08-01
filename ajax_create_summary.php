@@ -24,6 +24,7 @@ if (isset($_POST['adjustment_by'])) {
 }
 
 $data = array(
+    'sales' => (float) $_POST['sales'],
     'open_amount' => (float) $_POST['open_amount'],
     'close_amount' => (float) $_POST['close_amount'],
     'paid_in' => (float) $_POST['paid_in'],

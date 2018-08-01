@@ -67,7 +67,7 @@
                     <td><?= $currency_symbol . floatval($dataset['paid_in']) ?></td>
                     <td><?= $currency_symbol . floatval($dataset['expected_amount']) ?></td>
                     <td><?= sprintf('%s%s%s', $dataset['difference'] > 0 ? '+' : '-', $currency_symbol, abs(floatval($dataset['difference']))) ?></td>
-                    <td><?= htmlspecialchars($dataset['adjustment_type_text']) ?> <?= $currency_symbol . floatval($dataset['difference']) ?></td>
+                    <td><?= htmlspecialchars($dataset['adjustment_type_text']) ?> <?= $currency_symbol . floatval($dataset['adjustment_amount']) ?></td>
                     <td><?= htmlspecialchars($dataset['adjustment_by']) ?></td>
                     <td><?= $currency_symbol . floatval($dataset['float']) ?></td>
                     <td><?= date('Y-m-d H:i:s', $dataset['created_at']) ?></td>
