@@ -53,7 +53,7 @@ var highchart = function(renderTo, categories, datasets) {
     var char_options = {
         chart: {
             renderTo: renderTo,
-            type: 'column'
+            type: 'line'
         },
         title: {
             text: '總覽',
@@ -72,7 +72,7 @@ var highchart = function(renderTo, categories, datasets) {
             }
         },
         plotOptions: {
-            'column': {
+            'line': {
                 dataLabels: {
                     enabled: true,
                     format: '${point.y}'
