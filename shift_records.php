@@ -10,7 +10,7 @@ $start_datetime = (new Datetime($start_date))->add($day_change_interval);
 $end_datetime = (new Datetime($end_date))->add(new DateInterval('P1D'))->add($day_change_interval);
 $start_at = $start_datetime->getTimestamp();
 $end_at = $end_datetime->getTimestamp();
-$shifts = Shift::search("`created_at` BETWEEN {$start_at} AND {$end_at}");
+$shifts = $store->shifts->search("`created_at` BETWEEN {$start_at} AND {$end_at}");
 $datasets = array();
 foreach ($shifts as $shift) {
     $datetime = new Datetime(date('c', $shift->created_at));
