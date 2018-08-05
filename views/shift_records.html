@@ -6,6 +6,16 @@
     <title><?= htmlspecialchars($store->nickname) ?> 關帳紀錄</title>
     <?php include(VIEWS_DIR . "/include/static_common.html"); ?>
     <?php include(VIEWS_DIR . "/include/bootstrap_datepicker.html"); ?>
+    <style>
+        .table > thead > tr > td {
+            height: 60px;
+            vertical-align: middle;
+        }
+        .table > tbody > tr > td {
+            height: 60px;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 
 <body>
@@ -39,7 +49,7 @@
         </form>
     </div>
     <div class="bordered-block">
-        <table class="table table-striped">
+        <table class="table table-striped shifts">
             <thead>
                 <tr>
                     <td>營業日</td>
@@ -61,13 +71,13 @@
                 <tr>
                     <td><?= htmlspecialchars($dataset['business_date']) ?></td>
                     <td><?= $currency_symbol . floatval($dataset['sales']) ?></td>
-                    <td><?= $currency_symbol . floatval($dataset['open_amount']) ?></td>
-                    <td><?= $currency_symbol . floatval($dataset['paid_out']) ?></td>
-                    <td><?= $currency_symbol . floatval($dataset['paid_in']) ?></td>
+                    <td class="modifiable" data-id="<?= intval($dataset['id']) ?>"><?= $currency_symbol ?><span class="number" data-name="open_amount"><?= floatval($dataset['open_amount']) ?></span> <a href="#" class="modify" style="display:none"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
+                    <td class="modifiable" data-id="<?= intval($dataset['id']) ?>"><?= $currency_symbol ?><span class="number" data-name="paid_out"><?= floatval($dataset['paid_out']) ?></span> <a href="#" class="modify" style="display:none"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
+                    <td class="modifiable" data-id="<?= intval($dataset['id']) ?>"><?= $currency_symbol ?><span class="number" data-name="paid_in"><?= floatval($dataset['paid_in']) ?></span> <a href="#" class="modify" style="display:none"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
                     <td><?= $currency_symbol . floatval($dataset['expected_amount']) ?></td>
-                    <td><?= $currency_symbol . floatval($dataset['close_amount']) ?></td>
+                    <td class="modifiable" data-id="<?= intval($dataset['id']) ?>"><?= $currency_symbol ?><span class="number" data-name="close_amount"><?= floatval($dataset['close_amount']) ?></span> <a href="#" class="modify" style="display:none"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
                     <td><?= sprintf('%s%s%s', $dataset['difference'] > 0 ? '+' : '-', $currency_symbol, abs(floatval($dataset['difference']))) ?></td>
-                    <td><?= htmlspecialchars($dataset['adjustment_type_text']) ?> <?= $currency_symbol . floatval($dataset['adjustment_amount']) ?></td>
+                    <td class="modifiable" data-id="<?= intval($dataset['id']) ?>"><?= htmlspecialchars($dataset['adjustment_type_text']) ?> <?= $currency_symbol ?><span class="number" data-name="adjustment_amount"><?= floatval($dataset['adjustment_amount']) ?></span> <a href="#" class="modify" style="display:none"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
                     <td><?= htmlspecialchars($dataset['adjustment_by']) ?></td>
                     <td><?= $currency_symbol . floatval($dataset['float']) ?></td>
                     <td><?= date('Y-m-d H:i:s', $dataset['created_at']) ?></td>
@@ -84,5 +94,35 @@ $('.datepicker').datepicker({
     autoclose: true,
     todayHighlight: true,
     zIndexOffset: 2000
+});
+
+$('a.modify').on('click', function(e) {
+    e.preventDefault();
+    var $this = $(this);
+    var $number = $this.siblings('span.number');
+    var $td = $this.closest('td');
+    var oriValue = parseFloat($number.text());
+    var $form = $('<form>').prop({
+        method: 'post',
+        action: '/shift_records.php'
+    });
+    $('<input>').prop({
+        type: 'number',
+        name: $number.data('name'),
+        value: oriValue,
+        style: "width: " + $td.width() + "px"
+    }).appendTo($form);
+    $('<input>').prop({
+        type: 'hidden',
+        name: 'id',
+        value: $td.data('id')
+    }).appendTo($form);
+    $td.html($form);
+});
+
+$('td.modifiable').hover(function() {
+    $(this).find('a.modify').show();
+}, function() {
+    $(this).find('a.modify').hide();
 });
 </script>
