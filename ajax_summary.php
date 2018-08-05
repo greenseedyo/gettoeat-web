@@ -16,7 +16,7 @@ if ($previous_shift) {
     $bills = $store->getTodayPaidBills();
 }
 $sales = $bills->sum('price');
-$open_amount = $previous_shift ? $previous_shift->getFloat() : "";
+$previous_float = $previous_shift ? $previous_shift->getFloat() : "";
 
 $staff_names = $store->getCurrentStaffs()->toArray('name');
 

@@ -92,6 +92,9 @@ var display_summary_page = function(){
         $summary_page.html(rtn).trigger('create');
         display_page('summary');
         $(':input[name=adjustment_type]:eq(0)').click();
+        $('[data-toggle="tooltip"]').on('click', function(e) {
+            e.preventDefault();
+        }).tooltip();
     });
 };
 
@@ -449,6 +452,22 @@ var summaryPage = {
         return true;
     },
 
+    checkOpenAmount: function() {
+        var open_amount = summaryPage.getOpenAmountValue();
+        if (0 === open_amount) {
+            return false;
+        }
+        return true;
+    },
+
+    checkCloseAmount: function() {
+        var close_amount = summaryPage.getCloseAmountValue();
+        if (0 === close_amount) {
+            return false;
+        }
+        return true;
+    },
+
     checkAdjustmentBy: function() {
         var $adjustment_by = $(':input[name=adjustment_by]');
         if (0 === $adjustment_by.length) {  // 不須選擇
@@ -459,6 +478,18 @@ var summaryPage = {
             return true;
         }
         if ("0" == $adjustment_by.val()) {  // 未選擇
+            return false;
+        }
+        return true;
+    },
+
+    checkAdjustmentAmount: function() {
+        var $adjustment_type = $(':input[name=adjustment_type]:checked');
+        if ("0" == $adjustment_type.val()) {  // 略過取出/補款
+            return true;
+        }
+        var adjustment_amount = summaryPage.getAdjustmentAmountValue();
+        if (0 === adjustment_amount) {
             return false;
         }
         return true;
@@ -546,8 +577,20 @@ $summary_page.delegate(':input[name=adjustment_type]', 'change', function(e) {
 
 $summary_page.delegate('#submit_summary', 'click', function(e) {
     e.preventDefault();
+    if (!summaryPage.checkOpenAmount()) {
+        alert("請選擇輸入錢櫃初始金額");
+        return;
+    }
+    if (!summaryPage.checkCloseAmount()) {
+        alert("請選擇輸入錢櫃實際現金");
+        return;
+    }
     if (!summaryPage.checkAdjustmentBy()) {
         alert("請選擇取出/補款人");
+        return;
+    }
+    if (!summaryPage.checkAdjustmentAmount()) {
+        alert("請選擇輸入結餘處理金額");
         return;
     }
     var $this = $(this);
