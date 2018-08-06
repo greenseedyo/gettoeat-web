@@ -495,6 +495,14 @@ var summaryPage = {
         return true;
     },
 
+    checkFloatValue: function() {
+        var float_value = summaryPage.getFloatValue();
+        if (float_value <= 0) {
+            return false;
+        }
+        return true;
+    },
+
     getConfirmSummaryContent: function() {
         var confirm_content = "==確認關帳資訊==\n";
         confirm_content += ("錢櫃初始金額: " + currencySymbol + summaryPage.getOpenAmountValue().toString() + "\n");
@@ -589,9 +597,14 @@ $summary_page.delegate('#submit_summary', 'click', function(e) {
         alert("請選擇取出/補款人");
         return;
     }
-    if (!summaryPage.checkAdjustmentAmount()) {
-        alert("請選擇輸入結餘處理金額");
+    if (!summaryPage.checkAdjustmentBy()) {
+        alert("請選擇取出/補款人");
         return;
+    }
+    if (!summaryPage.checkFloatValue()) {
+        if (!confirm('錢櫃留存現金為 0 元，表示你把錢櫃裡的錢全部拿走了，明天開店的時候錢櫃裡一毛錢都沒有，確定嗎？')) {
+            return;
+        }
     }
     var $this = $(this);
     var confirm_content = summaryPage.getConfirmSummaryContent();
