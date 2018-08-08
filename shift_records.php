@@ -2,15 +2,6 @@
 require_once 'config.php';
 require_once(ROOT_DIR . '/helpers/ShiftHelper.php');
 
-if ($_POST) {
-    if (!$shift = Shift::find(intval($_POST['id']))) {
-        die('找不到此筆資料');
-    }
-    $data = $_POST;
-    unset($data['id']);
-    $shift->update($data);
-}
-
 $start_date = $_GET['start_date'] ?: date('Y-m-d', strtotime('-28days'));
 $end_date = $_GET['end_date'] ?: date('Y-m-d', strtotime('today'));
 
@@ -42,5 +33,7 @@ foreach ($shifts as $shift) {
     );
     $datasets[] = $dataset;
 }
+
+$staff_names = $store->getCurrentStaffs()->toArray('name');
 
 include(VIEWS_DIR . "/shift_records.html");
