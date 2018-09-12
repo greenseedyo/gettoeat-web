@@ -42,11 +42,12 @@ var highchart = function(renderTo, title, categories, yAxisTitle, datasets) {
             }
             formatted_dataset.push({y: value, percentage: percentage});
         }
+        let valuePrefix = ('金額' === yAxisTitle ? '$' : '');
         series.push({
             name: stat_item,
             data: formatted_dataset,
             tooltip: {
-                valuePrefix: '$'
+                valuePrefix: valuePrefix
             }
         });
     }
