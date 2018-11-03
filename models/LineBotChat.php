@@ -25,7 +25,8 @@ class LineBotChatRow extends Pix_Table_Row
     {
         $bot = $this->getBotClient();
         $builder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message);
-        $bot->pushMessage($this->source_id, $builder);
+        $result = $bot->pushMessage($this->source_id, $builder);
+        return $result;
     }
 }
 
