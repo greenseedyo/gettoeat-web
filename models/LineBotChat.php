@@ -28,6 +28,14 @@ class LineBotChatRow extends Pix_Table_Row
         $result = $bot->pushMessage($this->source_id, $builder);
         return $result;
     }
+
+    public function replyMessage($reply_token, $message)
+    {
+        $bot = $this->getBotClient();
+        $builder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message);
+        $result = $bot->replyMessage($reply_token, $builder);
+        return $result;
+    }
 }
 
 class LineBotChat extends Pix_Table
@@ -54,6 +62,13 @@ class LineBotChat extends Pix_Table
         $this->addIndex('left_at', array('left_at'));
         $this->addIndex('created_at', array('created_at'));
         $this->addIndex('updated_at', array('updated_at'));
+
+        $this->_relations['store'] = array('rel' => 'has_one', 'type' => 'Store', 'foreign_key' => 'store_id');
+    }
+
+    public function getBySource($source_type, $source_id)
+    {
+        return self::search(array('source_type' => $source_type, 'source_id' => $source_id))->first();
     }
 }
 
