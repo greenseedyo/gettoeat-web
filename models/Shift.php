@@ -38,7 +38,7 @@ class ShiftRow extends Pix_Table_Row
         $adjustment_type = (int)$this->adjustment_type;
         $adjustment_amount = $this->adjustment_amount;
         $adjustment_by = $this->getAdjustmentByInText();
-        if (Shift::ADJUSTMENT_TAKEOUT === adjustment_type) {
+        if (Shift::ADJUSTMENT_TAKEOUT === $adjustment_type) {
             $msg .= sprintf("營收取出: %s%s%s", $currency_symbol, $adjustment_amount, PHP_EOL);
             if ($adjustment_by) {
                 $msg .= sprintf("取出人: %s%s", $adjustment_by, PHP_EOL);
