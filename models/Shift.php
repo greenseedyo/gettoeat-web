@@ -10,6 +10,9 @@ class ShiftRow extends Pix_Table_Row
     public function pushMessageToLineBotChats()
     {
         $chats = $this->store->getValidLineBotChats();
+        if (0 == $chats->count()) {
+            return;
+        }
         $message = $this->formatMessage();
         foreach ($chats as $chat) {
             $chat->pushMessage($message);
