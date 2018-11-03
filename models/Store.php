@@ -138,6 +138,16 @@ class StoreRow extends Pix_Table_Row
         $staff = $this->staffs->search(array('id' => $staff_id))->first();
         return $staff;
     }
+
+    public function getLineBotChat(string $source_type, string $source_id)
+    {
+        return $this->line_bot_chats->search(array('source_type' => $source_type, 'source_id' => $source_id))->first();
+    }
+
+    public function getValidLineBotChats()
+    {
+        return $this->line_bot_chats->search('joined_at > 0 AND left_at = 0');
+    }
 }
 
 class Store extends Pix_Table
@@ -166,6 +176,7 @@ class Store extends Pix_Table
         $this->_relations['staffs'] = array('rel' => 'has_many', 'type' => 'Staff', 'foreign_key' => 'store_id');
         $this->_relations['staff_groups'] = array('rel' => 'has_many', 'type' => 'StaffGroup', 'foreign_key' => 'store_id');
         $this->_relations['tables_infos'] = array('rel' => 'has_many', 'type' => 'TablesInfo', 'foreign_key' => 'store_id');
+        $this->_relations['line_bot_chats'] = array('rel' => 'has_many', 'type' => 'LineBotChat', 'foreign_key' => 'store_id');
     }
 
     public static function getByAccount($account)

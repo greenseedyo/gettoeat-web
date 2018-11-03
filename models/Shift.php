@@ -2,6 +2,55 @@
 
 class ShiftRow extends Pix_Table_Row
 {
+    public function postInsert()
+    {
+        $this->pushMessageToLineBotChats();
+    }
+
+    public function pushMessageToLineBotChats()
+    {
+        $chats = $this->store->getValidLineBotChats();
+        foreach ($chats as $chat) {
+            $message = $this->formatMessage();
+            $chat->pushMessage($message);
+        }
+    }
+
+    public function formatMessage()
+    {
+        $currency_symbol = $this->getCurrencySymbol();
+        $datetime = new Datetime();
+        $datetime->setTimestamp($this->created_at);
+        $start_at = $this->store->getDayStartAt($datetime);
+        $date = date('Y-m-d', $start_at);
+        $today_sales = $this->store->getTodayPaidBills($datetime)->sum('price');
+        $msg = sprintf("[%s關帳資訊]%s", $date, PHP_EOL);
+        $msg .= sprintf("本日營收: %s%s", $today_sales, PHP_EOL);
+        $msg .= sprintf("關帳時間: %s%s", date('Y-m-d H:i:s', $this->created_at), PHP_EOL);
+        $msg .= sprintf("錢櫃初始金額: %s%s%s", $currency_symbol, $this->open_amount, PHP_EOL);
+        $msg .= sprintf("錢櫃實際現金: %s%s%s", $currency_symbol, $this->close_amount, PHP_EOL);
+        $msg .= sprintf("臨時支出: %s%s%s", $currency_symbol, $this->paid_out, PHP_EOL);
+        $msg .= sprintf("臨時收入: %s%s%s", $currency_symbol, $this->paid_in, PHP_EOL);
+        $msg .= sprintf("現金短溢: %s%s", $this->getDifferenceText(), PHP_EOL);
+        $adjustment_type = (int)$this->adjustment_type;
+        $adjustment_amount = $this->adjustment_amount;
+        $adjustment_by = $this->getAdjustmentByInText();
+        if (Shift::ADJUSTMENT_TAKEOUT === adjustment_type) {
+            $msg .= sprintf("營收取出: %s%s%s", $currency_symbol, $adjustment_amount, PHP_EOL);
+            if ($adjustment_by) {
+                $msg .= sprintf("取出人: %s%s", $adjustment_by, PHP_EOL);
+            }
+        } else if (Shift::ADJUSTMENT_ADD === $adjustment_type) {
+            $msg .= sprintf("錢櫃補款: %s%s%s", $currency_symbol, $adjustment_amount, PHP_EOL);
+            if ($adjustment_by) {
+                $msg .= sprintf("補款人: %s%s", $adjustment_by, PHP_EOL);
+            }
+        }
+        $msg .= sprintf("錢櫃留存現金: %s%s%s", $currency_symbol, $this->getFloat(), PHP_EOL);
+
+        return $msg;
+    }
+
     public function preInsert()
     {
         $this->created_at = time();
@@ -15,6 +64,22 @@ class ShiftRow extends Pix_Table_Row
     public function getDifference()
     {
         return $this->close_amount - $this->getExpectedAmount();
+    }
+
+    public function getDifferenceText()
+    {
+        $difference = $this->getDifference();
+        $currency_symbol = $this->getCurrencySymbol();
+        if ($difference < 0) {
+            return '-' . $currency_symbol . ($difference * (-1));
+        } else {
+            return '+' . $currency_symbol . $difference;
+        }
+    }
+
+    public function getCurrencySymbol()
+    {
+        return '$';
     }
 
     public function getFloat()

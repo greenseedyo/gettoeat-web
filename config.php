@@ -44,6 +44,8 @@ if ($store_account) {
 }
 $currency_symbol = '$';
 
+require_once(ROOT_DIR . '/vendor/autoload.php');
+
 /*
 if (!getenv('DATABASE_URL')) {
 die('need DATABASE_URL');
