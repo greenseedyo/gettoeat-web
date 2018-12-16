@@ -56,7 +56,7 @@ var display_table_page = function(){
         }
         var item_datas = all_table_datas[table].item_datas || {};
         if (item_datas.length) {
-            $('#table-button-' + table).addClass('taken');
+            $('#table-button-' + $.escapeSelector(table)).addClass('taken');
         }
     }
     display_page('table');
@@ -125,7 +125,7 @@ var setCategoryActive = function($li){
     $('#category-' + cid).show();
 };
 
-/* -------- talbe 頁設定 -------- */
+/* -------- table 頁設定 -------- */
 $table_page.delegate('.table-grid', 'click', function(e){
     e.preventDefault();
     current_table = $(this).attr('id').replace('table-button-', '');
