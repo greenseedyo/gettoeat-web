@@ -3,6 +3,7 @@ GTE.common.initTableGrid($(".table-grid"));
 GTE.common.setMapSize($(".map"));
 var currencySymbol = GTE.currencySymbol || '$';
 
+/* FIXME: localStorage 在 buddyhouse 的老 ipad 瀏覽器上會有一開店就載入前一周資料的 bug */
 var LS = localStorage;
 LS.all_table_datas = LS.all_table_datas || '{}';
 var all_table_datas = $.parseJSON(LS.all_table_datas);
