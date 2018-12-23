@@ -1,11 +1,5 @@
 <?php
-require_once(__DIR__ . '/../config.php');
-
-$mysqli = new Mysqli;
-$db_config = json_decode(file_get_contents(CONFIG_PATH . '/db.json'), 1);
-$mysqli->connect($db_config['host'], 'root', getenv('MYSQL_ROOT_PASSWORD'), $db_config['database']);
-$mysqli->set_charset("utf8");
-$link = new Pix_Table_Db_Adapter_Mysqli($mysqli);
+require_once(__DIR__ . '/include_migration.php');
 
 $sql = "
 CREATE TABLE `staff` (

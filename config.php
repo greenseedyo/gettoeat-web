@@ -1,6 +1,10 @@
 <?php
 
-$environment = getenv("ENV");
+if ('cli' === php_sapi_name()) {
+    $environment = readline('ENV: ');
+} else {
+    $environment = getenv("ENV");
+}
 
 switch ($environment) {
 case 'development':
