@@ -28,6 +28,16 @@ class PaymentMethodFactory
         return $data;
     }
 
+    public static function getAllTexts(string $country_code = 'tw'): array
+    {
+        $all_data = self::getAllData();
+        $items = array();
+        foreach ($all_data as $data) {
+            $items[$data['key']] = $data['texts'][$country_code];
+        }
+        return $items;
+    }
+
     public static function getAllItems(): array
     {
         $all_data = self::getAllData();
@@ -56,7 +66,6 @@ class PaymentMethodFactory
     {
         $data = $this->getAllData()[$bill_payment_row->payment_method];
         $item = new PaymentMethodItem($data);
-        $item->setAmount($bill_payment_row->amount);
         return $item;
     }
 }
@@ -90,15 +99,5 @@ class PaymentMethodItem
     public function getText(string $country_code = 'tw'): string
     {
         return $this->texts[$country_code];
-    }
-
-    public function setAmount(float $amount)
-    {
-        $this->amount = $amount;
-    }
-
-    public function getAmount(): float
-    {
-        return $this->amount;
     }
 }

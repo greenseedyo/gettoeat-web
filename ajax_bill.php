@@ -22,10 +22,14 @@ if ($next_bill = $store->getTodayPaidBills()->search("paid_at > {$paid_at}")->or
 }
 
 $factory = new Helpers\PaymentMethodFactory;
-$payment_method_items = array();
+$bill_payments_dataset = array();
 foreach ($bill->payments as $payment) {
+    $data = $payment->toArray();
     $item = $factory->getItemByBillPaymentRow($payment);
-    $payment_method_items[] = $item;
+    $data['text'] = $item->getText('tw');
+    $bill_payments_dataset[] = $data;
 }
+
+$all_payment_methods = $factory->getAllTexts();
 
 include(VIEWS_DIR . '/index/partial/bill.html');
