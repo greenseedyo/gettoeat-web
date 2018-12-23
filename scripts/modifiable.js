@@ -1,8 +1,9 @@
 (function($) {
-    $.fn.modifiable = function(data) {
+    $.fn.modifiable = function(arguments) {
         var $obj = $(this);
         var type = $obj.data('type');
         var text = $obj.data('text');
+        var select_options = arguments.select_options || {};
         var $text = $('<span class="cell-text"></span>');
         $text.text(text);
         var $pencil = $('<a href="#" class="modify-button" style="display:none"></a>');
@@ -50,15 +51,15 @@
                     name: 'value',
                     style: "width: " + $obj.width() + "px"
                 });
-                $.each(data, function(key, item) {
+                $.each(select_options, function(key, item) {
                     var selected = false;
-                    if (oriText === item) {
+                    if (oriText === item.text) {
                         selected = true;
                     }
                     $('<option>').prop({
-                        value: key,
+                        value: item.value,
                         selected: selected
-                    }).text(item).appendTo($select);
+                    }).text(item.text).appendTo($select);
                 });
                 $select.on('change', function(){
                     var new_text = $(this).find('option:selected').text();

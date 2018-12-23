@@ -30,6 +30,13 @@ foreach ($bill->payments as $payment) {
     $bill_payments_dataset[] = $data;
 }
 
-$all_payment_methods = $factory->getAllTexts();
+$payment_method_keys = $store->getPaymentMethodKeys();
+$payment_method_items = $factory->getItemsByKeys($payment_method_keys);
+$payment_method_options = array_map(function($item) {
+    return array(
+        'value' => $item->getKey(),
+        'text' => $item->getText('tw'),
+    );
+}, $payment_method_items);
 
 include(VIEWS_DIR . '/index/partial/bill.html');

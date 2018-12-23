@@ -82,7 +82,7 @@
 
 <script>
 $(function() {
-    var payment_methods = <?= json_encode($all_payment_methods) ?>;
-    $('.modifiable-payment-method').modifiable(payment_methods);
+    var payment_method_options = <?= json_encode($payment_method_options) ?>;
+    $('.modifiable-payment-method').modifiable({select_options: payment_method_options});
 });
 </script>
