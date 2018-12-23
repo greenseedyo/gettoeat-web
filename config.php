@@ -32,10 +32,10 @@ Pix_Loader::registerAutoload();
 define('CONFIG_PATH', __DIR__ . "/../config/{$environment}");
 
 $db_config = json_decode(file_get_contents(CONFIG_PATH . '/db.json'), 1);
-$link = new Mysqli;
-$link->connect($db_config['host'], $db_config['user'], $db_config['password'], $db_config['database']);
-$link->set_charset("utf8");
-Pix_Table::setDefaultDb(new Pix_Table_Db_Adapter_Mysqli($link));
+$mysqli = new Mysqli;
+$mysqli->connect($db_config['host'], $db_config['user'], $db_config['password'], $db_config['database']);
+$mysqli->set_charset("utf8");
+Pix_Table::setDefaultDb(new Pix_Table_Db_Adapter_Mysqli($mysqli));
 
 $store_account = explode('.', $_SERVER['HTTP_HOST'])[0];
 $_SESSION['store_account'] = $store_account;

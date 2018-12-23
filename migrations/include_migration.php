@@ -16,3 +16,4 @@ $db_config = json_decode(file_get_contents(CONFIG_PATH . '/db.json'), 1);
 $mysqli->connect($mysql_host, $mysql_user, $mysql_pass, $db_config['database']);
 $mysqli->set_charset("utf8");
 $link = new Pix_Table_Db_Adapter_Mysqli($mysqli);
+Pix_Table::setDefaultDb(new Pix_Table_Db_Adapter_Mysqli($mysqli));

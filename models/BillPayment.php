@@ -4,8 +4,8 @@ class BillPaymentRow extends Pix_Table_Row
 {
     public function preInsert()
     {
-        $this->created_at = time();
-        $this->updated_at = time();
+        $this->created_at = $this->created_at ?: time();
+        $this->updated_at = $this->updated_at ?: time();
     }
 
     public function preUpdate($changed_fields = array())

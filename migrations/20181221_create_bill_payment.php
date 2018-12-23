@@ -21,4 +21,18 @@ $link->query($sql);
 $sql = "
 ALTER TABLE `store` ADD `payment_method_keys` varchar(255)
 ";
-$link->query($sql);
+//$link->query($sql);
+
+foreach (Bill::search(1) as $bill) {
+    if ($bill->payments->first() > 0) {
+        continue;
+    }
+    $data = array(
+        'payment_method' => Store::PAYMENT_METHOD_CASH,
+        'amount' => $bill->price,
+        'created_at' => $bill->paid_at,
+        'updated_at' => $bill->paid_at,
+    );
+    $payment = $bill->create_payments($data);
+}
+
