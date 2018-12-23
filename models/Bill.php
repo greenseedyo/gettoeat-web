@@ -34,5 +34,6 @@ class Bill extends Pix_Table
 
         $this->_relations['items'] = array('rel' => 'has_many', 'type' => 'BillItem', 'foreign_key' => 'bill_id');
         $this->_relations['discounts'] = array('rel' => 'has_many', 'type' => 'BillDiscount', 'foreign_key' => 'bill_id');
+        $this->_relations['payments'] = array('rel' => 'has_many', 'type' => 'BillPayment', 'foreign_key' => 'bill_id');
     }
 }

@@ -148,6 +148,23 @@ class StoreRow extends Pix_Table_Row
     {
         return $this->line_bot_chats->search('joined_at > 0 AND left_at = 0');
     }
+
+    public function getPaymentMethodKeys(): array
+    {
+        if (!$this->payment_method_keys) {
+            $this->setPaymentMethodKeys(array(Store::PAYMENT_METHOD_CASH));
+        }
+        $payment_method_keys = explode(Store::PAYMENT_METHODS_DELIMITER, $this->payment_method_keys);
+        return $payment_method_keys;
+    }
+
+    public function setPaymentMethodKeys(array $payment_method_keys)
+    {
+        $new_string = implode(Store::PAYMENT_METHODS_DELIMITER, $payment_method_keys);
+        if ($new_string !== $this->payment_method_keys) {
+            $this->update(array('payment_method_keys' => $new_string));
+        }
+    }
 }
 
 class Store extends Pix_Table
@@ -164,6 +181,7 @@ class Store extends Pix_Table
         $this->_columns['name'] = array('type' => 'varchar', 'size' => 20);
         $this->_columns['nickname'] = array('type' => 'varchar', 'size' => 10);
         $this->_columns['date_change_at'] = array('type' => 'int', 'size' => 10);
+        $this->_columns['payment_method_keys'] = array('type' => 'varchar', 'size' => 255);
 
         $this->addIndex('account', array('account'));
         $this->addIndex('name', array('name'));
@@ -178,6 +196,12 @@ class Store extends Pix_Table
         $this->_relations['tables_infos'] = array('rel' => 'has_many', 'type' => 'TablesInfo', 'foreign_key' => 'store_id');
         $this->_relations['line_bot_chats'] = array('rel' => 'has_many', 'type' => 'LineBotChat', 'foreign_key' => 'store_id');
     }
+
+    const PAYMENT_METHOD_CASH = 1;
+    const PAYMENT_METHOD_CARD = 2;
+    const PAYMENT_METHOD_JKOPAY = 3;
+
+    const PAYMENT_METHODS_DELIMITER = ',';
 
     public static function getByAccount($account)
     {

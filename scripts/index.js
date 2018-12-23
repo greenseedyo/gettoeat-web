@@ -66,6 +66,7 @@ var display_table_page = function(){
 var display_submit_page = function(table){
     $submit_page.data('table', table);
     $submit_page.find('.navbar-title').text(table);
+    $submit_page.find('.payment-method-button:eq(0)').click();
     display_page('submit');
 };
 
@@ -272,9 +273,9 @@ $submit_page.find('.back-to-pos').click(function(e){
     display_pos_page(current_table);
 });
 
-$submit_page.find('.custermers-button').click(function(e){
+$submit_page.find('.boxed-select').click(function(e){
     e.preventDefault();
-    $('.custermers-button').removeClass('selected');
+    $(this).siblings('.boxed-select').removeClass('selected');
     $(this).addClass('selected');
 });
 
@@ -296,6 +297,8 @@ $('#submit_bill').click(function(e){
         alert('請選擇人數');
         return;
     }
+    // 暫時只實作單一付款方式
+    var payment_method = $('.payment-method-button.selected').data('value');
     $this.attr('disabled', 'disabled');
     var table = $submit_page.data('table');
     var event_options = {};
@@ -314,6 +317,7 @@ $('#submit_bill').click(function(e){
     var data = {
         table: table,
         custermers: custermers,
+        payment_method: payment_method,
         event_options: JSON.stringify(event_options),
         item_datas: all_table_datas[table].item_datas,
         ordered_at: all_table_datas[table].ordered_at

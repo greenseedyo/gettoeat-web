@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once(ROOT_DIR . '/helpers/payment_methods.php');
 
 $store = Store::getByAccount($_SESSION['store_account']);
 if (!$store instanceof StoreRow) {
@@ -18,6 +19,13 @@ if ($prev_bill = $store->getTodayPaidBills()->search("paid_at < {$paid_at}")->or
 }
 if ($next_bill = $store->getTodayPaidBills()->search("paid_at > {$paid_at}")->order('paid_at ASC')->first()) {
     $next_bill_id = $next_bill->id;
+}
+
+$factory = new Helpers\PaymentMethodFactory;
+$payment_method_items = array();
+foreach ($bill->payments as $payment) {
+    $item = $factory->getItemByBillPaymentRow($payment);
+    $payment_method_items[] = $item;
 }
 
 include(VIEWS_DIR . '/index/partial/bill.html');

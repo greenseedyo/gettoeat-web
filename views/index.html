@@ -137,13 +137,13 @@
                 <div class="form-control-label h2">人數</div>
                 <div class="btn-group btn-group-lg" role="group" aria-label="Large button group">
                     <?php for ($i = 1; $i <= 9; $i ++) { ?>
-                    <button class="btn btn-default custermers-button" data-value="<?= $i ?>"><?= $i ?></button>
+                    <button class="btn btn-default boxed-select custermers-button" data-value="<?= $i ?>"><?= $i ?></button>
                     <?php } ?>
                 </div>
                 <br><br>
                 <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                     <?php for ($i = 10; $i <= 20; $i ++) { ?>
-                    <button class="btn btn-default custermers-button" data-value="<?= $i ?>"><?= $i ?></button>
+                    <button class="btn btn-default boxed-select custermers-button" data-value="<?= $i ?>"><?= $i ?></button>
                     <?php } ?>
                 </div>
             </div>
@@ -156,6 +156,14 @@
                     <?php } ?>
                 </select>
                 <form class="form-by-event-id"></form>
+            </div>
+            <div class="form-group">
+                <div class="form-control-label h2">付款方式</div>
+                <div class="btn-group-lg" role="group" aria-label="Large button group">
+                    <?php foreach ($payment_method_items as $item) { ?>
+                    <button class="btn btn-default boxed-select payment-method-button" data-value="<?= intval($item->getKey()) ?>"><?= htmlspecialchars($item->getText('tw')) ?></button>
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </div>

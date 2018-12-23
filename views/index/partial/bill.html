@@ -45,6 +45,21 @@
             <th></th>
             <th><?= intval($bill->price) ?></th>
         </tr>
+
+        <table class="table table-striped">
+            <tr>
+                <th>付款方式</th>
+                <th>金額</th>
+                <th></th>
+            </tr>
+            <?php foreach ($payment_method_items as $item) { ?>
+            <tr>
+                <td><?= htmlspecialchars($item->getText('tw')) ?></td>
+                <td><?= htmlspecialchars($item->getAmount()) ?></td>
+                <td><a href="#"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
+            </tr>
+            <?php } ?>
+        </table>
     </ul>
 </div>
 <?php } else { ?>

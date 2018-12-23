@@ -9,6 +9,7 @@ class Cashier
     public $table;
     public $ordered_at;
     public $custermers;
+    public $payments = array();
     public $cart_items = array();
     public $discount_items = array();
     public $event_datas = array();
@@ -40,6 +41,15 @@ class Cashier
     public function setCustermers($custermers)
     {
         $this->custermers = $custermers;
+        return $this;
+    }
+
+    public function addPayment($method_key, $amount = null)
+    {
+        $this->payments[] = array(
+            'method_key' => $method_key,
+            'amount' => $amount,
+        );
         return $this;
     }
 
@@ -139,6 +149,15 @@ class Cashier
                 'value' => $discount_item->getSubtotalPrice() * (-1),
             );
             $item = $bill->create_discounts($data);
+        }
+
+        // 暫時只實作單一付款方式
+        foreach ($this->payments as $payment) {
+            $data = array(
+                'payment_method' => $payment['method_key'],
+                'amount' => $bill->price,
+            );
+            $bill->create_payments($data);
         }
 
         return $bill;

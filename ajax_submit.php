@@ -32,6 +32,9 @@ foreach ($event_options as $event_id => $options) {
     }
 }
 
+// 暫時只實作單一付款方式
+$cashier->addPayment($_POST['payment_method']);
+
 //$preview = $cashier->getPreviewData(); echo $preview;exit;
 
 $link = Pix_Table::getDefaultDb();
