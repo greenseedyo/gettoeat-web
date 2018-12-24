@@ -5,16 +5,21 @@
         var text = $obj.data('text');
         var select_options = arguments.select_options || {};
         var $text = $('<span class="cell-text"></span>');
+        var $pencil = $('<a href="#" class="modify-button"></a>');
         $text.text(text);
-        var $pencil = $('<a href="#" class="modify-button" style="display:none"></a>');
-        $pencil.append(' <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>');
+        $pencil.append(' <span class="glyphicon glyphicon-pencil"></span>');
         $obj.append($text).append($pencil);
 
-        $obj.hover(function() {
-            $(this).find('a.modify-button').show();
-        }, function() {
-            $(this).find('a.modify-button').hide();
-        }).delegate('a.modify-button', 'click', function(e) {
+        if (true == $obj.data('toggle')) {
+            $pencil.hide();
+            $obj.hover(function() {
+                $pencil.show();
+            }, function() {
+                $pencil.hide();
+            });
+        }
+
+        $obj.delegate('a.modify-button', 'click', function(e) {
             e.preventDefault();
             var $button = $(this);
             var $span = $button.siblings('span.cell-text');
