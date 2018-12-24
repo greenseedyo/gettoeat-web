@@ -21,22 +21,24 @@ if ($next_bill = $store->getTodayPaidBills()->search("paid_at > {$paid_at}")->or
     $next_bill_id = $next_bill->id;
 }
 
-$factory = new Helpers\PaymentMethodFactory;
-$bill_payments_dataset = array();
-foreach ($bill->payments as $payment) {
-    $data = $payment->toArray();
-    $item = $factory->getItemByBillPaymentRow($payment);
-    $data['text'] = $item->getText('tw');
-    $bill_payments_dataset[] = $data;
-}
+if ($bill) {
+    $factory = new Helpers\PaymentMethodFactory;
+    $bill_payments_dataset = array();
+    foreach ($bill->payments as $payment) {
+        $data = $payment->toArray();
+        $item = $factory->getItemByBillPaymentRow($payment);
+        $data['text'] = $item->getText('tw');
+        $bill_payments_dataset[] = $data;
+    }
 
-$payment_method_keys = $store->getPaymentMethodKeys();
-$payment_method_items = $factory->getItemsByKeys($payment_method_keys);
-$payment_method_options = array_map(function($item) {
-    return array(
-        'value' => $item->getKey(),
-        'text' => $item->getText('tw'),
-    );
-}, $payment_method_items);
+    $payment_method_keys = $store->getPaymentMethodKeys();
+    $payment_method_items = $factory->getItemsByKeys($payment_method_keys);
+    $payment_method_options = array_map(function($item) {
+        return array(
+            'value' => $item->getKey(),
+            'text' => $item->getText('tw'),
+        );
+    }, $payment_method_items);
+}
 
 include(VIEWS_DIR . '/index/partial/bill.html');
