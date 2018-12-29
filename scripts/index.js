@@ -68,6 +68,7 @@ var display_submit_page = function(table){
     $submit_page.find('.navbar-title').text(table);
     $submit_page.find('.payment-method-button:eq(0)').click();
     display_page('submit');
+    adjust_event_checkbox_position();
 };
 
 var display_bill_page = function(bill_id){
@@ -275,18 +276,22 @@ $submit_page.find('.back-to-pos').click(function(e){
 
 $submit_page.find('.boxed-select').click(function(e){
     e.preventDefault();
-    $(this).siblings('.boxed-select').removeClass('selected');
+    var group = $(this).data('group');
+    $('.boxed-select').filter('[data-group=' + group + ']').removeClass('selected');
     $(this).addClass('selected');
 });
 
-$submit_page.find('.select-event').on('change', function(e){
+$submit_page.find('.toggle-event').on('change', function(e){
     var $this = $(this);
-    var id = $this.val();
-    if (0 == id) {
-        return;
+    var $checkbox = $this.find('input[type=checkbox]');
+    var $form = $this.siblings('.form-by-event-id');
+    if (!$checkbox.is(':checked')) {
+        $form.text('');
+    } else {
+        var id = $checkbox.val();
+        var url = '/ajax_get_event_form.php?id=' + id;
+        $form.data('id', id).load(url);
     }
-    var url = '/ajax_get_event_form.php?id=' + id;
-    $('.form-by-event-id').eq($this.index() - 1).data('id', id).load(url);
 });
 
 $('#submit_bill').click(function(e){
@@ -302,17 +307,21 @@ $('#submit_bill').click(function(e){
     $this.attr('disabled', 'disabled');
     var table = $submit_page.data('table');
     var event_options = {};
-    $('.select-event').each(function(index){
-        var $select = $(this);
-        var $form = $('.form-by-event-id').eq(index);
+    $('.toggle-event').each(function(){
+        var $this = $(this);
+        var $checkbox = $this.find('input[type=checkbox]');
+        if (!$checkbox.is(':checked')) {
+            return;
+        }
+        var $form = $this.siblings('.form-by-event-id');
         var options = {};
         $form.find(':input').each(function(){
             var key = $(this).attr('name');
             var value = $(this).val();
             options[key] = value;
         });
-        event_options[$select.val()] = options;
-        $select[0].selectedIndex = 0;
+        event_options[$checkbox.val()] = options;
+        $checkbox.prop('checked', false);
     });
     var data = {
         table: table,
@@ -358,6 +367,19 @@ $bill_page.delegate('#delete_bill', 'click', function(e){
         display_table_page();
     });
 });
+
+var adjust_event_checkbox_position = function() {
+    var max_width = 0;
+    var $labels = $('.toggle-event label');
+    $labels.each(function() {
+        let width = $(this).width();
+        if (width > max_width) {
+            max_width = width;
+        }
+    });
+    $labels.width(max_width).css('text-align', 'left');
+    $('.toggle-event').siblings('.form-by-event-id').width(max_width);
+};
 
 $(function(){
     display_table_page();

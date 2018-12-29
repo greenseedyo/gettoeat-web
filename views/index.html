@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</title>
     <?php include(VIEWS_DIR . "/include/static_common.html"); ?>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/static/checkbox.css" rel="stylesheet">
 </head>
 <body>
 
@@ -137,31 +139,39 @@
                 <div class="form-control-label h2">人數</div>
                 <div class="btn-group btn-group-lg" role="group" aria-label="Large button group">
                     <?php for ($i = 1; $i <= 9; $i ++) { ?>
-                    <button class="btn btn-default boxed-select custermers-button" data-value="<?= $i ?>"><?= $i ?></button>
+                    <button class="btn btn-default boxed-select custermers-button" data-group="custermers" data-value="<?= $i ?>"><?= $i ?></button>
                     <?php } ?>
                 </div>
                 <br><br>
                 <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                     <?php for ($i = 10; $i <= 20; $i ++) { ?>
-                    <button class="btn btn-default boxed-select custermers-button" data-value="<?= $i ?>"><?= $i ?></button>
+                    <button class="btn btn-default boxed-select custermers-button" data-group="custermers" data-value="<?= $i ?>"><?= $i ?></button>
                     <?php } ?>
                 </div>
             </div>
+            <hr class="col-xs-12">
             <div class="form-group">
                 <div class="form-control-label h2">折扣選擇</div>
-                <select name="event_id" class="form-control select-event">
-                    <option value="0" selected>無</option>
+                <div>
                     <?php foreach ($events as $event) { ?>
-                    <option value="<?= intval($event->id) ?>"><?= htmlspecialchars($event->title) ?></option>
+                    <div class="col-sm-12">
+                        <div class="checkbox toggle-event">
+                            <label style="font-size: 2em">
+                                <input type="checkbox" value="<?= intval($event->id) ?>" data-index="<?= (++ $index) ?>"> <span class="cr"><i class="cr-icon fa fa-check"></i></span>
+                                <?= htmlspecialchars($event->title) ?>
+                            </label>
+                        </div>
+                        <form class="form-by-event-id"></form>
+                    </div>
                     <?php } ?>
-                </select>
-                <form class="form-by-event-id"></form>
+                </div>
             </div>
+            <hr class="col-xs-12">
             <div class="form-group">
                 <div class="form-control-label h2">付款方式</div>
                 <div class="btn-group-lg" role="group" aria-label="Large button group">
                     <?php foreach ($payment_method_items as $item) { ?>
-                    <button class="btn btn-default boxed-select payment-method-button" data-value="<?= intval($item->getKey()) ?>"><?= htmlspecialchars($item->getText('tw')) ?></button>
+                    <button class="btn btn-default boxed-select payment-method-button" data-group="payment-method" data-value="<?= intval($item->getKey()) ?>"><?= htmlspecialchars($item->getText('tw')) ?></button>
                     <?php } ?>
                 </div>
             </div>

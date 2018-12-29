@@ -17,6 +17,7 @@ class BillDiscount extends Pix_Table
         $this->_columns['bill_id'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['value'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['event_id'] = array('type' => 'int', 'unsigned' => true);
+        $this->_columns['title'] = array('type' => 'varchar', 'size' => 255);
 
         $this->addIndex('bill_id', array('bill_id'));
         $this->addIndex('event_id', array('event_id'));

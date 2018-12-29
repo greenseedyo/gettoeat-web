@@ -7,28 +7,35 @@ class CategoryPercentOff extends AbstractHelper
     public function generateDiscountItemsArray($options = null): \Store\Cashier\DiscountItemsArray
     {
         $total_price = 0;
-        foreach ($this->cart_items as $cart_item) {
-            $total_price += $cart_item->getSubtotalPrice();
-        }
-        $percent_off = $this->getData()['percent'] / 100;
-        $value = intval($total_price * $percent_off);
-        $discount_item = new \Store\Cashier\DiscountItem($this->event);
-        $discount_item->setUnitPrice($value * (-1));
-        $discount_item->setQuantity(1);
-
+        $percent = $this->getData()['percent'];
+        $percent_off = $percent / 100;
+        $category_ids = $this->getData()['category_ids'];
         $discount_items = new \Store\Cashier\DiscountItemsArray();
-        $discount_items[] = $discount_item;
+        foreach ($this->cart_items as $cart_item) {
+            $product = $cart_item->getProduct();
+            if (!in_array($product->category_id, $category_ids)) {
+                continue;
+            }
+            $value = $cart_item->getUnitPrice() * $percent_off;
+            $title = sprintf('%s-%s', $this->event->title, $product->name);
+            $discount_item = new \Store\Cashier\DiscountItem($this->event);
+            $discount_item->setUnitPrice($value * (-1));
+            $discount_item->setQuantity($cart_item->getQuantity());
+            $discount_item->setTitle($title);
+            $discount_items[] = $discount_item;
+        }
 
         return $discount_items;
     }
 
     public function setData($data = array())
     {
+        $formatted_data = array();
         if ($percent_reversed = $data['percent_reversed']) {
-            $percent_reversed = floatval("0.{$percent_reversed}") * 100;
-            $percent = 100 - $percent_reversed;
+            $formatted_data['percent_reversed'] = floatval("0.{$percent_reversed}") * 100;
+            $formatted_data['percent'] = 100 - $formatted_data['percent_reversed'];
         } elseif ($percent = $data['percent']) {
-            $percent_reversed = 100 - $percent;
+            $formatted_data['percent_reversed'] = 100 - $percent;
         }
         if (!$category_ids = $data['category_ids']) {
             throw new LogicException('missing category_ids');
@@ -36,24 +43,34 @@ class CategoryPercentOff extends AbstractHelper
         if (!is_array($category_ids)) {
             throw new LogicException('category_ids needs to be an array');
         }
-        $this->event->update(array('data' => json_encode($data)));
+        $formatted_data['category_ids'] = $category_ids;
+        $this->event->update(array('data' => json_encode($formatted_data)));
     }
 
     public function getData()
     {
         $data = json_decode($this->event->data, 1);
-        $valid_categories = array();
-        $invalid_categories = array();
+        $data['valid_categories'] = $this->getValidCategories($data);
+        $data['invalid_categories'] = $this->getInvalidCategories($data);
+        return $data;
+    }
+
+    protected function getValidCategories($data)
+    {
         foreach ($this->store->categories as $category) {
             if (in_array($category->id, $data['category_ids'])) {
-                $valid_categories[] = $category;
-            } else {
-                $invalid_categories[] = $category;
+                yield $category;
             }
         }
-        $data['valid_categories'] = $valid_categories;
-        $data['invalid_categories'] = $invalid_categories;
-        return $data;
+    }
+
+    protected function getInvalidCategories($data)
+    {
+        foreach ($this->store->categories as $category) {
+            if (!in_array($category->id, $data['category_ids'])) {
+                yield $category;
+            }
+        }
     }
 }
 

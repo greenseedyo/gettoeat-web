@@ -7,6 +7,7 @@ class DiscountItem implements AbstractReceiptItem
     protected $event;
     protected $quantity;
     protected $unit_price;
+    protected $title;
 
     public function __construct(\EventRow $event)
     {
@@ -23,9 +24,14 @@ class DiscountItem implements AbstractReceiptItem
         $this->unit_price = $unit_price;
     }
 
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
     public function getTitle()
     {
-        return $this->event->title;
+        return $this->title ?: $this->event->title;
     }
 
     public function getQuantity()

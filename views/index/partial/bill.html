@@ -33,7 +33,7 @@
         <?php } ?>
         <?php foreach ($bill->discounts as $discount) { ?>
         <tr class="danger">
-            <td><?= htmlspecialchars($discount->event->title) ?></td>
+            <td><?= htmlspecialchars($discount->title) ?></td>
             <td></td>
             <td></td>
             <td>-<?= intval($discount->value) ?></td>

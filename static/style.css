@@ -142,9 +142,14 @@ body {
     height: 40px;
 }
 
-#submit .submit-content input {
-    width: 50%;
+#submit .submit-content input[type="number"],
+#submit .submit-content input[type="text"] {
     text-align:center;
+    display: inline-block;
+}
+
+#submit .form-by-event-id {
+    width: 50%;
     display: inline-block;
 }
 

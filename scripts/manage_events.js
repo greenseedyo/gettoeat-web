@@ -1,6 +1,4 @@
-$('.date').datepicker();
-
-$('.select-type').on('change', function(){
+$('.select-type').on('change', function() {
     var $this = $(this);
     var type_id = parseInt($this.find('option:selected').val());
     if (0 == type_id) {

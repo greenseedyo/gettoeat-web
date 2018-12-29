@@ -27,8 +27,8 @@
             <div class="panel-body">
                 <table class="table">
                     <tr>
-                        <th>類型</th>
                         <th>名稱</th>
+                        <th>類型</th>
                         <th>開始時間</th>
                         <th>結束時間</th>
                         <th>備註</th>
@@ -37,8 +37,8 @@
                     <?php if (!empty($event_datas)) { ?>
                     <?php foreach ($event_datas as $event_data) { ?>
                     <tr>
-                        <td><?= htmlspecialchars($event_data['type_description']) ?></td>
                         <td><?= htmlspecialchars($event_data['title']) ?></td>
+                        <td><?= htmlspecialchars($event_data['type_description']) ?></td>
                         <td><?= htmlspecialchars($event_data['start_date'] ? $event_data['start_date'] : '無限制') ?></td>
                         <td><?= htmlspecialchars($event_data['end_date'] ? $event_data['end_date'] : '無限制') ?></td>
                         <td><?= htmlspecialchars($event_data['note']) ?></td>

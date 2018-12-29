@@ -147,6 +147,7 @@ class Cashier
             $data = array(
                 'event_id' => $discount_item->getEvent()->id,
                 'value' => $discount_item->getSubtotalPrice() * (-1),
+                'title' => $discount_item->getTitle(),
             );
             $item = $bill->create_discounts($data);
         }
