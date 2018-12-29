@@ -25,7 +25,6 @@ if ($_POST) {
             'start_at' => $start_date ? $store->getDayStartAt($start_date) : 0,
             'end_at' => $end_date ? $store->getDayStartAt($end_date) : 0,
             'title' => $_POST['title'],
-            'note' => $_POST['note'],
         );
         if ('edit_event' == $_POST['form_name']) {
             $event = Event::find(intval($_GET['id']));
@@ -33,10 +32,17 @@ if ($_POST) {
         } elseif ('add_event' == $_POST['form_name']) {
             $event = $store->create_events($data);
         }
-        $event->getHelper()->setData(array(
-            'percent' => $_POST['percent'],
-            'percent_reversed' => $_POST['percent_reversed'],
-        ));
+        $event_helper = $event->getHelper();
+        if ($_POST['data']) {
+            $data = json_decode($_POST['data'], 1);
+            $event_helper->setData($data);
+        } else {
+            // TODO: 目前只有 PercentOff 會用到，不要放這裡
+            $event_helper->setData(array(
+                'percent' => $_POST['percent'],
+                'percent_reversed' => $_POST['percent_reversed'],
+            ));
+        }
         header('Location: manage_events.php');
     }
 }

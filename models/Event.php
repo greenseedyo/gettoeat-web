@@ -48,5 +48,6 @@ class Event extends Pix_Table
         $this->addIndex('end_at', array('end_at'));
 
         $this->_relations['type'] = array('rel' => 'has_one', 'type' => 'EventType', 'foreign_key' => 'type_id');
+        $this->_relations['store'] = array('rel' => 'has_one', 'type' => 'Store', 'foreign_key' => 'store_id');
     }
 }

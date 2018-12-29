@@ -11,6 +11,7 @@ abstract class AbstractHelper
     {
         $this->event = $event;
         $this->event_id = $event->id;
+        $this->store = $event->store;
     }
 
     public function setCartItems(array $cart_items)

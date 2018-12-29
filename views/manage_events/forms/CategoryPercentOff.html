@@ -1,0 +1,101 @@
+<div class="form-group">
+    <label for="name">折扣活動名稱</label>
+    <input type="text" class="form-control" name="title" value="<?= htmlspecialchars($event_data['title']) ?>" placeholder="請輸入折扣活動名稱 (例: 周年慶披薩八折)" />
+</div>
+<div class="form-group">
+    <label for="name">折數</label>
+    <input type="text" class="form-control" name="percent_reversed" value="<?= htmlspecialchars($event_data['data']['percent_reversed']) ?>" placeholder="請輸入折數 (例: 85)" />
+</div>
+<div class="form-group">
+    <label for="start_date">開始日期 (選填)</label>
+    <div class="input-group date" data-provide="datepicker">
+        <input type="text" class="form-control" name="start_date" value="<?= htmlspecialchars($event_data['start_date']) ?>" placeholder="請選擇開始日期">
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-th"></span>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label for="end_date">結束日期 (選填)</label>
+    <div class="input-group date" data-provide="datepicker">
+        <input type="text" class="form-control" name="end_date" value="<?= htmlspecialchars($event_data['end_date']) ?>" placeholder="請選擇結束日期">
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-th"></span>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label for="name">備註 (選填)</label>
+    <input type="text" class="form-control" name="note" value="<?= htmlspecialchars($event_data['note']) ?>" placeholder="請輸入備註" />
+</div>
+<div class="form-group">
+    <div class="row">
+        <div class="col-xs-5">
+            <select name="from[]" id="multiselect" class="form-control" multiple="multiple">
+                <?php if ($event_data['data']['invalid_categories']) { ?>
+                <?php foreach ($event_data['data']['invalid_categories'] as $category) { ?>
+                <option value="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></option>
+                <?php } ?>
+                <?php } ?>
+            </select>
+        </div>
+
+        <div class="col-xs-2">
+            <button type="button" id="multiselect_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+            <button type="button" id="multiselect_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+            <button type="button" id="multiselect_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+            <button type="button" id="multiselect_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+        </div>
+
+        <div class="col-xs-5">
+            <select name="to[]" id="multiselect_to" class="form-control" multiple="multiple">
+                <?php if ($event_data['data']['valid_categories']) { ?>
+                <?php foreach ($event_data['data']['valid_categories'] as $category) { ?>
+                <option value="<?= intval($category->id) ?>"><?= htmlspecialchars($category->name) ?></option>
+                <?php } ?>
+                <?php } ?>
+            </select>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" name="data" value="" />
+
+<?php if ($event_data) { ?>
+<button type="button" id="categoryPercentOffSubmit" class="btn btn-default">更新</button>
+<?php } else { ?>
+<button type="button" id="categoryPercentOffSubmit" class="btn btn-default">新增</button>
+<?php } ?>
+
+<script>
+(function($) {
+    var $multiselect = $('#multiselect');
+    <?php if ($event_data) { ?>
+    $multiselect.multiselect();
+    <?php } else { ?>
+    var data = {'store_id': <?= intval($store->id) ?>};
+    $.get('ajax_get_categories.php', data, function(rtn) {
+        if (rtn.error) {
+            alert(rtn.msg);
+            return;
+        }
+        $.each(rtn.categories, function(index, item) {
+            $multiselect.append('<option value="' + item.id + '">' + item.name + '</option>').prop('size', 8);
+        });
+        $multiselect.multiselect();
+    }, 'json');
+    <?php } ?>
+
+    $('#categoryPercentOffSubmit').click(function(e) {
+        var data = {};
+        var multiselect_value = [];
+        $('#multiselect_to').find('option').each(function(index, item) {
+            multiselect_value.push($(item).val());
+        });
+        data['category_ids'] = multiselect_value;
+        data['percent_reversed'] = $(':input[name=percent_reversed]').val();
+        $(':input[name=data]').val(JSON.stringify(data));
+        $(this).closest('form').submit();
+    });
+})(jQuery);
+</script>
