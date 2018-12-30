@@ -67,6 +67,9 @@ body {
 .table-content .map .taken {
     background: #FDFF55;
 }
+.table-content .map .taken.all-done {
+    background: #acea9f;
+}
 
 /* pos content */
 #pos-content {

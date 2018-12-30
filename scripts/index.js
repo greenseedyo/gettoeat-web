@@ -56,11 +56,30 @@ var display_table_page = function(){
             continue;
         }
         var item_datas = all_table_datas[table].item_datas || {};
+        var $table_button = $('#table-button-' + $.escapeSelector(table));
+        // 有點餐會變黃色
         if (item_datas.length) {
-            $('#table-button-' + $.escapeSelector(table)).addClass('taken');
+            $table_button.addClass('taken');
+        }
+        // 餐點都出了會變綠色
+        var all_done = isAllDone(table);
+        if (all_done) {
+            $table_button.addClass('all-done');
+        } else {
+            $table_button.removeClass('all-done');
         }
     }
     display_page('table');
+};
+
+var isAllDone = function(table) {
+    var item_datas = all_table_datas[table].item_datas || {};
+    for (i in item_datas) {
+        if ('undone' == item_datas[i].status) {
+            return false;
+        }
+    }
+    return true;
 };
 
 var display_submit_page = function(table){
