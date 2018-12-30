@@ -110,7 +110,7 @@
 
 <script id="tmpl-item-tr" type="text/x-jquery-tmpl">
 <tr class="item" data-price="${price}" id="item-${product_id}" data-product_id="${product_id}">
-    <td class="item-name">
+    <td class="item-name ${status}" data-status="${status}">
         <span>${name}</span>
     </td>
     <td width="30">

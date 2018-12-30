@@ -109,7 +109,8 @@ var saveItemDatas = function(table){
             product_id: $this.data('product_id'),
             name: $this.find('.item-name').text().trim(),
             price: $this.data('price'),
-            amount: parseInt($this.find('.selected-item-amount').text())
+            amount: parseInt($this.find('.selected-item-amount').text()),
+            status: $this.find('.item-name').data('status')
         };
         item_datas.push(data);
     });
@@ -225,7 +226,7 @@ $pos_page.delegate('.list-div button', 'click', function(e){
     var $item_tr = $('#item-' + product_id);
     var name = $this.find('.name').text();
     if (0 === $item_tr.length) {
-        $item_tr = $tmpl_item_tr.tmpl({product_id: product_id, name: name, price: price, amount: 0}).appendTo($all_items);
+        $item_tr = $tmpl_item_tr.tmpl({product_id: product_id, name: name, price: price, amount: 0, status: 'undone'}).appendTo($all_items);
         $all_items.trigger("create");
     }
     amountPlus($item_tr);
@@ -237,10 +238,10 @@ $pos_page.delegate('.list-div button', 'click', function(e){
 $all_items.on('click', '.item-name', function(e){
     e.preventDefault();
     var $this = $(this);
-    if (!$this.data('status')) {
-        $this.data('status', 'done').css('text-decoration', 'line-through').css('background-color', '#DDDDDD');
-    } else if ('done' == $this.data('status')) {
-        $this.data('status', '').css('text-decoration', '').css('background-color', '');
+    if ('done' == $this.data('status')) {
+        $this.data('status', 'undone').addClass('undone').removeClass('done');
+    } else {
+        $this.data('status', 'done').addClass('done').removeClass('undone');
     }
 });
 

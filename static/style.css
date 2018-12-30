@@ -89,6 +89,14 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
+#pos-left-column table tr td.item-name.undone {
+    text-decoration: inherit;
+    background-color: inherit;
+}
+#pos-left-column table tr td.item-name.done {
+    text-decoration: line-through;
+    background-color: #DDDDDD;
+}
 #pos-left-column table tr.thead {
     background-color: #999999;
     color: #ffffff;
