@@ -1,3 +1,10 @@
 <div class="form-group">
     <input type="number" class="form-control" name="price" value="" placeholder="請輸入金額" autocomplete="off" />
 </div>
+<button type="button" class="btn btn-default change-form-inline-button">確定</button>
+
+<script>
+$(function() {
+    $('.change-form-inline-button').closest('form').addClass('form-inline');
+});
+</script>

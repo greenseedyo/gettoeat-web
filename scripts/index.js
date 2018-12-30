@@ -285,35 +285,35 @@ $submit_page.find('.toggle-event').on('change', function(e){
     var $this = $(this);
     var $checkbox = $this.find('input[type=checkbox]');
     var $form = $this.siblings('.form-by-event-id');
+    var table = $submit_page.data('table');
     if (!$checkbox.is(':checked')) {
         $form.text('');
+        refreshCartSubtotal(table);
     } else {
         var id = $checkbox.val();
         var url = '/ajax_get_event_form.php?id=' + id;
-        $form.data('id', id).load(url);
+        $form.data('id', id).load(url, function() {
+            refreshCartSubtotal(table);
+            $(this).find(':input').on('change', function() {
+                refreshCartSubtotal(table);
+            });
+        });
     }
 });
 
-$('#submit_bill').click(function(e){
-    e.preventDefault();
-    var $this = $(this);
-    var custermers = $('.custermers-button.selected').data('value');
-    if ('undefined' == typeof custermers) {
-        alert('請選擇人數');
-        return;
-    }
+var formatCartData = function(table) {
+    var $submit_bill = $('#submit_bill');
+    var custermers = $submit_page.find('.custermers-button.selected').data('value');
     // 暫時只實作單一付款方式
-    var payment_method = $('.payment-method-button.selected').data('value');
-    $this.attr('disabled', 'disabled');
-    var table = $submit_page.data('table');
+    var payment_method = $submit_page.find('.payment-method-button.selected').data('value');
     var event_options = {};
-    $('.toggle-event').each(function(){
-        var $this = $(this);
-        var $checkbox = $this.find('input[type=checkbox]');
+    $submit_page.find('.toggle-event').each(function(){
+        var $item = $(this);
+        var $checkbox = $item.find('input[type=checkbox]');
         if (!$checkbox.is(':checked')) {
             return;
         }
-        var $form = $this.siblings('.form-by-event-id');
+        var $form = $item.siblings('.form-by-event-id');
         var options = {};
         $form.find(':input').each(function(){
             var key = $(this).attr('name');
@@ -321,7 +321,6 @@ $('#submit_bill').click(function(e){
             options[key] = value;
         });
         event_options[$checkbox.val()] = options;
-        $checkbox.prop('checked', false);
     });
     var data = {
         table: table,
@@ -331,12 +330,55 @@ $('#submit_bill').click(function(e){
         item_datas: all_table_datas[table].item_datas,
         ordered_at: all_table_datas[table].ordered_at
     };
-    $('.custermers-button.selected').removeClass('selected');
-    $.post('ajax_submit.php', data, function(rtn){
-        var bill_id = rtn;
-        delete all_table_datas[table];
-        display_bill_page(bill_id);
-        $this.removeAttr('disabled');
+    return data;
+};
+
+var refreshCartSubtotal = function(table) {
+    var url = '/ajax_get_cart_subtotal.php';
+    var data = formatCartData(table);
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: data,
+        beforeSend: function() {
+            var height = $submit_page.find('.subtotal').height();
+            $img = $('<img src="static/images/ajax-loader.gif">').height(height);
+            $subtotal.text('').append($img);
+        },
+        success: function(rtn) {
+            $subtotal.text(rtn);
+        }
+    });
+};
+
+$('#submit_bill').click(function(e) {
+    e.preventDefault();
+    var custermers = $submit_page.find('.custermers-button.selected').data('value');
+    if ('undefined' == typeof custermers) {
+        alert('請選擇人數');
+        return;
+    }
+    var $submit_bill = $(this);
+    var table = $submit_page.data('table');
+    var data = formatCartData(table);
+    $.ajax({
+        url: 'ajax_submit.php',
+        type: 'post',
+        data: data,
+        beforeSend: function() {
+            $submit_page.find('.custermers-button.selected').removeClass('selected');
+            $submit_page.find('.toggle-event label :input[type=checkbox]').prop('checked', false);
+            $submit_page.find('form.form-by-event-id').text('');
+            $submit_bill.attr('disabled', 'disabled');
+        },
+        success: function(rtn) {
+            var bill_id = rtn;
+            delete all_table_datas[table];
+            display_bill_page(bill_id);
+        },
+        complete: function() {
+            $submit_bill.removeAttr('disabled');
+        }
     });
 });
 
