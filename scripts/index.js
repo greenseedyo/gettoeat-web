@@ -271,6 +271,8 @@ $('#to-submit-page').click(function(e){
 $submit_page.find('.back-to-pos').click(function(e){
     e.preventDefault();
     var current_table = $submit_page.data('table');
+    resetSubmitPage();
+    refreshCartSubtotal(current_table);
     display_pos_page(current_table);
 });
 
@@ -333,6 +335,12 @@ var formatCartData = function(table) {
     return data;
 };
 
+var resetSubmitPage = function() {
+    $submit_page.find('.custermers-button.selected').removeClass('selected');
+    $submit_page.find('.toggle-event label :input[type=checkbox]').prop('checked', false);
+    $submit_page.find('form.form-by-event-id').text('');
+}
+
 var refreshCartSubtotal = function(table) {
     var url = '/ajax_get_cart_subtotal.php';
     var data = formatCartData(table);
@@ -366,9 +374,7 @@ $('#submit_bill').click(function(e) {
         type: 'post',
         data: data,
         beforeSend: function() {
-            $submit_page.find('.custermers-button.selected').removeClass('selected');
-            $submit_page.find('.toggle-event label :input[type=checkbox]').prop('checked', false);
-            $submit_page.find('form.form-by-event-id').text('');
+            resetSubmitPage();
             $submit_bill.attr('disabled', 'disabled');
         },
         success: function(rtn) {
