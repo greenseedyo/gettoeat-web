@@ -420,7 +420,7 @@ var adjust_event_checkbox_position = function() {
     var max_width = 0;
     var $labels = $('.toggle-event label');
     $labels.each(function() {
-        let width = $(this).width();
+        var width = $(this).width();
         if (width > max_width) {
             max_width = width;
         }
