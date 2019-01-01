@@ -141,6 +141,10 @@ body {
     text-align:center;
 }
 
+#submit .submit-content hr {
+    width: 100%;
+}
+
 #submit .submit-content button.selected {
     background-color: #FEFF91;
 }
