@@ -3,10 +3,14 @@ GTE.common.initTableGrid($(".table-grid"));
 GTE.common.setMapSize($(".map"));
 var currencySymbol = GTE.currencySymbol || '$';
 
-/* FIXME: localStorage 在 buddyhouse 的老 ipad 瀏覽器上會有一開店就載入前一周資料的 bug */
 var LS = localStorage;
 LS.all_table_datas = LS.all_table_datas || '{}';
-var all_table_datas = $.parseJSON(LS.all_table_datas);
+var all_table_datas;
+try {
+    all_table_datas = $.parseJSON(LS.all_table_datas);
+} catch (err) {
+    all_table_datas = {};
+}
 if ('object' !== typeof all_table_datas || !all_table_datas) {
     all_table_datas = {};
 }
@@ -139,6 +143,7 @@ var saveItemDatas = function(table){
     } else {
         delete all_table_datas[table];
     }
+    saveTablesToLocalStorage();
 };
 
 var setCategoryActive = function($li){
@@ -191,6 +196,7 @@ $('#select-change-table').find('li').on('click', function(e){
     var tmp_data = all_table_datas[table];
     delete all_table_datas[table];
     all_table_datas[new_table] = tmp_data;
+    saveTablesToLocalStorage();
     display_table_page();
 });
 
@@ -400,6 +406,7 @@ $('#submit_bill').click(function(e) {
         success: function(rtn) {
             var bill_id = rtn;
             delete all_table_datas[table];
+            saveTablesToLocalStorage();
             display_bill_page(bill_id);
         },
         complete: function() {
@@ -449,12 +456,12 @@ var adjust_event_checkbox_position = function() {
     $('.toggle-event').siblings('.form-by-event-id').width(max_width);
 };
 
+var saveTablesToLocalStorage = function() {
+    LS.all_table_datas = JSON.stringify(all_table_datas);
+};
+
 $(function(){
     display_table_page();
-});
-
-$(window).on("unload", function(){
-    LS.all_table_datas = JSON.stringify(all_table_datas);
 });
 
 
