@@ -174,6 +174,14 @@ $table_page.delegate('.to-summary-page', 'click', function(e){
     display_summary_page();
 });
 
+$table_page.delegate('.resize-text-increase', 'click', function(e) {
+    resizeText(1, true);
+});
+
+$table_page.delegate('.resize-text-decrease', 'click', function(e) {
+    resizeText(-1, true);
+});
+
 
 /* -------- pos 頁設定 -------- */
 /* 回 table 頁 */
@@ -461,7 +469,31 @@ var saveTablesToLocalStorage = function() {
     LS.all_table_datas = JSON.stringify(all_table_datas);
 };
 
+var resizeText = function(delta, save) {
+    var amount = (delta > 0 ? 1 : -1);
+    for (var i = 0; i < Math.abs(delta); i ++) {
+        $('.resizable').find('*').css('font-size', function() {
+            return parseInt($(this).css('font-size')) + amount + 'px';
+        });
+    }
+    if (true === save) {
+        updateFontSizeToLocalStorage(delta);
+    }
+}
+
+var updateFontSizeToLocalStorage = function(delta) {
+    var ori = LS.fontSizeDelta || 0;
+    var newValue = parseInt(ori) + parseInt(delta);
+    LS.fontSizeDelta = JSON.stringify(newValue);
+};
+
+var initFontSize = function() {
+    var delta = parseInt(LS.fontSizeDelta);
+    resizeText(delta, false);
+}
+
 $(function(){
+    initFontSize();
     display_table_page();
 });
 

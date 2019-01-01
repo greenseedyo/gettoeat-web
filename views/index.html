@@ -29,7 +29,13 @@
             </ul>
         </div>
     </nav>
-    <div class="container table-content">
+    <div class="container resizable table-content">
+        <div id="tools-div">
+            <div class="resize-text">
+                <div class="resize-text-increase"><span class="glyphicon glyphicon-zoom-in"></span></div>
+                <div class="resize-text-decrease"><span class="glyphicon glyphicon-zoom-out"></span></div>
+            </div>
+        </div>
         <div class="map" data-height="<?= intval($total_height) ?>" data-width="<?= intval($total_width) ?>">
             <?php foreach ($tables as $key => $table) { ?>
             <div class="table-grid btn btn-default btn-lg" id="table-button-<?= htmlspecialchars($table->name) ?>"
@@ -55,7 +61,7 @@
         </div>
     </nav>
 
-    <div id="nav-category" class="btn-group btn-group-justified" role="group" aria-label="分類">
+    <div class="btn-group btn-group-justified resizable" id="nav-category" role="group" aria-label="分類">
         <ul class="nav nav-tabs nav-justified">
             <?php foreach ($categories as $category) { ?>
             <li>
@@ -65,7 +71,7 @@
         </ul>
     </div>
 
-    <div id="pos-content">
+    <div class="resizable" id="pos-content">
         <div id="pos-left-column">
             <table width="100%" cellpadding="10" id="all-items">
                 <tr class="thead">
@@ -133,7 +139,7 @@
             <span class="navbar-brand navbar-title"></span>
         </div>
     </nav>
-    <div>
+    <div class="resizable">
         <div class="submit-content">
             <div class="form-group">
                 <div class="form-control-label h2">人數</div>
