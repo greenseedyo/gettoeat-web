@@ -22,6 +22,11 @@ var $summary_page = $('#summary');
 var $tmpl_item_tr = $('#tmpl-item-tr');
 var $all_items = $('#all-items');
 var $subtotal = $('.subtotal');
+var brandTitle = $table_page.find('.navbar-brand').text();
+
+var formatNavbarTitle = function(table) {
+    return brandTitle + " - " + table;
+};
 
 var display_page = function(page_id){
     $('.page').hide();
@@ -34,7 +39,7 @@ var display_pos_page = function(table){
     }
     $pos_page.data('table', table);
     $pos_page.find('tr.item').remove();
-    $pos_page.find('.navbar-title').text(table);
+    $pos_page.find('.navbar-title').text(formatNavbarTitle(table));
     all_table_datas[table] = all_table_datas[table] || {};
     var item_datas = all_table_datas[table].item_datas || {};
     var subtotal = 0;
@@ -88,7 +93,7 @@ var isAllDone = function(table) {
 
 var display_submit_page = function(table){
     $submit_page.data('table', table);
-    $submit_page.find('.navbar-title').text(table);
+    $submit_page.find('.navbar-title').text(formatNavbarTitle(table));
     $submit_page.find('.payment-method-button:eq(0)').click();
     display_page('submit');
     adjust_event_checkbox_position();
@@ -308,6 +313,12 @@ $submit_page.find('.back-to-pos').click(function(e){
     resetSubmitPage();
     refreshCartSubtotal(current_table);
     display_pos_page(current_table);
+});
+
+$submit_page.delegate('.back-to-table', 'click', function(e) {
+    e.preventDefault();
+    resetSubmitPage();
+    display_table_page();
 });
 
 $submit_page.find('.boxed-select').click(function(e){

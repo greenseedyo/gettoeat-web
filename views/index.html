@@ -20,7 +20,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <span class="navbar-brand"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</span>
+            <div class="navbar-brand"><span><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</span></div>
         </div>
         <div id="navbar-menu" class="collapse nav-collapse">
             <ul class="nav navbar-nav">
@@ -57,7 +57,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle navbar-left navbar-btn back-to-table"><span class="glyphicon glyphicon-home"></span></button>
-            <span class="navbar-brand navbar-title"></span>
+            <div class="navbar-brand"><span class="navbar-title back-to-table"></span></div>
         </div>
     </nav>
 
@@ -108,7 +108,7 @@
                     <?php } ?>
                 </ul>
             </div>
-            <span class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></span>
+            <div class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></div>
             <button id="to-submit-page" class="navbar-toggle navbar-btn"><span class="glyphicon glyphicon-usd"></span></button>
         </div>
     </nav>
@@ -136,7 +136,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle navbar-left navbar-btn back-to-pos"><span class="glyphicon glyphicon-chevron-left"></span></button>
-            <span class="navbar-brand navbar-title"></span>
+            <div class="navbar-brand"><span class="navbar-title back-to-table"></span></div>
         </div>
     </nav>
     <div class="resizable">
@@ -185,7 +185,7 @@
     </div>
     <nav class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="navbar-header">
-            <span class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></span>
+            <div class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></div>
             <button type="button" class="navbar-toggle navbar-btn" id="submit_bill"><span class="glyphicon glyphicon-ok"></span></button>
         </div>
     </nav>
