@@ -330,6 +330,7 @@ $submit_page.find('.toggle-event').on('change', function(e){
 });
 
 var formatCartData = function(table) {
+    all_table_datas[table] = all_table_datas[table] || {};
     var $submit_bill = $('#submit_bill');
     var custermers = $submit_page.find('.custermers-button.selected').data('value');
     // 暫時只實作單一付款方式
