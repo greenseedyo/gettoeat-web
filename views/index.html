@@ -20,7 +20,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <span class="navbar-brand"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</span>
+            <div class="navbar-brand"><span><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</span></div>
         </div>
         <div id="navbar-menu" class="collapse nav-collapse">
             <ul class="nav navbar-nav">
@@ -29,7 +29,13 @@
             </ul>
         </div>
     </nav>
-    <div class="container table-content">
+    <div class="container resizable table-content">
+        <div id="tools-div">
+            <div class="resize-text">
+                <div class="resize-text-increase"><span class="glyphicon glyphicon-zoom-in"></span></div>
+                <div class="resize-text-decrease"><span class="glyphicon glyphicon-zoom-out"></span></div>
+            </div>
+        </div>
         <div class="map" data-height="<?= intval($total_height) ?>" data-width="<?= intval($total_width) ?>">
             <?php foreach ($tables as $key => $table) { ?>
             <div class="table-grid btn btn-default btn-lg" id="table-button-<?= htmlspecialchars($table->name) ?>"
@@ -51,11 +57,11 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle navbar-left navbar-btn back-to-table"><span class="glyphicon glyphicon-home"></span></button>
-            <span class="navbar-brand navbar-title"></span>
+            <div class="navbar-brand"><span class="navbar-title back-to-table"></span></div>
         </div>
     </nav>
 
-    <div id="nav-category" class="btn-group btn-group-justified" role="group" aria-label="分類">
+    <div class="btn-group btn-group-justified resizable" id="nav-category" role="group" aria-label="分類">
         <ul class="nav nav-tabs nav-justified">
             <?php foreach ($categories as $category) { ?>
             <li>
@@ -65,7 +71,7 @@
         </ul>
     </div>
 
-    <div id="pos-content">
+    <div class="resizable" id="pos-content">
         <div id="pos-left-column">
             <table width="100%" cellpadding="10" id="all-items">
                 <tr class="thead">
@@ -102,7 +108,7 @@
                     <?php } ?>
                 </ul>
             </div>
-            <span class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></span>
+            <div class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></div>
             <button id="to-submit-page" class="navbar-toggle navbar-btn"><span class="glyphicon glyphicon-usd"></span></button>
         </div>
     </nav>
@@ -130,10 +136,10 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle navbar-left navbar-btn back-to-pos"><span class="glyphicon glyphicon-chevron-left"></span></button>
-            <span class="navbar-brand navbar-title"></span>
+            <div class="navbar-brand"><span class="navbar-title back-to-table"></span></div>
         </div>
     </nav>
-    <div>
+    <div class="resizable">
         <div class="submit-content">
             <div class="form-group">
                 <div class="form-control-label h2">人數</div>
@@ -149,7 +155,7 @@
                     <?php } ?>
                 </div>
             </div>
-            <hr class="col-xs-12">
+            <hr>
             <div class="form-group">
                 <div class="form-control-label h2">折扣選擇</div>
                 <div>
@@ -166,7 +172,7 @@
                     <?php } ?>
                 </div>
             </div>
-            <hr class="col-xs-12">
+            <hr>
             <div class="form-group">
                 <div class="form-control-label h2">付款方式</div>
                 <div class="btn-group-lg" role="group" aria-label="Large button group">
@@ -179,7 +185,7 @@
     </div>
     <nav class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="navbar-header">
-            <span class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></span>
+            <div class="navbar-brand">小計 $ <span class="subtotal" data-value="0"></span></div>
             <button type="button" class="navbar-toggle navbar-btn" id="submit_bill"><span class="glyphicon glyphicon-ok"></span></button>
         </div>
     </nav>

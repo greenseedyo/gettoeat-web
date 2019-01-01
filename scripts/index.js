@@ -3,10 +3,14 @@ GTE.common.initTableGrid($(".table-grid"));
 GTE.common.setMapSize($(".map"));
 var currencySymbol = GTE.currencySymbol || '$';
 
-/* FIXME: localStorage 在 buddyhouse 的老 ipad 瀏覽器上會有一開店就載入前一周資料的 bug */
 var LS = localStorage;
 LS.all_table_datas = LS.all_table_datas || '{}';
-var all_table_datas = $.parseJSON(LS.all_table_datas);
+var all_table_datas;
+try {
+    all_table_datas = $.parseJSON(LS.all_table_datas);
+} catch (err) {
+    all_table_datas = {};
+}
 if ('object' !== typeof all_table_datas || !all_table_datas) {
     all_table_datas = {};
 }
@@ -18,6 +22,11 @@ var $summary_page = $('#summary');
 var $tmpl_item_tr = $('#tmpl-item-tr');
 var $all_items = $('#all-items');
 var $subtotal = $('.subtotal');
+var brandTitle = $table_page.find('.navbar-brand').text();
+
+var formatNavbarTitle = function(table) {
+    return brandTitle + " - " + table;
+};
 
 var display_page = function(page_id){
     $('.page').hide();
@@ -30,7 +39,7 @@ var display_pos_page = function(table){
     }
     $pos_page.data('table', table);
     $pos_page.find('tr.item').remove();
-    $pos_page.find('.navbar-title').text(table);
+    $pos_page.find('.navbar-title').text(formatNavbarTitle(table));
     all_table_datas[table] = all_table_datas[table] || {};
     var item_datas = all_table_datas[table].item_datas || {};
     var subtotal = 0;
@@ -84,7 +93,7 @@ var isAllDone = function(table) {
 
 var display_submit_page = function(table){
     $submit_page.data('table', table);
-    $submit_page.find('.navbar-title').text(table);
+    $submit_page.find('.navbar-title').text(formatNavbarTitle(table));
     $submit_page.find('.payment-method-button:eq(0)').click();
     display_page('submit');
     adjust_event_checkbox_position();
@@ -139,6 +148,7 @@ var saveItemDatas = function(table){
     } else {
         delete all_table_datas[table];
     }
+    saveTablesToLocalStorage();
 };
 
 var setCategoryActive = function($li){
@@ -169,6 +179,14 @@ $table_page.delegate('.to-summary-page', 'click', function(e){
     display_summary_page();
 });
 
+$table_page.delegate('.resize-text-increase', 'click', function(e) {
+    resizeText(1, true);
+});
+
+$table_page.delegate('.resize-text-decrease', 'click', function(e) {
+    resizeText(-1, true);
+});
+
 
 /* -------- pos 頁設定 -------- */
 /* 回 table 頁 */
@@ -191,6 +209,7 @@ $('#select-change-table').find('li').on('click', function(e){
     var tmp_data = all_table_datas[table];
     delete all_table_datas[table];
     all_table_datas[new_table] = tmp_data;
+    saveTablesToLocalStorage();
     display_table_page();
 });
 
@@ -296,6 +315,12 @@ $submit_page.find('.back-to-pos').click(function(e){
     display_pos_page(current_table);
 });
 
+$submit_page.delegate('.back-to-table', 'click', function(e) {
+    e.preventDefault();
+    resetSubmitPage();
+    display_table_page();
+});
+
 $submit_page.find('.boxed-select').click(function(e){
     e.preventDefault();
     var group = $(this).data('group');
@@ -324,6 +349,7 @@ $submit_page.find('.toggle-event').on('change', function(e){
 });
 
 var formatCartData = function(table) {
+    all_table_datas[table] = all_table_datas[table] || {};
     var $submit_bill = $('#submit_bill');
     var custermers = $submit_page.find('.custermers-button.selected').data('value');
     // 暫時只實作單一付款方式
@@ -400,6 +426,7 @@ $('#submit_bill').click(function(e) {
         success: function(rtn) {
             var bill_id = rtn;
             delete all_table_datas[table];
+            saveTablesToLocalStorage();
             display_bill_page(bill_id);
         },
         complete: function() {
@@ -449,12 +476,36 @@ var adjust_event_checkbox_position = function() {
     $('.toggle-event').siblings('.form-by-event-id').width(max_width);
 };
 
-$(function(){
-    display_table_page();
-});
-
-$(window).on("unload", function(){
+var saveTablesToLocalStorage = function() {
     LS.all_table_datas = JSON.stringify(all_table_datas);
+};
+
+var resizeText = function(delta, save) {
+    var amount = (delta > 0 ? 1 : -1);
+    for (var i = 0; i < Math.abs(delta); i ++) {
+        $('.resizable').find('*').css('font-size', function() {
+            return parseInt($(this).css('font-size')) + amount + 'px';
+        });
+    }
+    if (true === save) {
+        updateFontSizeToLocalStorage(delta);
+    }
+}
+
+var updateFontSizeToLocalStorage = function(delta) {
+    var ori = LS.fontSizeDelta || 0;
+    var newValue = parseInt(ori) + parseInt(delta);
+    LS.fontSizeDelta = JSON.stringify(newValue);
+};
+
+var initFontSize = function() {
+    var delta = parseInt(LS.fontSizeDelta);
+    resizeText(delta, false);
+}
+
+$(function(){
+    initFontSize();
+    display_table_page();
 });
 
 

@@ -141,6 +141,10 @@ body {
     text-align:center;
 }
 
+#submit .submit-content hr {
+    width: 100%;
+}
+
 #submit .submit-content button.selected {
     background-color: #FEFF91;
 }
@@ -256,6 +260,22 @@ body {
     height: 50px;
     -webkit-animation: spin 2s linear infinite; /* Safari */
     animation: spin 1s linear infinite;
+}
+
+#tools-div {
+    position: fixed;
+    width: 100%;
+    left: 0px;
+    padding: 10px;
+    text-align: right;
+}
+#tools-div .resize-text {
+    font-size: 20px;
+}
+#tools-div .resize-text div {
+    margin: 10px;
+    display: block;
+    cursor: pointer;
 }
 
 /* Safari */
