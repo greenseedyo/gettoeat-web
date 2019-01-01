@@ -18,16 +18,13 @@ if ('development' == $environment) {
     //$msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U8d06f9b05c23c2e1279dce883a3d3dc5","type":"group"},"timestamp":1541188811207,"message":{"type":"text","id":"8807694197168","text":"今誰收"}}]}';
     //$msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U8d06f9b05c23c2e1279dce883a3d3dc5","type":"group"},"timestamp":1541188811207,"message":{"type":"text","id":"8807694197168","text":"各位 營收匯一下"}}]}';
     // GetToEat
-    //$msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U3ab951088274f21f42a22876e1eabb77","type":"group"},"timestamp":1546247536000,"message":{"type":"text","id":"8807694197168","text":"訂閱demo"}}]}';
-    $msg = '{"events":[{"type":"message","replyToken":"2c0ed637105845f78964419efe51a090","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U3ab951088274f21f42a22876e1eabb77","type":"group"},"timestamp":1541263944809,"message":{"type":"text","id":"8811946762260","text":"本月營收"}}]}';
+    $msg = '{"events":[{"type":"message","replyToken":"ba86ae42f46b4b1c9af51710890da17e","source":{"groupId":"C00cde8174d7577c570eea42d20071654","userId":"U3ab951088274f21f42a22876e1eabb77","type":"group"},"timestamp":1546355372427,"message":{"type":"text","id":"9109996296131","text":"訂閱buddyhouse"}}],"destination":"U7fe7bda5e4ca12e2992b7f3493eaa113"}';
+    //$msg = '{"events":[{"type":"message","replyToken":"ba86ae42f46b4b1c9af51710890da17e","source":{"groupId":"C00cde8174d7577c570eea42d20071654","userId":"U3ab951088274f21f42a22876e1eabb77","type":"group"},"timestamp":1546355372427,"message":{"type":"text","id":"9109996296131","text":"本月營收"}}],"destination":"U7fe7bda5e4ca12e2992b7f3493eaa113"}';
 } else {
     $msg = file_get_contents('php://input');
 }
 
-if (!$msg) {
-    echo 'no message.';
-    exit;
-}
+echo "message: {$msg}\n";
 
 function getTotalSales($store, $start_date, $end_date)
 {
@@ -114,7 +111,9 @@ case 'message':
         }
         break;
     }
-    $store = $line_bot_chat->store;
+    if (!$store = $line_bot_chat->store) {
+        break;
+    }
     if (strstr($text, '本月') and strstr($text, '收')) {
         $start_date = date('Y-m-01');
         $end_date = date('Y-m-d');
@@ -146,15 +145,19 @@ case 'leave':
 
 if ($reply_message) {
     if ('development' == $environment) {
-        $result = $line_bot_chat->pushMessage($reply_message);
-        print_r($result);
+        $response = $line_bot_chat->pushMessage($reply_message);
     } else {
-        $line_bot_chat->replyMessage($reply_token, $reply_message);
+        $response = $line_bot_chat->replyMessage($reply_token, $reply_message);
     }
 }
 
 if ($push_message) {
-    $line_bot_chat->pushMessage($push_message);
+    $response = $line_bot_chat->pushMessage($push_message);
 }
 
-echo 'ok';
+if (200 != $response->getHttpStatus()) {
+    // TODO: save log
+    echo print_r($response);
+} else {
+    echo "ok\n";
+}
