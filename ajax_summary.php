@@ -1,21 +1,35 @@
 <?php
 require_once 'config.php';
 require_once(ROOT_DIR . '/helpers/ShiftHelper.php');
+require_once(ROOT_DIR . '/helpers/payment_methods.php');
+
+use Helpers\PaymentMethodFactory;
 
 $store = Store::getByAccount($_SESSION['store_account']);
 if (!$store instanceof StoreRow) {
     die('找不到此帳號');
 }
 
-$today_sales = $store->getTodayPaidBills()->sum('price');
+$t = new Bill;
+$today_bills = $store->getTodayPaidBills();
+$today_sales = $today_bills->sum('price');
+$today_bill_ids = $today_bills->toArray('id');
+$today_payment_method_items = PaymentMethodFactory::getAllItems();
+foreach ($today_payment_method_items as $item) {
+    $filtered_bills = $today_bills->filterByPaymentMethodKey($item->getKey());
+    $payment_method_sum = $filtered_bills->sum('price');
+    $item->setProperty('sum', $payment_method_sum);
+}
+
 $previous_shift = $store->shifts->search(1)->order('created_at DESC')->first();
 if ($previous_shift) {
     $now = time();
     $bills = $store->bills->search("`paid_at` BETWEEN {$previous_shift->created_at} AND {$now}");
 } else {
-    $bills = $store->getTodayPaidBills();
+    $bills = $today_bills;
 }
-$sales = $bills->sum('price');
+$cash_sales = $bills->filterByPaymentMethodKey(Store::PAYMENT_METHOD_CASH)->sum('price');
+
 $previous_float = $previous_shift ? $previous_shift->getFloat() : "";
 
 $staff_names = $store->getCurrentStaffs()->toArray('name');

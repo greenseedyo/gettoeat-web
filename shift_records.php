@@ -18,7 +18,7 @@ foreach ($shifts as $shift) {
     $dataset = array(
         'id' => $shift->id,
         'business_date' => $business_date,
-        'sales' => $shift->sales,
+        'cash_sales' => $shift->cash_sales,
         'open_amount' => $shift->open_amount,
         'close_amount' => $shift->close_amount,
         'paid_in' => $shift->paid_in,

@@ -511,8 +511,8 @@ $(function(){
 
 /* -------- summary page -------- */
 var summaryPage = {
-    getSalesValue: function() {
-        return parseFloat($('#sales').text().substr(1)) || 0;
+    getCashSalesValue: function() {
+        return parseFloat($('#cash_sales').text().substr(1)) || 0;
     },
 
     getOpenAmountValue: function() {
@@ -532,11 +532,11 @@ var summaryPage = {
     },
 
     getExpectedAmount: function() {
-        var sales = summaryPage.getSalesValue();
+        var cash_sales = summaryPage.getCashSalesValue();
         var open_amount = summaryPage.getOpenAmountValue();
         var paid_in = summaryPage.getPaidInValue();
         var paid_out = summaryPage.getPaidOutValue();
-        return open_amount + sales + paid_in - paid_out;
+        return open_amount + cash_sales + paid_in - paid_out;
     },
 
     getDifferenceValue: function() {
@@ -651,6 +651,7 @@ var summaryPage = {
 
     getConfirmSummaryContent: function() {
         var confirm_content = "==確認關帳資訊==\n";
+        confirm_content += ("應關帳金額: " + currencySymbol + summaryPage.getCashSalesValue().toString() + "\n");
         confirm_content += ("錢櫃初始金額: " + currencySymbol + summaryPage.getOpenAmountValue().toString() + "\n");
         confirm_content += ("錢櫃實際現金: " + currencySymbol + summaryPage.getCloseAmountValue().toString() + "\n");
         confirm_content += ("臨時支出: " + currencySymbol + summaryPage.getPaidOutValue().toString() + "\n");

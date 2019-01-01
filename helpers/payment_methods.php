@@ -75,7 +75,6 @@ class PaymentMethodItem
 {
     private $key;
     private $name;
-    private $amount;
     private $texts = array();
 
     public function __construct($data)
@@ -83,7 +82,6 @@ class PaymentMethodItem
         $this->key = $data['key'];
         $this->name = $data['name'];
         $this->texts = $data['texts'];
-        $this->amount = $data['amount'] ?: null;
     }
 
     public function getKey(): string
@@ -99,5 +97,15 @@ class PaymentMethodItem
     public function getText(string $country_code = 'tw'): string
     {
         return $this->texts[$country_code];
+    }
+
+    public function setProperty($name, $value)
+    {
+        $this->{$name} = $value;
+    }
+
+    public function getProperty($name)
+    {
+        return $this->{$name};
     }
 }

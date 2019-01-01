@@ -4,9 +4,21 @@ class BillRow extends Pix_Table_Row
 {
 }
 
+class BillResultSet extends Pix_Table_ResultSet
+{
+    public function filterByPaymentMethodKey($key): self
+    {
+        $bill_ids = $this->toArray('id');
+        $bill_payments = BillPayment::search(1)->searchIn('bill_id', $bill_ids)->search(array('payment_method' => $key));
+        $matched_bill_ids = $bill_payments->toArray('bill_id');
+        return $this->searchIn('id', $matched_bill_ids);
+    }
+}
+
 class Bill extends Pix_Table
 {
     public $_rowClass = 'BillRow';
+    public $_resultSetClass = 'BillResultSet';
 
     public function init()
     {

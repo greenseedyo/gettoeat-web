@@ -8,7 +8,7 @@ ALTER TABLE `bill_discount` ADD `title` varchar(255) NOT NULL DEFAULT ''
     ";
     $link->query($sql);
 }
-alterTable();
+alterTable($link);
 
 function addPastTitles()
 {

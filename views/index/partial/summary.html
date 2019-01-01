@@ -7,7 +7,25 @@
 
 <div class="container">
     <h1>關帳</h1>
-    <h2>營業資訊</h2>
+    <h2>本日營業額資訊</h2>
+    <form class="form-horizontal">
+        <?php foreach ($today_payment_method_items as $item) { ?>
+        <div class="form-group form-group-lg">
+            <label class="col-sm-2 control-label"><?= htmlspecialchars($item->getText('tw')) ?></label>
+            <div class="col-sm-10">
+                <p class="form-control-static"><?= htmlspecialchars($currency_symbol) ?><?= floatval($item->getProperty('sum')) ?></p>
+            </div>
+        </div>
+        <?php } ?>
+        <div class="form-group form-group-lg">
+            <label class="col-sm-2 control-label">總和</label>
+            <div class="col-sm-10">
+                <p class="form-control-static"><?= htmlspecialchars($currency_symbol) ?><?= floatval($today_sales) ?></p>
+            </div>
+        </div>
+    </form>
+
+    <h2>未關帳資訊</h2>
     <form class="form-horizontal">
         <div class="form-group form-group-lg">
             <label class="col-sm-2 control-label">前次關帳時間</label>
@@ -16,15 +34,9 @@
             </div>
         </div>
         <div class="form-group form-group-lg">
-            <label class="col-sm-2 control-label">本日營業額</label>
+            <label class="col-sm-2 control-label text-danger">累積未關帳現金</label>
             <div class="col-sm-10">
-                <p class="form-control-static"><?= htmlspecialchars($currency_symbol) ?><?= floatval($today_sales) ?></p>
-            </div>
-        </div>
-        <div class="form-group form-group-lg">
-            <label class="col-sm-2 control-label text-danger">累積未關帳金額</label>
-            <div class="col-sm-10">
-                <p class="form-control-static text-danger" id="sales"><?= htmlspecialchars($currency_symbol) ?><?= floatval($sales) ?></p>
+                <p class="form-control-static text-danger" id="cash_sales"><?= htmlspecialchars($currency_symbol) ?><?= floatval($cash_sales) ?></p>
             </div>
         </div>
     </form>
@@ -115,7 +127,7 @@
         </div>
         <div class="form-group form-group-lg">
             <div class="col-sm-offset-2 col-sm-10">
-                <input type="hidden" name="sales" value="<?= floatval($sales) ?>">
+                <input type="hidden" name="cash_sales" value="<?= floatval($cash_sales) ?>">
                 <button type="button" class="btn btn-default" id="submit_summary">確認</button>
             </div>
         </div>

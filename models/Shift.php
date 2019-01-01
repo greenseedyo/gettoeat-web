@@ -26,9 +26,9 @@ class ShiftRow extends Pix_Table_Row
         $datetime->setTimestamp($this->created_at);
         $start_at = $this->store->getDayStartAt($datetime);
         $date = date('Y-m-d', $start_at);
-        $today_sales = $this->store->getTodayPaidBills($datetime)->sum('price');
+        $today_cash_sales = $this->store->getTodayPaidBills($datetime)->filterByPaymentMethodKey(Store::PAYMENT_METHOD_CASH)->sum('price');
         $msg = sprintf("[%s關帳資訊]%s", $date, PHP_EOL);
-        $msg .= sprintf("本日營收: %s%s", $today_sales, PHP_EOL);
+        $msg .= sprintf("本日營收: %s%s", $today_cash_sales, PHP_EOL);
         $msg .= sprintf("關帳時間: %s%s", date('Y-m-d H:i:s', $this->created_at), PHP_EOL);
         $msg .= sprintf("錢櫃初始金額: %s%s%s", $currency_symbol, $this->open_amount, PHP_EOL);
         $msg .= sprintf("錢櫃實際現金: %s%s%s", $currency_symbol, $this->close_amount, PHP_EOL);
@@ -61,7 +61,7 @@ class ShiftRow extends Pix_Table_Row
 
     public function getExpectedAmount()
     {
-        return $this->open_amount + $this->sales + $this->paid_in - $this->paid_out;
+        return $this->open_amount + $this->cash_sales + $this->paid_in - $this->paid_out;
     }
 
     public function getDifference()
@@ -127,7 +127,7 @@ class Shift extends Pix_Table
 
         $this->_columns['id'] = array('type' => 'int', 'auto_increment' => true, 'unsigned' => true);
         $this->_columns['store_id'] = array('type' => 'int', 'unsigned' => true);
-        $this->_columns['sales'] = array('type' => 'double', 'unsigned' => true);
+        $this->_columns['cash_sales'] = array('type' => 'double', 'unsigned' => true);
         $this->_columns['open_amount'] = array('type' => 'double', 'unsigned' => true);
         $this->_columns['close_amount'] = array('type' => 'double', 'unsigned' => true);
         $this->_columns['paid_in'] = array('type' => 'double', 'unsigned' => true);
