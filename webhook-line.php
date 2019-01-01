@@ -13,13 +13,13 @@ $store = null;
 
 if ('development' == $environment) {
     // Buddyhouse
-    $msg = '{"events":[{"type":"join","replyToken":"6cc68fd121f54d3ca479fb63c55f4f32","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","type":"group"},"timestamp":1541224257292}]}';
+    //$msg = '{"events":[{"type":"join","replyToken":"6cc68fd121f54d3ca479fb63c55f4f32","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","type":"group"},"timestamp":1541224257292}]}';
     //$msg = '{"events":[{"type":"message","replyToken":"2c0ed637105845f78964419efe51a090","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U8d06f9b05c23c2e1279dce883a3d3dc5","type":"group"},"timestamp":1541263944809,"message":{"type":"text","id":"8811946762260","text":"本月營收"}}]}';
     //$msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U8d06f9b05c23c2e1279dce883a3d3dc5","type":"group"},"timestamp":1541188811207,"message":{"type":"text","id":"8807694197168","text":"今誰收"}}]}';
     //$msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U8d06f9b05c23c2e1279dce883a3d3dc5","type":"group"},"timestamp":1541188811207,"message":{"type":"text","id":"8807694197168","text":"各位 營收匯一下"}}]}';
     // GetToEat
     //$msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U3ab951088274f21f42a22876e1eabb77","type":"group"},"timestamp":1546247536000,"message":{"type":"text","id":"8807694197168","text":"訂閱demo"}}]}';
-    //$msg = '{"events":[{"type":"message","replyToken":"2c0ed637105845f78964419efe51a090","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U3ab951088274f21f42a22876e1eabb77","type":"group"},"timestamp":1541263944809,"message":{"type":"text","id":"8811946762260","text":"本月營收"}}]}';
+    $msg = '{"events":[{"type":"message","replyToken":"2c0ed637105845f78964419efe51a090","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U3ab951088274f21f42a22876e1eabb77","type":"group"},"timestamp":1541263944809,"message":{"type":"text","id":"8811946762260","text":"本月營收"}}]}';
 } else {
     $msg = file_get_contents('php://input');
 }
