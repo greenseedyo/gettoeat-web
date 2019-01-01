@@ -37,10 +37,12 @@ $mysqli->connect($db_config['host'], $db_config['user'], $db_config['password'],
 $mysqli->set_charset("utf8");
 Pix_Table::setDefaultDb(new Pix_Table_Db_Adapter_Mysqli($mysqli));
 
+// FIXME: 變數包到物件裡，不要裸露在外以免撞名
 $store_account = explode('.', $_SERVER['HTTP_HOST'])[0];
 $_SESSION['store_account'] = $store_account;
+$reserved_domains = array('api');
 
-if ($store_account) {
+if ($store_account and !in_array($store_account, $reserved_domains)) {
     $store = Store::getByAccount($_SESSION['store_account']);
     if (!$store instanceof StoreRow) {
         die('找不到此帳號');

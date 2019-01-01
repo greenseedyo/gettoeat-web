@@ -15,7 +15,13 @@ class LineBotChatRow extends Pix_Table_Row
 
     public function getBotClient()
     {
-        $config = json_decode(GAV::find('line-bot-config')->value);
+        if (4 == $this->store_id) {
+            // Buddyhouse 先不動
+            $gav_key = 'line-bot-config';
+        } else {
+            $gav_key = 'line-bot-config-gettoeat';
+        }
+        $config = json_decode(GAV::find($gav_key)->value);
         $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($config->access_token);
         $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $config->channel_secret]);
         return $bot;
@@ -35,6 +41,11 @@ class LineBotChatRow extends Pix_Table_Row
         $builder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message);
         $result = $bot->replyMessage($reply_token, $builder);
         return $result;
+    }
+
+    public function setStore(StoreRow $store)
+    {
+        $this->update(array('store_id' => $store->id));
     }
 }
 

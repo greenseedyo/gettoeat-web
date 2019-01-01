@@ -1,12 +1,25 @@
 <?php
 require_once 'config.php';
 require_once(ROOT_DIR . '/helpers/StatHelper.php');
+if (php_sapi_name() == "cli") {
+    // FIXME: 應該要用 api，但現在只有 buddyhouse.gettoeat.com 有 ssl 憑證
+    $store_account = 'buddyhouse';
+}
+// FIXME: 應該要用 api，但現在只有 buddyhouse.gettoeat.com 有 ssl 憑證
+if ('buddyhouse' !== $store_account) {
+    die();
+}
+$store = null;
 
 if ('development' == $environment) {
-    //$msg = '{"events":[{"type":"join","replyToken":"6cc68fd121f54d3ca479fb63c55f4f32","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","type":"group"},"timestamp":1541224257292}]}';
+    // Buddyhouse
+    $msg = '{"events":[{"type":"join","replyToken":"6cc68fd121f54d3ca479fb63c55f4f32","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","type":"group"},"timestamp":1541224257292}]}';
     //$msg = '{"events":[{"type":"message","replyToken":"2c0ed637105845f78964419efe51a090","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U8d06f9b05c23c2e1279dce883a3d3dc5","type":"group"},"timestamp":1541263944809,"message":{"type":"text","id":"8811946762260","text":"本月營收"}}]}';
     //$msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U8d06f9b05c23c2e1279dce883a3d3dc5","type":"group"},"timestamp":1541188811207,"message":{"type":"text","id":"8807694197168","text":"今誰收"}}]}';
-    $msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U8d06f9b05c23c2e1279dce883a3d3dc5","type":"group"},"timestamp":1541188811207,"message":{"type":"text","id":"8807694197168","text":"各位 營收匯一下"}}]}';
+    //$msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U8d06f9b05c23c2e1279dce883a3d3dc5","type":"group"},"timestamp":1541188811207,"message":{"type":"text","id":"8807694197168","text":"各位 營收匯一下"}}]}';
+    // GetToEat
+    //$msg = '{"events":[{"type":"message","replyToken":"c1633358289645e79aa0b9bd34195513","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U3ab951088274f21f42a22876e1eabb77","type":"group"},"timestamp":1546247536000,"message":{"type":"text","id":"8807694197168","text":"訂閱demo"}}]}';
+    //$msg = '{"events":[{"type":"message","replyToken":"2c0ed637105845f78964419efe51a090","source":{"groupId":"Cfd0e257d93a9346c5ba7a48d2f4caae1","userId":"U3ab951088274f21f42a22876e1eabb77","type":"group"},"timestamp":1541263944809,"message":{"type":"text","id":"8811946762260","text":"本月營收"}}]}';
 } else {
     $msg = file_get_contents('php://input');
 }
@@ -79,9 +92,8 @@ case 'room':
     break;
 }
 
-$line_bot_chat = $store->getLineBotChat($source_type, $source_id);
-if (!$line_bot_chat) {
-    $line_bot_chat = $store->create_line_bot_chats(array('source_type' => $source_type, 'source_id' => $source_id));
+if (!$line_bot_chat = LineBotChat::getBySource($source_type, $source_id)) {
+    $line_bot_chat = LineBotChat::insert(array('source_type' => $source_type, 'source_id' => $source_id));
 }
 
 $reply_token = $event->replyToken ?: null;
@@ -89,11 +101,17 @@ $reply_token = $event->replyToken ?: null;
 switch ($event_type) {
 case 'join':
     $line_bot_chat->update(array('joined_at' => time()));
+    $reply_message = '請輸入"訂閱+您的帳號"，例:"訂閱store123"';
     break;
 case 'message':
     $message = $event->message;
     $text = $message->text;
-    if (!$line_bot_chat = LineBotChat::getBySource($source_type, $source_id)) {
+    if (preg_match('/^訂閱(.*)$/', $text, $matches)) {
+        $account = trim($matches[1]);
+        if ($store = Store::getByAccount($account)) {
+            $reply_message = "訂閱 {$store->name} 成功";
+            $line_bot_chat->setStore($store);
+        }
         break;
     }
     $store = $line_bot_chat->store;
@@ -128,7 +146,8 @@ case 'leave':
 
 if ($reply_message) {
     if ('development' == $environment) {
-        $line_bot_chat->pushMessage($reply_message);
+        $result = $line_bot_chat->pushMessage($reply_message);
+        print_r($result);
     } else {
         $line_bot_chat->replyMessage($reply_token, $reply_message);
     }

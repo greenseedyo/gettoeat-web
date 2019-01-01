@@ -203,7 +203,7 @@ class Store extends Pix_Table
 
     const PAYMENT_METHODS_DELIMITER = ',';
 
-    public static function getByAccount($account)
+    public static function getByAccount(string $account)
     {
         return self::search(array('account' => $account))->first();
     }
