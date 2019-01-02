@@ -26,9 +26,11 @@ class ShiftRow extends Pix_Table_Row
         $datetime->setTimestamp($this->created_at);
         $start_at = $this->store->getDayStartAt($datetime);
         $date = date('Y-m-d', $start_at);
+        $today_sales = $this->store->getTodayPaidBills($datetime)->sum('price');
         $today_cash_sales = $this->store->getTodayPaidBills($datetime)->filterByPaymentMethodKey(Store::PAYMENT_METHOD_CASH)->sum('price');
         $msg = sprintf("[%s關帳資訊]%s", $date, PHP_EOL);
-        $msg .= sprintf("本日營收: %s%s", $today_cash_sales, PHP_EOL);
+        $msg .= sprintf("本日營收: %s%s", $today_sales, PHP_EOL);
+        $msg .= sprintf("現金帳: %s%s", $today_cash_sales, PHP_EOL);
         $msg .= sprintf("關帳時間: %s%s", date('Y-m-d H:i:s', $this->created_at), PHP_EOL);
         $msg .= sprintf("錢櫃初始金額: %s%s%s", $currency_symbol, $this->open_amount, PHP_EOL);
         $msg .= sprintf("錢櫃實際現金: %s%s%s", $currency_symbol, $this->close_amount, PHP_EOL);
