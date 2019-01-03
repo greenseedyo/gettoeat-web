@@ -61,6 +61,10 @@
                         <input type="text" class="form-control" name="name" value="" placeholder="請輸入人員名稱" />
                     </div>
                     <div class="form-group">
+                        <label>人員代碼</label>
+                        <input type="text" class="form-control" name="code" value="" placeholder="請輸入四位數字" />
+                    </div>
+                    <div class="form-group">
                         <label>聯絡電話 (非必填)</label>
                         <input type="text" class="form-control" name="phone" value="" placeholder="請輸入聯絡電話" />
                     </div>
@@ -167,15 +171,19 @@
                 <form id="form-edit-staff" method="post">
                     <div class="form-group">
                         <label>人員名稱</label>
-                        <input type="text" class="form-control" name="name" placeholder="請輸入人員名稱" value="<?= htmlspecialchars($staff->name) ?>" /><br>
+                        <input type="text" class="form-control" name="name" placeholder="請輸入人員名稱" value="<?= htmlspecialchars($staff->name) ?>" />
+                    </div>
+                    <div class="form-group">
+                        <label>人員代碼</label>
+                        <input type="text" class="form-control" name="code" value="<?= htmlspecialchars($staff->code) ?>" placeholder="請輸入四位數字" />
                     </div>
                     <div class="form-group">
                         <label>聯絡電話 (非必填)</label>
-                        <input type="text" class="form-control" name="phone" value="<?= htmlspecialchars($staff->phone) ?>" placeholder="請輸入聯絡電話" /><br>
+                        <input type="text" class="form-control" name="phone" value="<?= htmlspecialchars($staff->phone) ?>" placeholder="請輸入聯絡電話" />
                     </div>
                     <div class="form-group">
                         <label>Email (非必填)</label>
-                        <input type="text" class="form-control" name="email" value="<?= htmlspecialchars($staff->email) ?>" placeholder="請輸入 Email" /><br>
+                        <input type="text" class="form-control" name="email" value="<?= htmlspecialchars($staff->email) ?>" placeholder="請輸入 Email" />
                     </div>
                     <div class="form-group">
                         <input type="submit" class="btn btn-default" value="更新" />

@@ -19,6 +19,8 @@ var $pos_page = $('#pos');
 var $submit_page = $('#submit');
 var $bill_page = $('#bill');
 var $summary_page = $('#summary');
+var $punch_page = $('#punch');
+
 var $tmpl_item_tr = $('#tmpl-item-tr');
 var $all_items = $('#all-items');
 var $subtotal = $('.subtotal');
@@ -129,6 +131,11 @@ var display_summary_page = function(){
     });
 };
 
+var display_punch_page = function(){
+    resetPunchPage();
+    display_page('punch');
+};
+
 var saveItemDatas = function(table){
     var item_datas = [];
     $all_items.find('tr.item').each(function(){
@@ -177,6 +184,11 @@ $table_page.delegate('.to-bill-page', 'click', function(e){
 $table_page.delegate('.to-summary-page', 'click', function(e){
     e.preventDefault();
     display_summary_page();
+});
+
+$table_page.delegate('.to-punch-page', 'click', function(e){
+    e.preventDefault();
+    display_punch_page();
 });
 
 $table_page.delegate('.resize-text-increase', 'click', function(e) {
@@ -321,13 +333,6 @@ $submit_page.delegate('.back-to-table', 'click', function(e) {
     display_table_page();
 });
 
-$submit_page.find('.boxed-select').click(function(e){
-    e.preventDefault();
-    var group = $(this).data('group');
-    $('.boxed-select').filter('[data-group=' + group + ']').removeClass('selected');
-    $(this).addClass('selected');
-});
-
 $submit_page.find('.toggle-event').on('change', function(e){
     var $this = $(this);
     var $checkbox = $this.find('input[type=checkbox]');
@@ -346,6 +351,13 @@ $submit_page.find('.toggle-event').on('change', function(e){
             });
         });
     }
+});
+
+$('body').delegate('.boxed-select', 'click', function(e){
+    e.preventDefault();
+    var group = $(this).data('group');
+    $('.boxed-select').filter('[data-group=' + group + ']').removeClass('selected');
+    $(this).addClass('selected');
 });
 
 var formatCartData = function(table) {
@@ -385,6 +397,15 @@ var resetSubmitPage = function() {
     $submit_page.find('.custermers-button.selected').removeClass('selected');
     $submit_page.find('.toggle-event label :input[type=checkbox]').prop('checked', false);
     $submit_page.find('form.form-by-event-id').text('');
+}
+
+var resetPunchPage = function() {
+    $punch_page.find('.boxed-select').removeClass('selected');
+    $punch_page.find('form').each(function(i, el) {
+        el.reset();
+    });
+    $punch_page.find('#punch_staff_code').show();
+    $punch_page.find('#punch_form').hide();
 }
 
 var refreshCartSubtotal = function(table) {
@@ -770,4 +791,20 @@ $summary_page.delegate('#submit_summary', 'click', function(e) {
         $this.prop('disabled', false);
         display_table_page();
     });
+});
+
+$punch_page.find('.back-to-table').click(function(e) {
+    e.preventDefault();
+    display_table_page();
+});
+
+$punch_page.find('.numpad-num').click(function() {
+    var $num = $(this);
+    var text = $.trim($num.find('.numpad-txt').text());
+    var $tel = $('.numpad-tel');
+    $tel.val($tel.val() + text);
+    if (4 === $tel.val().length) {
+        $('#punch_staff_code').hide();
+        $('#punch_form').show();
+    }
 });

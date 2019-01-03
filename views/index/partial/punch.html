@@ -1,0 +1,88 @@
+
+<div class="page" id="punch" style="display:none;">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar-header">
+	    <button type="button" class="navbar-toggle navbar-left navbar-btn back-to-table"><span class="glyphicon glyphicon-home"></span></button>
+	    <div class="navbar-brand"><span class="back-to-table"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</span></div>
+	</div>
+    </nav>
+
+    <div class="container">
+	<div class="punch-step-div" id="punch_staff_code">
+	    <div class="col-md-12 numpad-phone">
+                <div class="form-group">
+                    <form>
+                        <input type="tel" name="name" class="form-control numpad-tel" value="" placeholder="請輸入人員代碼" readonly />
+                        <button type="reset" class="btn btn-default btn-md">清除</button>
+                    </form>
+                </div>
+		<div class="numpad">
+		    <div class="numpad-span4">
+			<div class="numpad-num">
+			    <div class="numpad-txt">1</div>
+			</div>
+		    </div>
+		    <div class="numpad-span4">
+			<div class="numpad-num">
+			    <div class="numpad-txt">2</div>
+			</div>
+		    </div>
+		    <div class="numpad-span4">
+			<div class="numpad-num">
+			    <div class="numpad-txt">3</div>
+			</div>
+		    </div>
+		    <div class="numpad-span4">
+			<div class="numpad-num">
+			    <div class="numpad-txt">4</div>
+			</div>
+		    </div>
+		    <div class="numpad-span4">
+			<div class="numpad-num">
+			    <div class="numpad-txt">5</div>
+			</div>
+		    </div>
+		    <div class="numpad-span4">
+			<div class="numpad-num">
+			    <div class="numpad-txt">6</div>
+			</div>
+		    </div>
+		    <div class="numpad-span4">
+			<div class="numpad-num">
+			    <div class="numpad-txt">7</div>
+			</div>
+		    </div>
+		    <div class="numpad-span4">
+			<div class="numpad-num">
+			    <div class="numpad-txt">8</div>
+			</div>
+		    </div>
+		    <div class="numpad-span4">
+			<div class="numpad-num">
+			    <div class="numpad-txt">9</div>
+			</div>
+		    </div>
+		    <div class="numpad-span4 numpad-span4-zero">
+			<div class="numpad-num">
+			    <div class="numpad-txt">0</div>
+			</div>
+		    </div>
+		</div>
+	    </div>
+	</div>
+
+	<div class="punch-step-div" id="punch_form">
+            <div class="staff-name"></div>
+            <form>
+                <div class="form-group">
+                    <button class="btn btn-default boxed-select punch-type-button" data-group="punch-type" data-value="<?= intval(PunchLog::TYPE_IN) ?>">上班</button>
+                    <button class="btn btn-default boxed-select punch-type-button" data-group="punch-type" data-value="<?= intval(PunchLog::TYPE_OUT) ?>">下班</button>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default btn-block btn-block btn-primary">打卡</button>
+                </div>
+                <input type="hidden" name="code" value="" />
+            </form>
+        </div>
+    </div>
+</div> 
