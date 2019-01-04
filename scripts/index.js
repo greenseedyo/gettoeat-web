@@ -801,10 +801,40 @@ $punch_page.find('.back-to-table').click(function(e) {
 $punch_page.find('.numpad-num').click(function() {
     var $num = $(this);
     var text = $.trim($num.find('.numpad-txt').text());
-    var $tel = $('.numpad-tel');
-    $tel.val($tel.val() + text);
-    if (4 === $tel.val().length) {
-        $('#punch_staff_code').hide();
-        $('#punch_form').show();
-    }
+    var $code = $num.closest('form').find(':input[name=code]');
+    $code.val($code.val() + text);
 });
+
+$punch_page.find('form[name=code]').submit(function(e) {
+    e.preventDefault();
+    var code = $(this).find(':input[name=code]').val();
+    $('#punch_staff_code').hide();
+    $('#punch_form').show();
+    $('#punch_form').find(':input[name=code]').val(code);
+    var url = '/ajax_get_staff_name_by_code.php?code=' + code;
+    $('#punch_form').find('.staff-name').load(url, function(rtn) {
+        if ('' == rtn) {
+            $(this).text('人員代碼有誤');
+        }
+    });
+});
+
+$punch_page.find('#punch_form').submit(function(e) {
+    e.preventDefault();
+    $form = $(this);
+    var data = {
+        type: $form.find('button.punch-type-button.selected').data('value'),
+        code: $form.find(':input[name=code]').val()
+    };
+    var url = '/ajax_punch.php';
+    $.post(url, data, function(rtn) {
+        if (rtn.msg) {
+            alert(rtn.msg);
+        }
+        if (rtn.error) {
+            return;
+        }
+        $punch_page.find('.back-to-table').click();
+    }, 'json');
+});
+

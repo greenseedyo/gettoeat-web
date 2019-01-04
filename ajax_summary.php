@@ -5,11 +5,6 @@ require_once(ROOT_DIR . '/helpers/payment_methods.php');
 
 use Helpers\PaymentMethodFactory;
 
-$store = Store::getByAccount($_SESSION['store_account']);
-if (!$store instanceof StoreRow) {
-    die('找不到此帳號');
-}
-
 $t = new Bill;
 $today_bills = $store->getTodayPaidBills();
 $today_sales = $today_bills->sum('price');

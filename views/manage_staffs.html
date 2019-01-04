@@ -62,7 +62,7 @@
                     </div>
                     <div class="form-group">
                         <label>人員代碼</label>
-                        <input type="text" class="form-control" name="code" value="" placeholder="請輸入四位數字" />
+                        <input type="text" class="form-control" name="code" value="" placeholder="請輸入 1 至 10 位數字" />
                     </div>
                     <div class="form-group">
                         <label>聯絡電話 (非必填)</label>
@@ -175,7 +175,7 @@
                     </div>
                     <div class="form-group">
                         <label>人員代碼</label>
-                        <input type="text" class="form-control" name="code" value="<?= htmlspecialchars($staff->code) ?>" placeholder="請輸入四位數字" />
+                        <input type="text" class="form-control" name="code" value="<?= htmlspecialchars($staff->code) ?>" placeholder="請輸入 1 至 10 位數字" />
                     </div>
                     <div class="form-group">
                         <label>聯絡電話 (非必填)</label>
@@ -198,13 +198,43 @@
 </div>
 
 <script>
-$('#form-add-staff, #form-edit-staff').submit(function(e){
-    var name = $(this).find('input[name=name]').val();
-    if ("" === name) {
-        alert('請輸入人員名稱');
-        e.preventDefault();
+$('form').submit(function(e) {
+    e.preventDefault();
+    var $form = $(this);
+
+    var err_msg = '';
+    if ($form.is('#form-add-staff, #form-edit-staff')) {
+        var name = $form.find(':input[name=name]').val();
+        if ("" === name) {
+            err_msg = '請輸入人員名稱';
+        }
+        var code = $form.find(':input[name=code]').val();
+        if ('' !== code && !code.match(/^\d{1,10}$/)) {
+            err_msg = '代碼請輸入 1 至 10 位數字';
+        }
+    }
+
+    if ('' !== err_msg) {
+        alert(err_msg);
         return;
     }
+
+    var url = '/ajax_manage_staffs.php';
+    var data = $form.serializeArray();
+    $.post(url, data, function(rtn) {
+        if (rtn.msg) {
+            alert(rtn.msg);
+        }
+        if (rtn.error) {
+            return;
+        }
+        // FIXME: redirect_to 應該要在前端生
+        if (!!rtn.redirect_to) {
+            window.location.href = rtn.redirect_to;
+        } else {
+            window.location.reload();
+        }
+    }, 'json');
 });
 </script>
 </body>

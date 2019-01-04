@@ -10,78 +10,82 @@
     <div class="container">
 	<div class="punch-step-div" id="punch_staff_code">
 	    <div class="col-md-12 numpad-phone">
-                <div class="form-group">
-                    <form>
-                        <input type="tel" name="name" class="form-control numpad-tel" value="" placeholder="請輸入人員代碼" readonly />
+                <form name="code">
+                    <div class="form-group">
+                        <input type="tel" name="code" class="form-control numpad-tel" value="" placeholder="請輸入人員代碼" readonly />
                         <button type="reset" class="btn btn-default btn-md">清除</button>
-                    </form>
-                </div>
-		<div class="numpad">
-		    <div class="numpad-span4">
-			<div class="numpad-num">
-			    <div class="numpad-txt">1</div>
-			</div>
-		    </div>
-		    <div class="numpad-span4">
-			<div class="numpad-num">
-			    <div class="numpad-txt">2</div>
-			</div>
-		    </div>
-		    <div class="numpad-span4">
-			<div class="numpad-num">
-			    <div class="numpad-txt">3</div>
-			</div>
-		    </div>
-		    <div class="numpad-span4">
-			<div class="numpad-num">
-			    <div class="numpad-txt">4</div>
-			</div>
-		    </div>
-		    <div class="numpad-span4">
-			<div class="numpad-num">
-			    <div class="numpad-txt">5</div>
-			</div>
-		    </div>
-		    <div class="numpad-span4">
-			<div class="numpad-num">
-			    <div class="numpad-txt">6</div>
-			</div>
-		    </div>
-		    <div class="numpad-span4">
-			<div class="numpad-num">
-			    <div class="numpad-txt">7</div>
-			</div>
-		    </div>
-		    <div class="numpad-span4">
-			<div class="numpad-num">
-			    <div class="numpad-txt">8</div>
-			</div>
-		    </div>
-		    <div class="numpad-span4">
-			<div class="numpad-num">
-			    <div class="numpad-txt">9</div>
-			</div>
-		    </div>
-		    <div class="numpad-span4 numpad-span4-zero">
-			<div class="numpad-num">
-			    <div class="numpad-txt">0</div>
-			</div>
-		    </div>
-		</div>
+                    </div>
+                    <div class="numpad">
+                        <div class="numpad-span4">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">1</div>
+                            </div>
+                        </div>
+                        <div class="numpad-span4">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">2</div>
+                            </div>
+                        </div>
+                        <div class="numpad-span4">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">3</div>
+                            </div>
+                        </div>
+                        <div class="numpad-span4">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">4</div>
+                            </div>
+                        </div>
+                        <div class="numpad-span4">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">5</div>
+                            </div>
+                        </div>
+                        <div class="numpad-span4">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">6</div>
+                            </div>
+                        </div>
+                        <div class="numpad-span4">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">7</div>
+                            </div>
+                        </div>
+                        <div class="numpad-span4">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">8</div>
+                            </div>
+                        </div>
+                        <div class="numpad-span4">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">9</div>
+                            </div>
+                        </div>
+                        <div class="numpad-span4 numpad-span4-zero">
+                            <div class="numpad-num">
+                                <div class="numpad-txt">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-default btn-block btn-block btn-success">確定</button>
+                </form>
 	    </div>
 	</div>
 
 	<div class="punch-step-div" id="punch_form">
-            <div class="staff-name"></div>
+            <div>
+                <div>人員名稱</div>
+                <div class="staff-name"></div>
+            </div>
             <form>
                 <div class="form-group">
-                    <button class="btn btn-default boxed-select punch-type-button" data-group="punch-type" data-value="<?= intval(PunchLog::TYPE_IN) ?>">上班</button>
-                    <button class="btn btn-default boxed-select punch-type-button" data-group="punch-type" data-value="<?= intval(PunchLog::TYPE_OUT) ?>">下班</button>
+                    <button type="button" class="btn btn-default boxed-select punch-type-button" data-group="punch-type" data-value="<?= intval(PunchLog::TYPE_IN) ?>">上班</button>
+                    <button type="button" class="btn btn-default boxed-select punch-type-button" data-group="punch-type" data-value="<?= intval(PunchLog::TYPE_OUT) ?>">下班</button>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-default btn-block btn-block btn-primary">打卡</button>
+                    <input type="hidden" name="code" value="" />
+                    <button type="submit" class="btn btn-default btn-block btn-block btn-success">打卡</button>
                 </div>
-                <input type="hidden" name="code" value="" />
             </form>
         </div>
     </div>
