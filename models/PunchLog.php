@@ -39,6 +39,11 @@ class PunchLog extends Pix_Table
     }
 
     const TYPE_IN = 1;
-    const TYPE_OUT = 1;
+    const TYPE_OUT = 2;
 }
 
+
+// FIXME: 找個地方放 exceptions
+class PunchDuplicatedException extends Exception
+{
+}

@@ -40,7 +40,7 @@ class StaffRow extends Pix_Table_Row
     {
         $ip_helper = new Helpers\IpHelper();
         $client_ip = $ip_helper->getClientLongIp();
-        // TODO: 檢查本日是否已打過卡
+        $this->checkPunchByType($type);
         $data = array(
             'type' => $type,
             'timestamp' => time(),
@@ -48,6 +48,18 @@ class StaffRow extends Pix_Table_Row
             'updated_from' => $client_ip,
         );
         $this->create_punch_logs($data);
+    }
+
+    private function checkPunchByType($type)
+    {
+        $store = $this->store;
+        $datetime = new Datetime('now');
+        $start_at = $store->getDayStartAt($datetime);
+        $end_at = $store->getDayEndAt($datetime);
+        $punch_logs = $this->punch_logs->search("`timestamp` BETWEEN {$start_at} AND {$end_at} AND `type` = {$type}");
+        if ($punch_logs->first()) {
+            throw new PunchDuplicatedException;
+        }
     }
 }
 
@@ -78,6 +90,7 @@ class Staff extends Pix_Table
 
         $this->_relations['group'] = array('rel' => 'has_one', 'type' => 'StaffGroup', 'foreign_key' => 'group_id');
         $this->_relations['punch_logs'] = array('rel' => 'has_many', 'type' => 'PunchLog', 'foreign_key' => 'staff_id');
+        $this->_relations['store'] = array('rel' => 'has_one', 'type' => 'Store', 'foreign_key' => 'store_id');
     }
 
     public static function getByStoreIdAndCode(int $store_id, string $code): ?StaffRow

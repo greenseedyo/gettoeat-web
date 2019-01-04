@@ -15,7 +15,7 @@ $error = false;
 try {
     $staff->punch($_POST['type']);
     $msg = '打卡完成';
-} catch (PunchLogRepeatedException $e) {
+} catch (PunchDuplicatedException $e) {
     $error = true;
     $msg = '重複打卡';
 }
