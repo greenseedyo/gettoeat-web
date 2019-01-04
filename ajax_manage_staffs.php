@@ -51,7 +51,7 @@ if ($_POST) {
     }
 
     $rtn = array(
-        'error' => false,
+        'error' => $error,
         'msg' => $msg,
         'redirect_to' => $redirect_to,
     );
