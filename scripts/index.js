@@ -814,9 +814,20 @@ $punch_page.find('form[name=code]').submit(function(e) {
     var url = '/ajax_get_staff_name_by_code.php?code=' + code;
     $('#punch_form').find('.staff-name').load(url, function(rtn) {
         if ('' == rtn) {
-            $(this).text('人員代碼有誤');
+            $(this).addClass('bg-danger').text('人員代碼有誤');
+            $('#punch_form').find('button[name=back]').show();
+            $('#punch_form').find('form').hide();
+        } else {
+            $(this).removeClass('bg-danger');
+            $('#punch_form').find('button[name=back]').hide();
+            $('#punch_form').find('form').show();
         }
     });
+});
+
+$punch_page.find('#punch_form').find('button[name=back]').click(function(e) {
+    e.preventDefault();
+    resetPunchPage();
 });
 
 $punch_page.find('#punch_form').submit(function(e) {
