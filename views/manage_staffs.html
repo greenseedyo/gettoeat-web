@@ -221,7 +221,9 @@ $('form').submit(function(e) {
 
     var url = '/ajax_manage_staffs.php';
     var data = $form.serializeArray();
+    $form.find('button[type=submit]').prop('disabled', true);
     $.post(url, data, function(rtn) {
+        $form.find('button[type=submit]').prop('disabled', false);
         if (rtn.msg) {
             alert(rtn.msg);
         }
