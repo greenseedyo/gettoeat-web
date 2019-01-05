@@ -1,6 +1,5 @@
 <?php
 require_once 'config.php';
-require_once(ROOT_DIR . '/helpers/StatHelper.php');
 
 $topic = $_GET['topic'] ?: 'overview';
 $start_date = $_GET['start_date'] ?: date('Y-m-d', strtotime('-28days'));

@@ -36,7 +36,7 @@ default:
     exit;
 }
 
-$helper = new StatHelper($store);
+$helper = new Helpers\StatHelper($store);
 $helper->setTopic($topic);
 $helper->setInterval($period_interval);
 $helper->setStartDatetime($start_datetime);

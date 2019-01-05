@@ -1,4 +1,12 @@
 <?php
+namespace Helpers;
+
+use StoreRow;
+use Datetime;
+use DateInterval;
+use BillDiscount;
+use BillItem;
+use Exception;
 
 class StatHelper
 {
