@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title><?= htmlspecialchars($store->nickname) ?> 統計數據</title>
+    <?php include(VIEWS_DIR . "/include/static_common.html"); ?>
+    <?php include(VIEWS_DIR . "/statistics/include_static.html"); ?>
+</head>
+
+<body>
+<?php include(VIEWS_DIR . "/include/manage_nav.html"); ?>
+
+<div class="container">
+    <div>
+        <h1><?= htmlspecialchars($store->nickname) ?> 統計數據</h1>
+    </div>
+    <?php include(VIEWS_DIR . "/statistics/include_subnav.html"); ?>
+    <?php include(VIEWS_DIR . "/statistics/include_main.html"); ?>
+</div>
+
+<script>
+var chart;
+var highchart = function(renderTo, title, categories, yAxisTitle, datasets) {
+    var series = [];
+    var totals = {};
+    for (let stat_item in datasets) {
+        dataset = datasets[stat_item];
+        for (let index in dataset) {
+            totals[index] = totals[index] || 0;
+            totals[index] += dataset[index];
+        }
+    }
+    for (let stat_item in datasets) {
+        dataset = datasets[stat_item];
+        let formatted_dataset = [];
+        for (let index in dataset) {
+            let value = dataset[index];
+            let percentage = '--';
+            if (totals[index] > 0) {
+                percentage = (value / totals[index] * 100).toFixed(2);
+            }
+            formatted_dataset.push({y: value, percentage: percentage});
+        }
+        series.push({
+            name: stat_item,
+            data: formatted_dataset
+        });
+    }
+    var char_options = {
+        chart: {
+            renderTo: renderTo
+        },
+        title: {
+            text: title,
+            x: -20 //center
+        },
+        subtitle: {
+            text: '',
+            x: -20
+        },
+        xAxis: {
+            categories: categories
+        },
+        yAxis: {
+            title: {
+                text: yAxisTitle
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true,
+                    formatter: function() {
+                        if ('金額' === yAxisTitle) {
+                            return '$' + this.y;
+                        } else {
+                            return this.y;
+                        }
+                    }
+                }
+            }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y} ({point.percentage}%)</b><br/>',
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+        series: series
+    };
+
+    chart = new Highcharts.Chart(char_options);
+};
+
+var renderByAjaxRtn = function(renderTo, rtn) {
+    var $value_chart_div = $('<div>').appendTo('#' + renderTo).prop('id', renderTo + '_value');
+    var $count_chart_div = $('<div>').appendTo('#' + renderTo).prop('id', renderTo + '_count');
+    var value_chart = rtn['付款方式金額統計'];
+    var count_chart = rtn['付款方式次數統計'];
+    highchart(
+        $value_chart_div.prop('id'),
+        value_chart.title,
+        value_chart.xAxisCategories,
+        '金額',
+        value_chart.datasets
+    );
+    highchart(
+        $count_chart_div.prop('id'),
+        count_chart.title,
+        count_chart.xAxisCategories,
+        '次數',
+        count_chart.datasets
+    );
+}
+</script>
+</body>
+</html>
+

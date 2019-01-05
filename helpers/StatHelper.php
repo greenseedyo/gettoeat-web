@@ -1,11 +1,13 @@
 <?php
 namespace Helpers;
+require_once(ROOT_DIR . '/helpers/payment_methods.php');
 
 use StoreRow;
 use Datetime;
 use DateInterval;
 use BillDiscount;
 use BillItem;
+use BillPayment;
 use Exception;
 
 class StatHelper
@@ -48,6 +50,8 @@ class StatHelper
             return $this->getCustomersStatResult();
         case 'event':
             return $this->getEventStatResult();
+        case 'payment_method':
+            return $this->getPaymentMethodStatResult();
         case 'overview':
         default:
             return $this->getOverviewStatResult();
@@ -298,6 +302,45 @@ class StatHelper
                 $event_title = $event_titles[$bill_discount->event_id];
                 $value_dataset[$event_title] += $bill_discount->value;
                 $quantity_dataset[$event_title] += 1;
+            }
+            $value_chart->append($period_name, $value_dataset);
+            $quantity_chart->append($period_name, $quantity_dataset);
+
+            $tmp_start_datetime = $tmp_end_datetime;
+        }
+
+        return $stat_result;
+    }
+
+    private function getPaymentMethodStatResult(): StatResult
+    {
+        if (!isset($this->interval)) {
+            throw new StatHelperException('interval not set');
+        }
+
+        $payment_method_texts = PaymentMethodFactory::getAllTexts('tw');
+
+        $stat_result = new StatResult();
+        $stat_items = $payment_method_texts;
+        $value_chart = $stat_result->createChart('付款方式金額統計', $stat_items);
+        $quantity_chart = $stat_result->createChart('付款方式次數統計', $stat_items);
+
+        while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
+            $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
+            $tmp_start_at = $tmp_start_datetime->getTimestamp();
+            $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            $tmp_end_at = $tmp_end_datetime->getTimestamp();
+            $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
+            $value_dataset = array_fill_keys($stat_items, 0);
+            $quantity_dataset = array_fill_keys($stat_items, 0);
+
+            $bill_ids = $this->store->bills->search("`ordered_at` BETWEEN {$tmp_start_at} AND {$tmp_end_at}")->toArray('id');
+            $bill_payments = BillPayment::search(1)->searchIn('bill_id', $bill_ids);
+
+            foreach ($bill_payments as $key => $bill_payment) {
+                $payment_method_text = $payment_method_texts[$bill_payment->payment_method];
+                $value_dataset[$payment_method_text] += $bill_payment->amount;
+                $quantity_dataset[$payment_method_text] += 1;
             }
             $value_chart->append($period_name, $value_dataset);
             $quantity_chart->append($period_name, $quantity_dataset);
