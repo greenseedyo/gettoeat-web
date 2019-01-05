@@ -25,7 +25,7 @@ foreach ($shifts as $shift) {
         'paid_out' => $shift->paid_out,
         'expected_amount' => $shift->getExpectedAmount(),
         'difference' => $shift->getDifference(),
-        'adjustment_type_text' => ShiftHelper::getAdjustmentTypeText($shift->adjustment_type),
+        'adjustment_type_text' => Helpers\ShiftHelper::getAdjustmentTypeText($shift->adjustment_type),
         'adjustment_amount' => $shift->adjustment_amount,
         'adjustment_by' => $shift->getAdjustmentByInText() ?: '老闆 (未設定)',
         'float' => $shift->getFloat(),

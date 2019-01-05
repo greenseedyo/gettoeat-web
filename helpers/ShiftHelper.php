@@ -1,4 +1,7 @@
 <?php
+namespace Helpers;
+
+use Shift;
 
 class ShiftHelper
 {

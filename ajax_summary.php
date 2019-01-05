@@ -4,6 +4,7 @@ require_once(ROOT_DIR . '/helpers/ShiftHelper.php');
 require_once(ROOT_DIR . '/helpers/payment_methods.php');
 
 use Helpers\PaymentMethodFactory;
+use Helpers\ShiftHelper;
 
 $t = new Bill;
 $today_bills = $store->getTodayPaidBills();
