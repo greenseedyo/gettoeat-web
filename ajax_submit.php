@@ -2,11 +2,6 @@
 header('Content-type: text/json');
 require_once 'config.php';
 
-$store = Store::getByAccount($_SESSION['store_account']);
-if (!$store instanceof StoreRow) {
-    die('找不到此帳號');
-}
-
 $ordered_at = substr($_POST['ordered_at'], 0, 10);
 if (date('H', $ordered_at) > $store->getDateChangeAt()) {
     $date = strtotime('today', $ordered_at);

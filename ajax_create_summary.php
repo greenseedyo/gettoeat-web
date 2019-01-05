@@ -2,11 +2,6 @@
 header('Content-type: text/json');
 require_once 'config.php';
 
-$store = Store::getByAccount($_SESSION['store_account']);
-if (!$store instanceof StoreRow) {
-    die('找不到此帳號');
-}
-
 // 營收取出金額不可超過錢櫃實際現金
 if (Shift::ADJUSTMENT_TAKEOUT === $_POST['adjustment_type']
     and $_POST['adjustment_amount'] > $_POST['close_amount']) {

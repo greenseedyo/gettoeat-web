@@ -2,11 +2,6 @@
 header('Content-type: text/json');
 require_once 'config.php';
 
-$store = Store::getByAccount($_SESSION['store_account']);
-if (!$store instanceof StoreRow) {
-    die('找不到此帳號');
-}
-
 $cashier = $store->getCashier();
 
 $item_datas = $_POST['item_datas'];
