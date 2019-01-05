@@ -13,6 +13,13 @@ class BillResultSet extends Pix_Table_ResultSet
         $matched_bill_ids = $bill_payments->toArray('bill_id');
         return $this->searchIn('id', $matched_bill_ids);
     }
+
+    public function getPaymentMethods(): Pix_Table_ResultSet
+    {
+        $bill_ids = $this->toArray('id');
+        $bill_payments = BillPayment::search(1)->searchIn('bill_id', $bill_ids);
+        return $bill_payments;
+    }
 }
 
 class Bill extends Pix_Table

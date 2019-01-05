@@ -1,4 +1,5 @@
 <?php
+require_once(ROOT_DIR . '/helpers/payment_methods.php');
 
 class ShiftRow extends Pix_Table_Row
 {
@@ -22,16 +23,39 @@ class ShiftRow extends Pix_Table_Row
     public function formatMessage()
     {
         $currency_symbol = $this->getCurrencySymbol();
+
+        // 關帳日期
         $datetime = new Datetime();
         $datetime->setTimestamp($this->created_at);
         $start_at = $this->store->getDayStartAt($datetime);
-        $date = date('Y-m-d', $start_at);
-        $today_sales = $this->store->getTodayPaidBills($datetime)->sum('price');
-        $today_cash_sales = $this->store->getTodayPaidBills($datetime)->filterByPaymentMethodKey(Store::PAYMENT_METHOD_CASH)->sum('price');
+        $date = date('Y/m/d', $start_at);
+
+        // 撈出至前次關帳之間的訂單
+        $previous_shift = $this->store->shifts->after($this)->order('created_at DESC')->first();
+        if ($previous_shift) {
+            $now = time();
+            $shift_bills = $this->store->bills->search("`paid_at` BETWEEN {$previous_shift->created_at} AND {$this->created_at}");
+        } else {
+            $shift_bills = $this->store->getTodayPaidBills($datetime);
+        }
+
+        // 撈出各付款方式金額
+        $all_payment_method_keys = array_unique($shift_bills->getPaymentMethods()->toArray('payment_method'));
+        $factory = new Helpers\PaymentMethodFactory;
+        $payment_method_items = $factory->getItemsByKeys($all_payment_method_keys);
+        foreach ($payment_method_items as $item) {
+            $method_total = $shift_bills->filterByPaymentMethodKey($item->getKey())->sum('price');
+            $item->setProperty('total', $method_total);
+        }
+        $start_time = date('m/d H:i', $previous_shift->created_at);
+        $end_time = date('m/d H:i', $this->created_at);
+
         $msg = sprintf("[%s關帳資訊]%s", $date, PHP_EOL);
-        $msg .= sprintf("本日營收: %s%s", $today_sales, PHP_EOL);
-        $msg .= sprintf("現金帳: %s%s", $today_cash_sales, PHP_EOL);
-        $msg .= sprintf("關帳時間: %s%s", date('Y-m-d H:i:s', $this->created_at), PHP_EOL);
+        $msg .= sprintf("關帳時間: %s - %s%s", $start_time, $end_time, PHP_EOL);
+        $msg .= sprintf("總營收: %s%s%s", $currency_symbol, $shift_bills->sum('price'), PHP_EOL);
+        foreach ($payment_method_items as $item) {
+            $msg .= sprintf("%s: %s%s%s", $item->getText('tw'), $currency_symbol, $item->getProperty('total'), PHP_EOL);
+        }
         $msg .= sprintf("錢櫃初始金額: %s%s%s", $currency_symbol, $this->open_amount, PHP_EOL);
         $msg .= sprintf("錢櫃實際現金: %s%s%s", $currency_symbol, $this->close_amount, PHP_EOL);
         $msg .= sprintf("臨時支出: %s%s%s", $currency_symbol, $this->paid_out, PHP_EOL);
