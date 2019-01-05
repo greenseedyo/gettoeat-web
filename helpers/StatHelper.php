@@ -347,6 +347,8 @@ class StatHelper
 
             $tmp_start_datetime = $tmp_end_datetime;
         }
+        $value_chart->removeEmptyDatasets();
+        $quantity_chart->removeEmptyDatasets();
 
         return $stat_result;
     }
@@ -390,6 +392,22 @@ class StatChart
         $this->stat_items = $stat_items;
         foreach ($stat_items as $stat_item) {
             $this->datasets[$stat_item] = array();
+        }
+    }
+
+    public function removeEmptyDatasets()
+    {
+        foreach ($this->datasets as $key => $dataset) {
+            $is_empty = true;
+            foreach ($dataset as $data) {
+                if ($data != 0) {
+                    $is_empty = false;
+                    break;
+                }
+            }
+            if ($is_empty) {
+                unset($this->datasets[$key]);
+            }
         }
     }
 
