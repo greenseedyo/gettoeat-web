@@ -19,10 +19,12 @@ switch ($_GET['period']) {
 case 'hourly':
     $period_interval = new DateInterval('PT1H');
     $limit_interval = new DateInterval('P1W');
+    $limit_hint = "一週";
     break;
 case 'daily':
     $period_interval = new DateInterval('P1D');
     $limit_interval = new DateInterval('P1Y');
+    $limit_hint = "一年";
     break;
 case 'weekly':
     $period_interval = new DateInterval('P1W');
@@ -37,14 +39,14 @@ case 'throughout':
     $period_interval = $start_datetime->diff($end_datetime);
     break;
 default:
-    echo json_encode(array('error' => true, 'msg' => '請選擇統計周期'));
+    echo json_encode(array('error' => true, 'msg' => '請選擇統計週期'));
     exit;
 }
 
 $limit_datetime = clone $start_datetime;
 $limit_datetime = $limit_datetime->add($limit_interval);
 if (isset($limit_interval) and $limit_datetime < $end_datetime) {
-    echo json_encode(array('error' => true, 'msg' => '請縮小日期範圍或增加統計周期'));
+    echo json_encode(array('error' => true, 'msg' => "請縮小日期範圍 (最多{$limit_hint})"));
     exit;
 }
 

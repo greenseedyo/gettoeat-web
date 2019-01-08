@@ -16,7 +16,7 @@ default:
     $valid_periods = array(
         'hourly' => '一小時',
         'daily' => '一天',
-        'weekly' => '一周',
+        'weekly' => '一週',
         'monthly' => '一月',
         'yearly' => '一年',
         'throughout' => '加總',
