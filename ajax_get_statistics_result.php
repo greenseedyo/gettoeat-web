@@ -18,12 +18,12 @@ if ($start_datetime >= $end_datetime) {
 switch ($_GET['period']) {
 case 'hourly':
     $period_interval = new DateInterval('PT1H');
-    $limit_interval = new DateInterval('P1W');
+    $limit_interval = new DateInterval('P8D');  // 連今天算8天
     $limit_hint = "一週";
     break;
 case 'daily':
     $period_interval = new DateInterval('P1D');
-    $limit_interval = new DateInterval('P1Y');
+    $limit_interval = new DateInterval('P1Y1M');  // 連本月算13個月
     $limit_hint = "一年";
     break;
 case 'weekly':
