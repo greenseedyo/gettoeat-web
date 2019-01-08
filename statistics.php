@@ -14,6 +14,7 @@ case 'product':
     break;
 default:
     $valid_periods = array(
+        'hourly' => '一小時',
         'daily' => '一天',
         'weekly' => '一周',
         'monthly' => '一月',
