@@ -107,7 +107,7 @@ class StatHelper
         }
 
         $stat_result = new StatResult();
-        $count_stat_chart = $stat_result->createChart('來客數統計', array('總來客數'));
+        $count_stat_chart = $stat_result->createChart('來客數統計', array('總來客數', '結帳次數'));
         $avg_stat_chart = $stat_result->createChart('平均客單價', array('平均客單價'));
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
@@ -118,6 +118,7 @@ class StatHelper
             $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
 
             $bills = $this->store->bills->search("`ordered_at` BETWEEN {$tmp_start_at} AND {$tmp_end_at}");
+            $bills_count = intval($bills->count());
             $customers_sum = $bills->sum('custermers');
             $price_sum = $bills->sum('price');
             $avg_price = 0;
@@ -125,7 +126,7 @@ class StatHelper
                 $avg_price = round($price_sum / $customers_sum, 2);
             }
 
-            $dataset = array('總來客數' => $customers_sum);
+            $dataset = array('總來客數' => $customers_sum, '結帳次數' => $bills_count);
             $count_stat_chart->append($period_name, $dataset);
             $dataset = array('平均客單價' => $avg_price);
             $avg_stat_chart->append($period_name, $dataset);

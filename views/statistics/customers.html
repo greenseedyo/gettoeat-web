@@ -23,9 +23,16 @@
 var chart;
 var highchart = function(renderTo, title, categories, count_datasets, avg_datasets) {
     var series = [];
-    series.push({ type: 'column',
+    series.push({
+        type: 'column',
         name: '總來客數',
+        yAxis: 0,
         data: count_datasets['總來客數']
+    }, {
+        type: 'column',
+        name: '結帳次數',
+        yAxis: 0,
+        data: count_datasets['結帳次數']
     }, {
         type: 'line',
         name: '平均客單價',
@@ -52,7 +59,7 @@ var highchart = function(renderTo, title, categories, count_datasets, avg_datase
         },
         yAxis: [{
             title: {
-                text: '人次'
+                text: '數量'
             },
             labels: {
                 style: {
@@ -105,7 +112,7 @@ var renderByAjaxRtn = function(renderTo, rtn) {
     var xAxisCategories = count_chart.xAxisCategories;
     highchart(
         renderTo,
-        '總來客數與平均客單價',
+        '來客統計',
         xAxisCategories,
         count_chart.datasets,
         avg_chart.datasets
