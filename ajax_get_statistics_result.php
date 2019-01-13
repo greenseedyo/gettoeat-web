@@ -43,11 +43,13 @@ default:
     exit;
 }
 
-$limit_datetime = clone $start_datetime;
-$limit_datetime = $limit_datetime->add($limit_interval);
-if (isset($limit_interval) and $limit_datetime < $end_datetime) {
-    echo json_encode(array('error' => true, 'msg' => "請縮小日期範圍 (最多{$limit_hint})"));
-    exit;
+if (isset($limit_interval)) {
+    $limit_datetime = clone $start_datetime;
+    $limit_datetime = $limit_datetime->add($limit_interval);
+    if ($limit_datetime < $end_datetime) {
+        echo json_encode(array('error' => true, 'msg' => "請縮小日期範圍 (最多{$limit_hint})"));
+        exit;
+    }
 }
 
 $helper = new Helpers\StatHelper($store);
