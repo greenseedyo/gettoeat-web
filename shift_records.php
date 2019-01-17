@@ -2,7 +2,7 @@
 require_once 'config.php';
 require_once(ROOT_DIR . '/helpers/ShiftHelper.php');
 
-$start_date = $_GET['start_date'] ?: date('Y-m-d', strtotime('-28days'));
+$start_date = $_GET['start_date'] ?: date('Y-m-01');
 $end_date = $_GET['end_date'] ?: date('Y-m-d', strtotime('today'));
 
 $day_change_interval = new DateInterval("PT{$store->getDateChangeAt()}H");
