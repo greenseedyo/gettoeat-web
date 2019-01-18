@@ -20,9 +20,11 @@ class StaffRow extends Pix_Table_Row
 
     public function preInsert($changed_fields = null)
     {
-        $same_code_staff = Staff::getByStoreIdAndCode($this->store_id, $this->code);
-        if ($same_code_staff and $same_code_staff->id != $this->id) {
-            throw new StaffCodeRepeatedException;
+        if ($this->code) {
+            $same_code_staff = Staff::getByStoreIdAndCode($this->store_id, $this->code);
+            if ($same_code_staff and $same_code_staff->id != $this->id) {
+                throw new StaffCodeRepeatedException;
+            }
         }
     }
 
