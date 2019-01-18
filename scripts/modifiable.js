@@ -1,5 +1,6 @@
 (function($) {
     $.fn.modifiable = function(arguments) {
+        var arguments = arguments || {};
         var $obj = $(this);
         var type = $obj.data('type');
         var text = $obj.data('text');
@@ -44,9 +45,9 @@
                     }
                 });
             });
-            if ('number' === type) {
+            if ('number' === type || 'text' === type) {
                 $('<input>').prop({
-                    type: 'number',
+                    type: type,
                     name: 'value',
                     value: oriText,
                     style: "width: " + $obj.width() + "px"
