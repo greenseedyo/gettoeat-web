@@ -41,6 +41,13 @@
                 </div>
             </div>
             <div class="form-group form-group-lg">
+                <label for="preset" class="col-sm-2 control-label"></label>
+                <div class="col-sm-10">
+                    <button class="btn btn-default btn-sm date-preset" data-preset="this-month">本月</button>
+                    <button class="btn btn-default btn-sm date-preset" data-preset="last-month">上月</button>
+                </div>
+            </div>
+            <div class="form-group form-group-lg">
                 <div class="col-sm-offset-2 col-sm-10">
                     <button type="submit" class="btn btn-default">送出</button>
                 </div>
@@ -73,6 +80,7 @@
     </div>
 </div>
 
+<script type="text/javascript" src="/scripts/date-preset.js?v=<?= STATIC_VERSION ?>"></script>
 <script>
 $('.datepicker').datepicker({
     format: 'yyyy-mm-dd',
@@ -80,4 +88,9 @@ $('.datepicker').datepicker({
     todayHighlight: true,
     zIndexOffset: 2000
 });
+
+var $form = $('#stat-form');
+var $startDate = $form.find(':input[name=start_date]');
+var $endDate = $form.find(':input[name=end_date]');
+$('.date-preset').datePreset($startDate, $endDate);
 </script>

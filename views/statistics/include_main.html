@@ -14,16 +14,16 @@
         </div>
         <div class="form-group form-group-lg">
             <label for="preset" class="col-sm-2 control-label"></label>
-            <div class="col-sm-10 date-presets">
-                <button class="btn btn-default btn-sm" data-preset="today">今天</button>
-                <button class="btn btn-default btn-sm" data-preset="yesterday">昨天 </button>
-                <button class="btn btn-default btn-sm" data-preset="this-month">本月</button>
-                <button class="btn btn-default btn-sm" data-preset="last-month">上月</button>
-                <button class="btn btn-default btn-sm" data-preset="this-year">今年</button>
-                <button class="btn btn-default btn-sm" data-preset="last-year">去年</button>
-                <button class="btn btn-default btn-sm" data-preset="recent-7-days">最近7天</button>
-                <button class="btn btn-default btn-sm" data-preset="recent-30-days">最近30天</button>
-                <button class="btn btn-default btn-sm" data-preset="recent-12-months">最近12個月</button>
+            <div class="col-sm-10">
+                <button class="btn btn-default btn-sm date-preset" data-preset="today">今天</button>
+                <button class="btn btn-default btn-sm date-preset" data-preset="yesterday">昨天 </button>
+                <button class="btn btn-default btn-sm date-preset" data-preset="this-month">本月</button>
+                <button class="btn btn-default btn-sm date-preset" data-preset="last-month">上月</button>
+                <button class="btn btn-default btn-sm date-preset" data-preset="this-year">今年</button>
+                <button class="btn btn-default btn-sm date-preset" data-preset="last-year">去年</button>
+                <button class="btn btn-default btn-sm date-preset" data-preset="recent-7-days">最近7天</button>
+                <button class="btn btn-default btn-sm date-preset" data-preset="recent-30-days">最近30天</button>
+                <button class="btn btn-default btn-sm date-preset" data-preset="recent-12-months">最近12個月</button>
             </div>
         </div>
         <div class="form-group form-group-lg">
@@ -46,6 +46,7 @@
     <div id="stat-chart"></div>
 </div>
 
+<script type="text/javascript" src="/scripts/date-preset.js?v=<?= STATIC_VERSION ?>"></script>
 <script>
 var period = <?= json_encode($selected_period) ?>;
 
@@ -85,19 +86,6 @@ var addSerializedArrayToUrlParameters = function(url, serializedArray, preserver
     return new_url;
 };
 
-var formatDate = function(dateObj) {
-    var year = dateObj.getFullYear();
-    var month = dateObj.getMonth() + 1;
-    var date = dateObj.getDate();
-    if (date < 10) {
-        date = "0" + date;
-    }
-    if (month < 10) {
-        month = "0" + month;
-    }
-    return year + "-" + month + "-" + date;
-};
-
 $('#stat-form').submit(function(e) {
     e.preventDefault();
     $form = $(this);
@@ -119,67 +107,16 @@ $('#stat-form').submit(function(e) {
     }, 'json');
 });
 
-$('.date-presets').find('button').click(function(e) {
-    e.preventDefault();
-    var preset = $(this).data('preset');
-    var $form = $('#stat-form');
-    var $startDate = $form.find(':input[name=start_date]');
-    var $endDate = $form.find(':input[name=end_date]');
-    var startDateObj, endDateObj;
-    var startDateString, endDateString;
-    var todayObj = new Date;
-    switch (preset) {
-        case 'today':
-            startDateObj = todayObj;
-            endDateObj = todayObj;
-            break;
-        case 'yesterday':
-            startDateObj = new Date(todayObj.getFullYear(), todayObj.getMonth(), todayObj.getDate() - 1);
-            endDateObj = new Date(todayObj.getFullYear(), todayObj.getMonth(), todayObj.getDate() - 1);
-            break;
-        case 'this-month':
-            startDateObj = new Date(todayObj.getFullYear(), todayObj.getMonth(), 1);
-            endDateObj = todayObj;
-            break;
-        case 'last-month':
-            startDateObj = new Date(todayObj.getFullYear(), todayObj.getMonth() - 1, 1);
-            endDateObj = new Date(todayObj.getFullYear(), todayObj.getMonth(), 0);
-            break;
-        case 'this-year':
-            startDateObj = new Date(todayObj.getFullYear(), 0, 1);
-            endDateObj = todayObj;
-            break;
-        case 'last-year':
-            startDateObj = new Date(todayObj.getFullYear() - 1, 0, 1);
-            endDateObj = new Date(todayObj.getFullYear(), 0, 0);
-            break;
-        case 'recent-7-days':
-            startDateObj = new Date(todayObj.getFullYear(), todayObj.getMonth(), todayObj.getDate() - 7);
-            endDateObj = todayObj;
-            break;
-        case 'recent-30-days':
-            startDateObj = new Date(todayObj.getFullYear(), todayObj.getMonth(), todayObj.getDate() - 30);
-            endDateObj = todayObj;
-            break;
-        case 'recent-12-months':
-            startDateObj = new Date(todayObj.getFullYear(), todayObj.getMonth() - 12, 1);
-            endDateObj = todayObj;
-            break;
-    }
-    startDateString = formatDate(startDateObj);
-    endDateString = formatDate(endDateObj);
-    console.log(startDateString);
-    console.log(endDateString);
-    $startDate.val(startDateString);
-    $endDate.val(endDateString);
-});
-
 $(function() {
     var $default_period = $(':input[name=period][value=' + period + ']');
     if (0 === $default_period.length) {
         $default_period = $(':input[name=period]:enabled:eq(0)');
     }
     $default_period.click();
-    $('#stat-form').submit();
+    var $form = $('#stat-form');
+    var $startDate = $form.find(':input[name=start_date]');
+    var $endDate = $form.find(':input[name=end_date]');
+    $('.date-preset').datePreset($startDate, $endDate);
+    $form.submit();
 });
 </script>
