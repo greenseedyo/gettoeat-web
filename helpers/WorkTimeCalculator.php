@@ -2,6 +2,8 @@
 namespace Helpers;
 
 use Datetime;
+use DateInterval;
+use UnexpectedValueException;
 
 class WorkTimeCalculator
 {
@@ -37,7 +39,7 @@ class WorkTimeCalculator
         }
     }
 
-    public function getCombinedWorkTimeRecords()
+    public function combineWorkTimeRecords()
     {
         foreach ($this->logs as $log) {
             $business_date = $log->getBusinessDate();
@@ -54,7 +56,32 @@ class WorkTimeCalculator
                 break;
             }
         }
-        return $this->records;
+    }
+
+    public function getRecords(): array
+    {
+        return $this->records ?: array();
+    }
+
+    public function getTotalWorkTime(): string
+    {
+        $end = new DateTime('00:00');
+        $start = clone $end;
+        foreach ($this->getRecords() as $record) {
+            try {
+                $interval = $record->getWorkTimeInterval();
+            } catch (UnexpectedValueException $e) {
+                continue;
+            }
+            $end->add($interval);
+        }
+        $diff = $end->diff($start);
+        if ($diff->days > 0) {
+            $hours = $diff->days * 24 + (int)$diff->format("%H:%I:%S");
+            return sprintf('%s:%s', $hours, $diff->format("%I:%S"));
+        } else {
+            return $diff->format("%H:%I:%S");
+        }
     }
 }
 
@@ -190,12 +217,22 @@ class CombinedWorkTimeRecord
         return ($this->punch_out ? $this->punch_out->format($format) : '');
     }
 
-    public function getWorkTime(): string
+    public function getWorkTimeInterval(): DateInterval
     {
         if (!$this->punch_out or !$this->punch_in) {
-            return '';
+            throw new UnexpectedValueException;
         }
         $interval = $this->punch_out->diff($this->punch_in);
+        return $interval;
+    }
+
+    public function getWorkTime(): string
+    {
+        try {
+            $interval = $this->getWorkTimeInterval();
+        } catch (UnexpectedValueException $e) {
+            return '';
+        }
         return $interval->format("%H:%I:%S");
     }
 }
