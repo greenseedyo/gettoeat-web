@@ -13,14 +13,12 @@ if (!$payment = BillPayment::find(intval($_POST['id']))) {
     die(json_encode($rtn_data));
 }
 
-if (!isset($_POST['column_name']) or !isset($_POST['value'])) {
+if (!isset($_POST['payment_method'])) {
     $rtn_data = array('error' => true, 'message' => '資料格式不正確');
     die(json_encode($rtn_data));
 }
 
-$column_name = $_POST['column_name'];
-$value = $_POST['value'];
-$data = array($column_name => $value);
+$data = array('payment_method' => $_POST['payment_method']);
 $payment->update($data);
 
 echo json_encode(array('error' => false));

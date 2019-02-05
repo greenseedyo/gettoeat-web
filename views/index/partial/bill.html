@@ -53,7 +53,7 @@
             </tr>
             <?php foreach ($bill_payments_dataset as $data) { ?>
             <tr>
-                <td class="modifiable-payment-method" data-id="<?= intval($data['id']) ?>" data-name="payment_method" data-text="<?= htmlspecialchars($data['text']) ?>" data-type="select" data-url="/ajax_update_payment_method.php" data-toggle="false"></td>
+                <td class="modifiable-payment-method" data-hidden-id="<?= intval($data['id']) ?>" data-name="payment_method" data-text="<?= htmlspecialchars($data['text']) ?>" data-type="select" data-url="/ajax_update_payment_method.php" data-toggle="false"></td>
                 <td><?= htmlspecialchars($data['amount']) ?></td>
             </tr>
             <?php } ?>

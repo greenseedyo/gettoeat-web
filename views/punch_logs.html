@@ -66,12 +66,12 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach (getFormattedWorkTimeRecord($work_time_records) as $record) { ?>
+                <?php foreach (getFormattedWorkTimeRecord($records) as $record) { ?>
                 <tr>
                     <td><?= htmlspecialchars($record['business_date']) ?></td>
                     <td><?= htmlspecialchars($record['staff_name']) ?></td>
-                    <td><?= htmlspecialchars($record['punch_in']) ?></td>
-                    <td><?= htmlspecialchars($record['punch_out']) ?></td>
+                    <td class="modifiable-punch-time" data-hidden-business_date="<?= htmlspecialchars($record['business_date']) ?>" data-hidden-staff_id="<?= htmlspecialchars($record['staff_id']) ?>" data-name="punch_in" data-text="<?= htmlspecialchars($record['punch_in']) ?>" data-type="text" data-url="/ajax_update_punch_time.php" data-toggle="true"></td>
+                    <td class="modifiable-punch-time" data-hidden-business_date="<?= htmlspecialchars($record['business_date']) ?>" data-hidden-staff_id="<?= htmlspecialchars($record['staff_id']) ?>" data-name="punch_out" data-text="<?= htmlspecialchars($record['punch_out']) ?>" data-type="text" data-url="/ajax_update_punch_time.php" data-toggle="true"></td>
                     <td><?= htmlspecialchars($record['work_time']) ?></td>
                 </tr>
                 <?php } ?>
@@ -81,6 +81,7 @@
 </div>
 
 <script type="text/javascript" src="/scripts/date-preset.js?v=<?= STATIC_VERSION ?>"></script>
+<script type="text/javascript" src="/scripts/modifiable.js?v=<?= STATIC_VERSION ?>"></script>
 <script>
 $('.datepicker').datepicker({
     format: 'yyyy-mm-dd',
@@ -88,6 +89,8 @@ $('.datepicker').datepicker({
     todayHighlight: true,
     zIndexOffset: 2000
 });
+
+$('.modifiable-punch-time').modifiable();
 
 var $form = $('#stat-form');
 var $startDate = $form.find(':input[name=start_date]');

@@ -12,11 +12,12 @@ $start_at = $start_datetime->getTimestamp();
 $end_at = $end_datetime->getTimestamp();
 $staff_ids = $store->staffs->toArray('id');
 $staff_names = $store->staffs->toArray('name');
-$punch_logs = PunchLog::search("`created_at` BETWEEN {$start_at} AND {$end_at}")->searchIn('staff_id', $staff_ids);
+$punch_logs = PunchLog::search("`timestamp` BETWEEN {$start_at} AND {$end_at}")->searchIn('staff_id', $staff_ids);
 
 $calculator = new Helpers\WorkTimeCalculator;
 $datasets = array();
 foreach ($punch_logs as $punch_log) {
+    $staff_id = $punch_log->staff_id;
     $staff_name = $staff_names[$punch_log->staff_id];
     $punch_time = (new Datetime)->setTimestamp($punch_log->timestamp);
     $day_start_at = $store->getDayStartAt($punch_time);
@@ -32,6 +33,7 @@ foreach ($punch_logs as $punch_log) {
 
     $log = new Helpers\WorkTimeLog;
     $log
+        ->setStaffId($staff_id)
         ->setStaffName($staff_name)
         ->setBusinessDate($business_date)
         ->setPunchType($punch_log->type)
@@ -39,13 +41,14 @@ foreach ($punch_logs as $punch_log) {
     $calculator->add($log);
 }
 
-$work_time_records = $calculator->getWorkTimeRecords();
+$records = $calculator->getCombinedWorkTimeRecords();
 
-function getFormattedWorkTimeRecord($work_time_records)
+function getFormattedWorkTimeRecord($records)
 {
-    foreach ($work_time_records as $record) {
+    foreach ($records as $record) {
         $data = array(
             'business_date' => $record->getFormattedBusinessDate('Y-m-d'),
+            'staff_id' => $record->getStaffId(),
             'staff_name' => $record->getStaffName(),
             'punch_in' => $record->getFormattedPunchIn('Y-m-d H:i:s'),
             'punch_out' => $record->getFormattedPunchOut('Y-m-d H:i:s'),

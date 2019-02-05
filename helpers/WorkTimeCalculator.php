@@ -25,24 +25,25 @@ class WorkTimeCalculator
         $this->logs[] = $log;
     }
 
-    public function getRecord(Datetime $business_date, string $staff_name)
+    public function getRecord(Datetime $business_date, string $staff_id)
     {
-        $key = sprintf("%s-%s", $business_date->format('Ymd'), $staff_name);
+        $key = sprintf("%s-%s", $business_date->format('Ymd'), $staff_id);
         if ($record = $this->records[$key]) {
             return $record;
         } else {
-            $record = new WorkTimeRecord($business_date, $staff_name);
+            $record = new CombinedWorkTimeRecord($business_date, $staff_id);
             $this->records[$key] = $record;
             return $record;
         }
     }
 
-    public function getWorkTimeRecords()
+    public function getCombinedWorkTimeRecords()
     {
         foreach ($this->logs as $log) {
             $business_date = $log->getBusinessDate();
-            $staff_name = $log->getStaffName();
-            $record = $this->getRecord($business_date, $staff_name);
+            $staff_id = $log->getStaffId();
+            $record = $this->getRecord($business_date, $staff_id);
+            $record->setStaffName($log->getStaffName());
             $punch_time = $log->getPunchTime();
             switch ($log->getPunchType()) {
             case WorkTimeLog::TYPE_IN:
@@ -60,6 +61,7 @@ class WorkTimeCalculator
 
 class WorkTimeLog
 {
+    protected $staff_id;
     protected $staff_name;
     protected $business_date;
     protected $punch_time;
@@ -67,6 +69,12 @@ class WorkTimeLog
 
     const TYPE_IN = 1;
     const TYPE_OUT = 2;
+
+    public function setStaffId(string $staff_id)
+    {
+        $this->staff_id = $staff_id;
+        return $this;
+    }
 
     public function setStaffName(string $staff_name)
     {
@@ -95,6 +103,11 @@ class WorkTimeLog
         return $this;
     }
 
+    public function getStaffId(): int
+    {
+        return $this->staff_id;
+    }
+
     public function getStaffName(): string
     {
         return $this->staff_name;
@@ -117,27 +130,44 @@ class WorkTimeLog
 }
 
 
-class WorkTimeRecord
+class CombinedWorkTimeRecord
 {
     protected $business_date;
+    protected $staff_id;
     protected $staff_name;
     protected $punch_in;
     protected $punch_out;
 
-    public function __construct(Datetime $business_date, string $staff_name)
+    public function __construct(Datetime $business_date, int $staff_id)
     {
         $this->business_date = $business_date;
+        $this->staff_id = $staff_id;
+    }
+
+    public function setStaffName(string $staff_name)
+    {
         $this->staff_name = $staff_name;
     }
 
     public function setPunchIn(Datetime $punch_in)
     {
+        if (isset($this->punch_in) and $this->punch_in < $punch_in) {
+            return;
+        }
         $this->punch_in = $punch_in;
     }
 
     public function setPunchOut(Datetime $punch_out)
     {
+        if (isset($this->punch_out) and $this->punch_out > $punch_out) {
+            return;
+        }
         $this->punch_out = $punch_out;
+    }
+
+    public function getStaffId(): int
+    {
+        return $this->staff_id;
     }
 
     public function getStaffName(): string

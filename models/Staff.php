@@ -1,5 +1,4 @@
 <?php
-require_once(ROOT_DIR . '/helpers/ip.php');
 
 class StaffRow extends Pix_Table_Row
 {
@@ -40,14 +39,10 @@ class StaffRow extends Pix_Table_Row
 
     public function punch($type)
     {
-        $ip_helper = new Helpers\IpHelper();
-        $client_ip = $ip_helper->getClientLongIp();
         $this->checkPunchByType($type);
         $data = array(
             'type' => $type,
             'timestamp' => time(),
-            'created_from' => $client_ip,
-            'updated_from' => $client_ip,
         );
         $this->create_punch_logs($data);
     }

@@ -1,4 +1,5 @@
 <?php
+require_once(ROOT_DIR . '/helpers/ip.php');
 
 class PunchLogRow extends Pix_Table_Row
 {
@@ -6,11 +7,18 @@ class PunchLogRow extends Pix_Table_Row
     {
         $this->created_at = $this->created_at ?: time();
         $this->updated_at = $this->updated_at ?: time();
+        $ip_helper = new Helpers\IpHelper();
+        $client_ip = $ip_helper->getClientLongIp();
+        $this->created_from = $client_ip;
+        $this->updated_from = $client_ip;
     }
 
     public function preUpdate($changed_fields = null)
     {
         $this->updated_at = $this->updated_at ?: time();
+        $ip_helper = new Helpers\IpHelper();
+        $client_ip = $ip_helper->getClientLongIp();
+        $this->updated_from = $client_ip;
     }
 }
 
