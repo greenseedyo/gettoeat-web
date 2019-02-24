@@ -189,8 +189,7 @@ class StatHelper
         $product_names = $products->toArray('name');
 
         $stat_result = new StatResult();
-        $turnover_chart = $stat_result->createChart('商品營收', array('金額'));
-        $quantity_chart = $stat_result->createChart('商品銷售數量', array('數量'));
+        $chart = $stat_result->createChart('商品營收及數量', array('金額', '數量'));
 
         $start_at = $this->start_datetime->getTimestamp();
         $end_at = $this->end_datetime->getTimestamp();
@@ -205,12 +204,10 @@ class StatHelper
             $quantity_dataset[$product_name] += $bill_item->amount;
         }
         arsort($turnover_dataset);
-        arsort($quantity_dataset);
         foreach ($turnover_dataset as $product_name => $total_price) {
-            $turnover_chart->append($product_name, array('金額' => $total_price));
-        }
-        foreach ($quantity_dataset as $product_name => $quantity) {
-            $quantity_chart->append($product_name, array('數量' => $quantity));
+            $total_quantity = $quantity_dataset[$product_name];
+            $dataset = array('金額' => $total_price, '數量' => $total_quantity);
+            $chart->append($product_name, $dataset);
         }
 
         return $stat_result;
