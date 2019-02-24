@@ -223,9 +223,8 @@ class StatHelper
         $staff_names = $staffs->toArray('name');
 
         $stat_result = new StatResult();
-        // $staff_adjustment_chart 跟 $staff_quantity_chart 是加總圖表不分周期
-        $staff_adjustment_chart = $stat_result->createChart('收款人結餘金額', array('金額'));
-        $staff_quantity_chart = $stat_result->createChart('收款人處理次數', array('次數'));
+        // $staff_chart 是加總圖表不分周期
+        $staff_chart = $stat_result->createChart('收款人結餘金額及處理次數', array('金額', '次數'));
         $staff_adjustment_dataset = array();
         $staff_quantity_dataset = array();
         // shift_chart 要分周期
@@ -259,12 +258,10 @@ class StatHelper
             $tmp_start_datetime = $tmp_end_datetime;
         }
         arsort($staff_adjustment_dataset);
-        arsort($staff_quantity_dataset);
         foreach ($staff_adjustment_dataset as $staff_name => $total_price) {
-            $staff_adjustment_chart->append($staff_name, array('金額' => $total_price));
-        }
-        foreach ($staff_quantity_dataset as $staff_name => $quantity) {
-            $staff_quantity_chart->append($staff_name, array('次數' => $quantity));
+            $total_quantity = $staff_quantity_dataset[$staff_name];
+            $dataset = array('金額' => $total_price, '次數' => $total_quantity);
+            $staff_chart->append($staff_name, $dataset);
         }
 
         return $stat_result;

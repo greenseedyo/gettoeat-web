@@ -23,26 +23,21 @@
 var chart;
 var formatDataset = function(datasets) {
     var total = 0;
-    var formatted_dataset = [];
-    for (let stat_item in datasets) {
-        for (let index in datasets[stat_item]) {
-            total += datasets[stat_item][index];
-        }
+    for (let index in datasets) {
+        total += datasets[index];
     }
-    for (let stat_item in datasets) {
-        dataset = datasets[stat_item];
-        for (let index in dataset) {
-            let value = dataset[index];
-            let percentage = (value / total * 100).toFixed(2);
-            formatted_dataset.push({y: value, percentage: percentage});
-        }
+    var formatted_dataset = [];
+    for (let index in datasets) {
+        let value = datasets[index];
+        let percentage = (value / total * 100).toFixed(2);
+        formatted_dataset.push({y: value, percentage: percentage});
     }
     return formatted_dataset;
 }
-var staffchart = function(renderTo, title, categories, adjustment_datasets, quantity_datasets) {
+var staffchart = function(renderTo, title, categories, datasets) {
     var series = [];
-    var formatted_adjustment_dataset = formatDataset(adjustment_datasets);
-    var formatted_quantity_dataset = formatDataset(quantity_datasets);
+    var formatted_adjustment_dataset = formatDataset(datasets['金額']);
+    var formatted_quantity_dataset = formatDataset(datasets['次數']);
     series.push({
         name: '金額',
         data: formatted_adjustment_dataset,
@@ -188,15 +183,13 @@ var renderByAjaxRtn = function(renderTo, rtn) {
         shift_chart.datasets
     );
 
-    var adjustment_chart = rtn['收款人結餘金額'];
-    var quantity_chart = rtn['收款人處理次數'];
-    var xAxisCategories = adjustment_chart.xAxisCategories;
+    var staff_chart = rtn['收款人結餘金額及處理次數'];
+    var xAxisCategories = staff_chart.xAxisCategories;
     staffchart(
         $staff_chart_div.prop('id'),
         '收款人統計 (開始至結束不分周期)',
         xAxisCategories,
-        adjustment_chart.datasets,
-        quantity_chart.datasets
+        staff_chart.datasets
     );
 }
 </script>
