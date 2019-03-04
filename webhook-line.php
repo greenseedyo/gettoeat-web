@@ -56,7 +56,7 @@ function getStaffAdjustmentsLastMonth($store)
     $helper->setStartDatetime($start_datetime);
     $helper->setEndDatetime($end_datetime);
     $stat_result = $helper->getStatResult();
-    $chart = $stat_result->getChart('收款人結餘金額');
+    $chart = $stat_result->getChart('收款人結餘金額及處理次數');
     $names = $chart->getXAxisCategories();
     $datasets = $chart->getDataSets();
     $amount = $datasets['金額'];
