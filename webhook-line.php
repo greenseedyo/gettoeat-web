@@ -2,11 +2,9 @@
 require_once 'config.php';
 require_once(ROOT_DIR . '/helpers/StatHelper.php');
 if (php_sapi_name() == "cli") {
-    // FIXME: 應該要用 api，但現在只有 buddyhouse.gettoeat.com 有 ssl 憑證
-    $store_account = 'buddyhouse';
+    $store_account = 'api';
 }
-// FIXME: 應該要用 api，但現在只有 buddyhouse.gettoeat.com 有 ssl 憑證
-if ('buddyhouse' !== $store_account) {
+if ('api' !== $store_account) {
     die();
 }
 $store = null;
