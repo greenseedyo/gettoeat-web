@@ -157,9 +157,11 @@ if ($push_message) {
     $response = $line_bot_chat->pushMessage($push_message);
 }
 
-if (200 != $response->getHttpStatus()) {
-    // TODO: save log
-    echo print_r($response);
-} else {
-    echo "ok\n";
+if (is_object($response)) {
+    if (200 != $response->getHttpStatus()) {
+        // TODO: save log
+        echo print_r($response);
+    } else {
+        echo "ok\n";
+    }
 }
