@@ -89,6 +89,10 @@ case 'room':
     break;
 }
 
+if (!$source_id) {
+    die('source id not found.');
+}
+
 if (!$line_bot_chat = LineBotChat::getBySource($source_type, $source_id)) {
     $line_bot_chat = LineBotChat::insert(array('source_type' => $source_type, 'source_id' => $source_id));
 }
