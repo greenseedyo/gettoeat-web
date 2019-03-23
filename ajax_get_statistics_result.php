@@ -10,6 +10,8 @@ $end_date = $_GET['end_date'];
 $start_datetime = (new Datetime($start_date))->add($day_change_interval);
 $end_datetime = (new Datetime($end_date))->add(new DateInterval('P1D'))->add($day_change_interval);
 
+$filters = $_GET['filters'];
+
 if ($start_datetime >= $end_datetime) {
     echo json_encode(array('error' => true, 'msg' => '開始日期不可大於結束日期'));
     exit;
@@ -57,6 +59,11 @@ $helper->setTopic($topic);
 $helper->setInterval($period_interval);
 $helper->setStartDatetime($start_datetime);
 $helper->setEndDatetime($end_datetime);
+
+foreach ($filters as $key => $value) {
+    $helper->setFilter($key, $value);
+}
+
 $stat_result = $helper->getStatResult();
 
 $rtn = array();

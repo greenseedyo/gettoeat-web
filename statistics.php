@@ -11,6 +11,9 @@ case 'product':
     $valid_periods = array(
         'throughout' => '加總',
     );
+    $categories = $store->categories->toArray(array('id', 'name'));
+    $filtered_category_id = $_GET['filters']['category_id'];
+    $filtered_custermers = $_GET['filters']['custermers'];
     break;
 default:
     $valid_periods = array(

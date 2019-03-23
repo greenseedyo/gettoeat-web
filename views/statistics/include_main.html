@@ -36,7 +36,7 @@
                 <?php } ?>
             </div>
         </div>
-        <div class="form-group form-group-lg">
+        <div class="form-group form-group-lg submit">
             <div class="col-sm-offset-2 col-sm-10">
                 <input type="hidden" name="topic" value="<?= htmlspecialchars($topic) ?>" />
                 <button type="submit" class="btn btn-default">送出</button>
@@ -66,18 +66,20 @@ var updateLinks = function(data) {
     });
 }
 
-var addSerializedArrayToUrlParameters = function(url, serializedArray, preserverKeys) {
-    var preserverKeys = preserverKeys || [];
+var addSerializedArrayToUrlParameters = function(url, serializedArray, preserveKeys) {
+    var preserveKeys = preserveKeys || [];
     var params = {};
     var oriQueryString = url.split('?')[1] || '';
     oriQueryString.split('#')[0].split('&').map(function(string) {
-        params[string.split('=')[0]] = string.split('=')[1];
+        var key = decodeURIComponent(string.split('=')[0]);
+        params[key] = decodeURIComponent(string.split('=')[1]);
     });
     $.each(serializedArray, function(index, item) {
-        if (preserverKeys.indexOf(item.name) > -1) {
+        if (preserveKeys.indexOf(item.name) > -1) {
             return;
         }
-        params[item.name] = item.value;
+        var key = item.name;
+        params[key] = item.value;
     });
     var params_string = $.param(params);
     var hash = oriQueryString.split('#')[1] || "";
@@ -108,6 +110,7 @@ $('#stat-form').submit(function(e) {
 });
 
 $(function() {
+    $(".stat-additional").insertBefore("#stat-form .submit");
     var $default_period = $(':input[name=period][value=' + period + ']');
     if (0 === $default_period.length) {
         $default_period = $(':input[name=period]:enabled:eq(0)');

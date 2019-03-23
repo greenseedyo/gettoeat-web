@@ -8,10 +8,13 @@ use DateInterval;
 use BillDiscount;
 use BillItem;
 use BillPayment;
+use Product;
 use Exception;
 
 class StatHelper
 {
+    protected $filters = array();
+
     public function __construct(StoreRow $store)
     {
         $this->store = $store;
@@ -35,6 +38,11 @@ class StatHelper
     public function setInterval(DateInterval $interval)
     {
         $this->interval = $interval;
+    }
+
+    public function setFilter($name, $value)
+    {
+        $this->filters[$name] = $value;
     }
 
     public function getStatResult(): StatResult
@@ -195,9 +203,22 @@ class StatHelper
         $end_at = $this->end_datetime->getTimestamp();
         $period_name = sprintf('%s - %s', date('Y-m-d(D) H:i', $start_at), date('Y-m-d(D) H:i', $end_at));
 
-        $bill_ids = $this->store->bills->search("`ordered_at` BETWEEN {$start_at} AND {$end_at}")->toArray('id');
+        $bills = $this->store->bills->search("`ordered_at` BETWEEN {$start_at} AND {$end_at}");
+
+        if ($custermers = $this->filters['custermers']) {
+            $bills = $bills->search(array('custermers' => $custermers));
+        }
+
+        $bill_ids = $bills->toArray('id');
         $bill_items = BillItem::search(1)->searchIn('bill_id', $bill_ids);
 
+        if ($category_id = $this->filters['category_id']) {
+            $product_ids = Product::search(array('category_id' => $category_id))->toArray('id');
+            $bill_items = $bill_items->searchIn('product_id', $product_ids);
+        }
+
+        $turnover_dataset = array();
+        $quantity_dataset = array();
         foreach ($bill_items as $key => $bill_item) {
             $product_name = $product_names[$bill_item->product_id];
             $turnover_dataset[$product_name] += $bill_item->getTotalPrice();
@@ -380,6 +401,7 @@ class StatChart
     private $period_names = array();
     private $datasets = array();
     private $stat_items = array();
+    private $x_axis_categories = array();
 
     public function __construct(string $title, array $stat_items)
     {
