@@ -44,7 +44,7 @@ function getTotalSales($store, $start_date, $end_date)
 
 function getStaffAdjustmentsLastMonth($store)
 {
-    $start_date = date('Y-m-01', strtotime('last month'));
+    $start_date = date('Y-m-01', strtotime('first day of last month'));
     $end_date = date('Y-m-d', strtotime('last day of last month'));
     $day_change_interval = new DateInterval("PT{$store->getDateChangeAt()}H");
     $start_datetime = (new Datetime($start_date))->add($day_change_interval);
@@ -122,14 +122,14 @@ case 'message':
         $total_sales = getTotalSales($store, $start_date, $end_date);
         $reply_message = sprintf("%s月營收至目前共 $%s", date('m'), $total_sales);
     } elseif (strstr($text, '上月') and strstr($text, '收')) {
-        $start_date = date('Y-m-01', strtotime('last month'));
+        $start_date = date('Y-m-01', strtotime('first day of last month'));
         $end_date = date('Y-m-d', strtotime('last day of last month'));
         $total_sales = getTotalSales($store, $start_date, $end_date);
-        $reply_message = sprintf("%s月營收共 $%s", date('m', strtotime('last month')), $total_sales);
+        $reply_message = sprintf("%s月營收共 $%s", date('m', strtotime('first day of last month')), $total_sales);
     } elseif (strstr($text, '收') and strstr($text, '匯')) {
         $result = getStaffAdjustmentsLastMonth($store);
         $lines = array();
-        $lines[] = sprintf("[%s月收帳統計]", date('m', strtotime('last month')));
+        $lines[] = sprintf("[%s月收帳統計]", date('m', strtotime('first day of last month')));
         foreach ($result as $name => $amount) {
             $lines[] = sprintf("%s: %s%s", $name, $currency_symbol, $amount);
         }
