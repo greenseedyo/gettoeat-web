@@ -10,7 +10,7 @@ $end_date = $_GET['end_date'];
 $start_datetime = (new Datetime($start_date))->add($day_change_interval);
 $end_datetime = (new Datetime($end_date))->add(new DateInterval('P1D'))->add($day_change_interval);
 
-$filters = $_GET['filters'];
+$filters = $_GET['filters'] ?: array();
 
 if ($start_datetime >= $end_datetime) {
     echo json_encode(array('error' => true, 'msg' => '開始日期不可大於結束日期'));
