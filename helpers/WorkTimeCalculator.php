@@ -219,20 +219,41 @@ class CombinedWorkTimeRecord
 
     public function getWorkTimeInterval(): DateInterval
     {
-        if (!$this->punch_out or !$this->punch_in) {
-            throw new UnexpectedValueException;
+        if (!$this->punch_out) {
+            throw new PunchOutNotFoundException;
+        }
+        if (!$this->punch_in) {
+            throw new PunchInNotFoundException;
         }
         $interval = $this->punch_out->diff($this->punch_in);
+        if (0 === $interval->invert) {
+            throw new InvalidDateIntervalException;
+        }
         return $interval;
     }
 
-    public function getWorkTime(): string
+    public function getFormattedWorkTime(): string
     {
         try {
             $interval = $this->getWorkTimeInterval();
-        } catch (UnexpectedValueException $e) {
-            return '';
+        } catch (InvalidDateIntervalException $e) {
+            return '打卡資訊有誤';
+        } catch (PunchInNotFoundException|PunchOutNotFoundException $e) {
+            return '打卡資訊不完整';
         }
         return $interval->format("%H:%I:%S");
     }
+}
+
+
+class PunchInNotFoundException extends UnexpectedValueException
+{
+}
+
+class PunchOutNotFoundException extends UnexpectedValueException
+{
+}
+
+class InvalidDateIntervalException extends UnexpectedValueException
+{
 }

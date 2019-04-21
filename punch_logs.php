@@ -56,7 +56,7 @@ foreach ($records as $record) {
         'staff_name' => $record->getStaffName(),
         'punch_in' => $record->getFormattedPunchIn('Y-m-d H:i:s'),
         'punch_out' => $record->getFormattedPunchOut('Y-m-d H:i:s'),
-        'work_time' => $record->getWorkTime(),
+        'work_time' => $record->getFormattedWorkTime(),
     );
     $record_datasets[] = $data;
 }
