@@ -69,7 +69,11 @@ class StatHelper
     private function calculateEndDatetime(Datetime $start_datetime): Datetime
     {
         $start_at = $start_datetime->getTimestamp();
-        $datetime = (new Datetime())->setTimestamp($start_at)->modify("+ {$this->interval->days} days");
+        if ($this->interval->days) {
+            $datetime = (new Datetime())->setTimestamp($start_at)->modify("+ {$this->interval->days} days");
+        } else {
+            $datetime = (new Datetime())->setTimestamp($start_at)->add($this->interval);
+        }
         return $datetime;
     }
 
