@@ -66,6 +66,13 @@ class StatHelper
         }
     }
 
+    private function calculateEndDatetime(Datetime $start_datetime): Datetime
+    {
+        $start_at = $start_datetime->getTimestamp();
+        $datetime = (new Datetime())->setTimestamp($start_at)->modify("+ {$this->interval->days} days");
+        return $datetime;
+    }
+
     private function getOverviewStatResult(): StatResult
     {
         if (!isset($this->interval)) {
@@ -79,7 +86,7 @@ class StatHelper
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
-            $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             if ($tmp_end_datetime > $this->end_datetime) {
                 $tmp_end_datetime = $this->end_datetime;
             }
@@ -121,7 +128,7 @@ class StatHelper
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
-            $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
             $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
 
@@ -163,7 +170,7 @@ class StatHelper
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
-            $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
             $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
             $turnover_dataset = array_fill_keys($stat_items, 0);
@@ -258,7 +265,7 @@ class StatHelper
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
-            $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
             $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
 
@@ -305,7 +312,7 @@ class StatHelper
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
-            $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
             $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
             $value_dataset = array_fill_keys($stat_items, 0);
@@ -344,7 +351,7 @@ class StatHelper
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
             $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
-            $tmp_end_datetime = (new Datetime())->setTimestamp($tmp_start_at)->add($this->interval);
+            $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
             $period_name = date('Y-m-d(D) H:i', $tmp_start_at);
             $value_dataset = array_fill_keys($stat_items, 0);
