@@ -168,6 +168,12 @@ body {
     margin-top: 20px;
 }
 
+.plus, .minus {
+    font-size: 18px;
+    line-height: 40px;
+    width: 40px;
+}
+
 
 /* punch page */
 #punch .container {

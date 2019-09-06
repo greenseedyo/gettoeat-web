@@ -117,18 +117,18 @@
 </div>
 
 <script id="tmpl-item-tr" type="text/x-jquery-tmpl">
-<tr class="item" data-price="${price}" id="item-${product_id}" data-product_id="${product_id}">
+<tr class="item" data-price="${price}" id="item-${product_id}" data-product_id="${product_id}" height="40">
     <td class="item-name ${status}" data-status="${status}">
         <span>${name}</span>
     </td>
     <td width="30">
-        <button class="minus" data-role="none" data-inline="true">－</button>
+        <span class="glyphicon glyphicon-minus-sign minus"></span>
     </td>
     <td style="text-align:center;">
         <span class="selected-item-amount">${amount}</span>
     </td>
     <td width="30">
-        <button class="plus" data-role="none" data-inline="true">＋</button>
+        <span class="glyphicon glyphicon-plus-sign plus"></span>
     </td>
 </tr>
 </script>
