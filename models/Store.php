@@ -201,6 +201,7 @@ class Store extends Pix_Table
     const PAYMENT_METHOD_CARD = 2;
     const PAYMENT_METHOD_JKOPAY = 3;
     const PAYMENT_METHOD_UBEREATS = 4;
+    const PAYMENT_METHOD_LINE_PAY = 5;
 
     const PAYMENT_METHODS_DELIMITER = ',';
 

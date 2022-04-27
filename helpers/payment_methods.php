@@ -24,6 +24,16 @@ class PaymentMethodFactory
                 'name' => 'jkopay',
                 'texts' => array('tw' => '街口支付'),
             ),
+            Store::PAYMENT_METHOD_UBEREATS => array(
+                'key' => Store::PAYMENT_METHOD_UBEREATS,
+                'name' => 'ubereats',
+                'texts' => array('tw' => 'Uber Eats'),
+            ),
+            Store::PAYMENT_METHOD_LINE_PAY => array(
+                'key' => Store::PAYMENT_METHOD_LINE_PAY,
+                'name' => 'linepay',
+                'texts' => array('tw' => 'LINE Pay'),
+            ),
         );
         return $data;
     }
