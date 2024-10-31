@@ -11,7 +11,7 @@ class TablesInfo_Helper
     public function __construct(TablesInfoRow $tables_info)
     {
         $this->_pix_tabel_row = $tables_info;
-        $this->_data = json_decode($tables_info->data);
+        $this->_data = json_decode($tables_info->data ?? null);
         /* [data 格式範例]
         // {
         //     "totalHeight": "100",

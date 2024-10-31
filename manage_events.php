@@ -15,7 +15,7 @@ function assignEventData($event)
     return $data;
 }
 
-if ($_POST) {
+if (!empty($_POST)) {
     if (in_array($_POST['form_name'], array('add_event', 'edit_event'))) {
         $start_date = $_POST['start_date'] ? new DateTime($_POST['start_date']) : null;
         $end_date = $_POST['end_date'] ? new DateTime($_POST['end_date']) : null;
@@ -33,21 +33,21 @@ if ($_POST) {
             $event = $store->create_events($data);
         }
         $event_helper = $event->getHelper();
-        if ($_POST['data']) {
+        if ($_POST['data'] ?? false) {
             $data = json_decode($_POST['data'], 1);
             $event_helper->setData($data);
         } else {
             // TODO: 目前只有 PercentOff 會用到，不要放這裡
             $event_helper->setData(array(
-                'percent' => $_POST['percent'],
-                'percent_reversed' => $_POST['percent_reversed'],
+                'percent' => $_POST['percent'] ?? null,
+                'percent_reversed' => $_POST['percent_reversed'] ?? null,
             ));
         }
         header('Location: manage_events.php');
     }
 }
 
-if ($_GET['id']) {
+if ($_GET['id'] ?? false) {
     $event = $store->getEventById(intval($_GET['id']));
     $event_data = assignEventData($event);
 } else {
@@ -65,7 +65,7 @@ foreach ($event_types as $event_type) {
     $event_type_datas[] = $event_type_data;
 }
 
-if ('get_form' == $_GET['action']) {
+if (isset($_GET['action']) and 'get_form' == $_GET['action']) {
     $event_type = EventType::find(intval($_GET['type_id']));
     include(VIEWS_DIR . "/manage_events/forms/{$event_type->name}.html");
 } else {

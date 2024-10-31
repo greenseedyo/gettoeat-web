@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 
-if ($_POST) {
+if (!empty($_POST)) {
     $error = false;
     if ('add_group' == $_POST['form_name']) {
         $group = $store->create_staff_groups($_POST);
@@ -53,7 +53,7 @@ if ($_POST) {
     $rtn = array(
         'error' => $error,
         'msg' => $msg,
-        'redirect_to' => $redirect_to,
+        'redirect_to' => $redirect_to ?? '',
     );
     echo json_encode($rtn);
 }

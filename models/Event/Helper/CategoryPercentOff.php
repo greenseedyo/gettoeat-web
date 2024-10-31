@@ -7,9 +7,9 @@ class CategoryPercentOff extends AbstractHelper
     public function generateDiscountItemsArray($options = null): \Store\Cashier\DiscountItemsArray
     {
         $total_price = 0;
-        $percent = $this->getData()['percent'];
+        $percent = $this->getData()['percent'] ?? 0;
         $percent_off = $percent / 100;
-        $category_ids = $this->getData()['category_ids'];
+        $category_ids = $this->getData()['category_ids'] ?? [];
         $discount_items = new \Store\Cashier\DiscountItemsArray();
         foreach ($this->cart_items as $cart_item) {
             $product = $cart_item->getProduct();
@@ -49,7 +49,7 @@ class CategoryPercentOff extends AbstractHelper
 
     public function getData()
     {
-        $data = json_decode($this->event->data, 1);
+        $data = json_decode($this->event->data ?? '', 1);
         $data['valid_categories'] = $this->getValidCategories($data);
         $data['invalid_categories'] = $this->getInvalidCategories($data);
         return $data;

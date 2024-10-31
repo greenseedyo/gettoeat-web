@@ -25,7 +25,7 @@ foreach ($tables as $table) {
     }
 }
 
-if ($_POST) {
+if (!empty($_POST)) {
     try {
         if ('save_table' == $_POST['form_name']) {
             $helper->save($_POST['tables_info']);

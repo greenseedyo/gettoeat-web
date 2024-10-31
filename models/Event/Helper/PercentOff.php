@@ -10,7 +10,7 @@ class PercentOff extends AbstractHelper
         foreach ($this->cart_items as $cart_item) {
             $total_price += $cart_item->getSubtotalPrice();
         }
-        $percent_off = $this->getData()['percent'] / 100;
+        $percent_off = ($this->getData()['percent'] ?? 0) / 100;
         $value = intval($total_price * $percent_off);
         $discount_item = new \Store\Cashier\DiscountItem($this->event);
         $discount_item->setUnitPrice($value * (-1));
@@ -39,7 +39,7 @@ class PercentOff extends AbstractHelper
 
     public function getData()
     {
-        return json_decode($this->event->data, 1);
+        return json_decode($this->event->data ?? '', 1);
     }
 }
 

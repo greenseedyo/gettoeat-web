@@ -46,7 +46,7 @@
                 data-line-height="<?= intval($table->height) ?>px"
                 data-left="<?= intval($table->x) ?>px"
                 data-top="<?= intval($table->y) ?>px"
-                data-z-index="<?= intval($table->z) ?>"
+                data-z-index="<?= intval($table->z ?? 0) ?>"
                 data-active="<?= intval($table->active) ?>"
                 data-name="<?= htmlspecialchars($table->name) ?>"></div>
             <?php } ?>
@@ -161,7 +161,7 @@
             <div class="form-group">
                 <div class="form-control-label h2">折扣選擇</div>
                 <div>
-                    <?php foreach ($events as $event) { ?>
+                    <?php $index = 0; foreach ($events as $event) { ?>
                     <div class="col-sm-12">
                         <div class="checkbox toggle-event">
                             <label style="font-size: 2em">

@@ -2,7 +2,7 @@
 require_once 'config.php';
 require_once(ROOT_DIR . '/helpers/payment_methods.php');
 
-if ($_GET['id']) {
+if ($_GET['id'] ?? false) {
     $bill = $store->getBillById($_GET['id']);
 } else {
     $bill = $store->getTodayPaidBills()->order('paid_at DESC')->first();
@@ -16,7 +16,7 @@ if ($next_bill = $store->getTodayPaidBills()->search("paid_at > {$paid_at}")->or
     $next_bill_id = $next_bill->id;
 }
 
-if ($bill) {
+if ($bill ?? false) {
     $factory = new Helpers\PaymentMethodFactory;
     $bill_payments_dataset = array();
     foreach ($bill->payments as $payment) {

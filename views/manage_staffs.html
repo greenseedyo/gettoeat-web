@@ -14,7 +14,7 @@
         <h1><?= htmlspecialchars($store->nickname) ?> 人員管理</h1>
     </div>
 
-    <?php if ($groups instanceof Pix_Table_ResultSet) { ?>
+    <?php if (isset($groups) and $groups instanceof Pix_Table_ResultSet) { ?>
     <div>
         <div class="page-header">
             <h2>群組</h2>
@@ -43,7 +43,7 @@
             </div>
         </div>
     </div>
-    <?php } elseif ($staffs instanceof Pix_Table_ResultSet) { ?>
+    <?php } elseif (isset($staffs) and $staffs instanceof Pix_Table_ResultSet) { ?>
     <div>
         <div class="page-header">
             <h2>編輯群組: <?= htmlspecialchars($group->name) ?></h2>
@@ -92,8 +92,8 @@
                     <div class="list-group">
                         <a href="manage_staffs.php?staff_id=<?= intval($staff->id) ?>" class="list-group-item">
                             <h4 class="list-group-item-heading"><?= htmlspecialchars($staff->name) ?></h4>
-                            <?php if ($staff->phone) { ?><p class="list-group-item-text"><?= htmlspecialchars($staff->phone) ?></p><?php } ?>
-                            <?php if ($staff->email) { ?><p class="list-group-item-text"><?= htmlspecialchars($staff->email) ?></p><?php } ?>
+                            <?php if ($staff->phone ?? false) { ?><p class="list-group-item-text"><?= htmlspecialchars($staff->phone) ?></p><?php } ?>
+                            <?php if ($staff->email ?? false) { ?><p class="list-group-item-text"><?= htmlspecialchars($staff->email) ?></p><?php } ?>
                         </a>
                     </div>
                     <?php } ?>
@@ -104,8 +104,8 @@
                     <div class="list-group">
                         <a href="manage_staffs.php?staff_id=<?= intval($staff->id) ?>" class="list-group-item">
                             <h4 class="list-group-item-heading"><?= htmlspecialchars($staff->name) ?></h4>
-                            <?php if ($staff->phone) { ?><p class="list-group-item-text"><?= htmlspecialchars($staff->phone) ?></p><?php } ?>
-                            <?php if ($staff->email) { ?><p class="list-group-item-text"><?= htmlspecialchars($staff->email) ?></p><?php } ?>
+                            <?php if ($staff->phone ?? false) { ?><p class="list-group-item-text"><?= htmlspecialchars($staff->phone) ?></p><?php } ?>
+                            <?php if ($staff->email ?? false) { ?><p class="list-group-item-text"><?= htmlspecialchars($staff->email) ?></p><?php } ?>
                         </a>
                     </div>
                     <?php } ?>
@@ -133,7 +133,7 @@
             </div>
         </div>
     </div>
-    <?php } elseif ($staff) { ?>
+    <?php } elseif ($staff ?? false) { ?>
     <div>
         <div class="page-header">
             <h2>編輯人員資訊: <?= htmlspecialchars($staff->name) ?></h2>

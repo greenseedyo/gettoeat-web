@@ -15,7 +15,7 @@
         <h1><?= htmlspecialchars($store->nickname) ?> 折扣活動管理</h1>
     </div>
 
-    <?php if (is_array($event_datas)) { ?>
+    <?php if (!empty($event_datas)) { ?>
     <div>
         <div class="page-header">
             <h2>分類</h2>
@@ -79,7 +79,7 @@
             </div>
         </div>
     </div>
-    <?php } elseif (is_array($event_data)) { ?>
+    <?php } elseif (!empty($event_data)) { ?>
     <div>
         <div class="page-header">
             <h2>編輯折扣活動: <?= htmlspecialchars($event->title) ?></h2>

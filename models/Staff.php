@@ -19,6 +19,10 @@ class StaffRow extends Pix_Table_Row
 
     public function preInsert($changed_fields = null)
     {
+	$this->created_at = time();
+	$this->updated_at = time();
+	$this->created_by = 0;
+	$this->updated_by = 0;
         if ($this->code) {
             $same_code_staff = Staff::getByStoreIdAndCode($this->store_id, $this->code);
             if ($same_code_staff and $same_code_staff->id != $this->id) {
@@ -29,7 +33,7 @@ class StaffRow extends Pix_Table_Row
 
     public function preUpdate($changed_fields = null)
     {
-        if ($changed_fields['code']) {
+        if ($changed_fields['code'] ?? false) {
             $same_code_staff = Staff::getByStoreIdAndCode($this->store_id, $this->code);
             if ($same_code_staff and $same_code_staff->id != $this->id) {
                 throw new StaffCodeRepeatedException;
@@ -43,6 +47,8 @@ class StaffRow extends Pix_Table_Row
         $data = array(
             'type' => $type,
             'timestamp' => time(),
+	    'created_by' => $this->id,
+	    'updated_by' => $this->id,
         );
         $this->create_punch_logs($data);
     }
@@ -76,7 +82,7 @@ class Staff extends Pix_Table
         $this->_columns['email'] = array('type' => 'varchar', 'size' => 255);
         $this->_columns['phone'] = array('type' => 'varchar', 'size' => 255);
         $this->_columns['code'] = array('type' => 'varchar', 'size' => 10);
-        $this->_columns['off'] = array('type' => 'tinyint', 'unsigned' => true, 'size' => 1);
+        $this->_columns['off'] = array('type' => 'tinyint', 'unsigned' => true, 'size' => 1, 'default' => 0);
         $this->_columns['created_at'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['created_by'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['updated_at'] = array('type' => 'int', 'unsigned' => true);

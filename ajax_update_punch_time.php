@@ -22,9 +22,9 @@ if (!$staff = Staff::find($_POST['staff_id'])) {
     die(json_encode($rtn_data));
 }
 
-if ($time = $_POST['punch_in']) {
+if ($time = $_POST['punch_in'] ?? false) {
     $type = PunchLog::TYPE_IN;
-} elseif ($time = $_POST['punch_out']) {
+} elseif ($time = $_POST['punch_out'] ?? false) {
     $type = PunchLog::TYPE_OUT;
 } else {
     $rtn_data = array('error' => true, 'message' => 'invalid punch type');

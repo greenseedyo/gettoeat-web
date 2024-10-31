@@ -22,8 +22,8 @@ class Product extends Pix_Table
         $this->_columns['category_id'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['name'] = array('type' => 'varchar', 'size' => 20);
         $this->_columns['price'] = array('type' => 'int', 'unsigned' => true);
-        $this->_columns['position'] = array('type' => 'tinyint', 'unsigned' => true);
-        $this->_columns['off'] = array('type' => 'tinyint', 'unsigned' => true);
+        $this->_columns['position'] = array('type' => 'tinyint', 'unsigned' => true, 'default' => 0);
+        $this->_columns['off'] = array('type' => 'tinyint', 'unsigned' => true, 'default' => 0);
 
         $this->addIndex('store_id', array('store_id'));
         $this->addIndex('category_id', array('category_id', 'position'));

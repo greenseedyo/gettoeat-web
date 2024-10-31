@@ -61,7 +61,7 @@ class Pix_Table_ResultSet extends Pix_Array // implements Pix_Array_Volumable
 	}
 
 	$primary = $this->getTable()->getPrimaryColumns();
-	$primary = $primary[0];
+	$primary = $primary[0] ?? null;
 
 
 	// 如果要取的數量超過 ResultSet Row 的數量的一半，就直接 ORDER BY RAND 了...
@@ -685,7 +685,7 @@ class Pix_Table_ResultSet extends Pix_Array // implements Pix_Array_Volumable
 	if (count($primary) > 1 or !isset($this->_rowset[0][$primary[0]])) {
 	    $primary = null;
 	}
-	$primary = $primary[0];
+	$primary = $primary[0] ?? null;
 
         if ($column == null) {
 	    foreach ($this->_rowset as $row) {

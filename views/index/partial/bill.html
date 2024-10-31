@@ -2,13 +2,13 @@
     <div class="navbar-header">
         <button type="button" class="navbar-toggle navbar-left navbar-btn back-to-table"><span class="glyphicon glyphicon-home"></span></button>
         <div class="navbar-brand"><span class="back-to-table"><?= htmlspecialchars($store->nickname) ?> 結帳小幫手</span></div>
-        <?php if ($bill) { ?>
+        <?php if ($bill ?? false) { ?>
         <button type="button" class="navbar-toggle navbar-btn" id="delete_bill" data-id="<?= intval($bill->id) ?>"><span class="glyphicon glyphicon-trash"></span></button>
         <?php } ?>
     </div>
 </nav>
 
-<?php if ($bill) { ?>
+<?php if ($bill ?? false) { ?>
 <div class="container">
     <div class="alert alert-info table-info">
         <strong><?= htmlspecialchars($bill->table) ?>: </strong>
@@ -70,11 +70,11 @@
 
 <nav class="navbar navbar-inverse navbar-fixed-bottom">
     <div class="navbar-header">
-        <?php if ($prev_bill_id) { ?>
+        <?php if ($prev_bill_id ?? false) { ?>
         <button id="prev_bill" class="navbar-toggle navbar-left navbar-btn" data-prev-id="<?= intval($prev_bill_id) ?>"><span class="glyphicon glyphicon-circle-arrow-left"></span></button>
         <?php } ?>
         <div class="navbar-brand">本日業績 $ <span id="today_total"></span></div>
-        <?php if ($next_bill_id) { ?>
+        <?php if ($next_bill_id ?? false) { ?>
         <button id="next_bill" class="navbar-toggle navbar-btn" data-next-id="<?= intval($next_bill_id) ?>"><span class="glyphicon glyphicon-circle-arrow-right"></span></button>
         <?php } ?>
     </div>

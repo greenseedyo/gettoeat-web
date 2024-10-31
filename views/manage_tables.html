@@ -71,7 +71,7 @@
                         data-line-height="<?= intval($table->height) ?>px"
                         data-left="<?= intval($table->x) ?>px"
                         data-top="<?= intval($table->y) ?>px"
-                        data-z-index="<?= intval($table->z) ?>"
+                        data-z-index="<?= intval($table->z ?? 0) ?>"
                         data-active="<?= intval($table->active) ?>"
                         data-name="<?= htmlspecialchars($table->name) ?>"></div>
                     <?php } ?>

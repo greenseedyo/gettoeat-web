@@ -2,9 +2,9 @@
 require_once 'config.php';
 require_once(ROOT_DIR . '/helpers/WorkTimeCalculator.php');
 
-$start_date = $_GET['start_date'] ?: date('Y-m-01');
-$end_date = $_GET['end_date'] ?: date('Y-m-d', strtotime('today'));
-$selected_staff_id = intval($_GET['staff_id']);
+$start_date = $_GET['start_date'] ?? date('Y-m-01');
+$end_date = $_GET['end_date'] ?? date('Y-m-d', strtotime('today'));
+$selected_staff_id = intval($_GET['staff_id'] ?? 0);
 
 $day_change_interval = new DateInterval("PT{$store->getDateChangeAt()}H");
 $start_datetime = (new Datetime($start_date))->add($day_change_interval);

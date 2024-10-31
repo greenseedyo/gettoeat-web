@@ -14,7 +14,7 @@
         <h1><?= htmlspecialchars($store->nickname) ?> 菜單管理</h1>
     </div>
 
-    <?php if ($categories instanceof Pix_Table_ResultSet) { ?>
+    <?php if (isset($categories) and $categories instanceof Pix_Table_ResultSet) { ?>
     <div>
         <div class="page-header">
             <h2>分類</h2>
@@ -43,7 +43,7 @@
             </div>
         </div>
     </div>
-    <?php } elseif ($products instanceof Pix_Table_ResultSet) { ?>
+    <?php } elseif (isset($products) and $products instanceof Pix_Table_ResultSet) { ?>
     <div>
         <div class="page-header">
             <h2>編輯分類: <?= htmlspecialchars($category->name) ?></h2>
@@ -152,7 +152,7 @@
             </div>
         </div>
     </div>
-    <?php } elseif ($product) { ?>
+    <?php } elseif ($product ?? false) { ?>
     <div>
         <div class="page-header">
             <h2>編輯項目: <?= htmlspecialchars($product->name) ?></h2>

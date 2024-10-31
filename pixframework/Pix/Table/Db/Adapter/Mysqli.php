@@ -56,7 +56,7 @@ class Pix_Table_Db_Adapter_Mysqli extends Pix_Table_Db_Adapter_MysqlCommon
      */
     public function query($sql, $table = null)
     {
-	if (Pix_Table::$_log_groups[Pix_Table::LOG_QUERY]) {
+	if (Pix_Table::$_log_groups[Pix_Table::LOG_QUERY] ?? false) {
 	    Pix_Table::debug(sprintf("[%s]\t%40s", $this->_link->host_info, $sql));
 	}
 	// TODO 需要 log SQL Query 功能

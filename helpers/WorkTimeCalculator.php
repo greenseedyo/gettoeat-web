@@ -30,7 +30,7 @@ class WorkTimeCalculator
     public function getRecord(Datetime $business_date, string $staff_id)
     {
         $key = sprintf("%s-%s", $business_date->format('Ymd'), $staff_id);
-        if ($record = $this->records[$key]) {
+        if ($record = $this->records[$key] ?? false) {
             return $record;
         } else {
             $record = new CombinedWorkTimeRecord($business_date, $staff_id);

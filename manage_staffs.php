@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 
-if ($_GET['group_id']) {
+if ($_GET['group_id'] ?? false) {
     $group = $store->getStaffGroupById($_GET['group_id']);
     $staffs = $group->staffs;
     $on_staffs = array();
@@ -13,7 +13,7 @@ if ($_GET['group_id']) {
             $on_staffs[] = $staff;
         }
     }
-} elseif ($_GET['staff_id']) {
+} elseif ($_GET['staff_id'] ?? false) {
     $staff = $store->getStaffById($_GET['staff_id']);
 } else {
     $groups = $store->staff_groups;

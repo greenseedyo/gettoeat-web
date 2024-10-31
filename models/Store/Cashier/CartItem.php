@@ -15,7 +15,7 @@ class CartItem implements AbstractReceiptItem
 
     public function getProduct()
     {
-        if ($this->product) {
+        if ($this->product ?? null) {
             return $this->product;
         }
         if (!$product = \Product::find(intval($this->product_id))) {

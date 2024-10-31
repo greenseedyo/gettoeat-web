@@ -19,15 +19,15 @@ if (isset($_POST['adjustment_by'])) {
 }
 
 $data = array(
-    'cash_sales' => (float) $_POST['cash_sales'],
-    'open_amount' => (float) $_POST['open_amount'],
-    'close_amount' => (float) $_POST['close_amount'],
-    'paid_in' => (float) $_POST['paid_in'],
-    'paid_out' => (float) $_POST['paid_out'],
-    'adjustment_type' => (int) $_POST['adjustment_type'],
-    'adjustment_amount' => (float) $_POST['adjustment_amount'],
-    'adjustment_by' => (int) $_POST['adjustment_by'],
-    'closed_by' => (int) $_POST['closed_by'],
+    'cash_sales' => (float)($_POST['cash_sales'] ?? 0),
+    'open_amount' => (float)($_POST['open_amount'] ?? 0),
+    'close_amount' => (float)($_POST['close_amount'] ?? 0),
+    'paid_in' => (float)($_POST['paid_in'] ?? 0),
+    'paid_out' => (float)($_POST['paid_out'] ?? 0),
+    'adjustment_type' => (int)($_POST['adjustment_type'] ?? 0),
+    'adjustment_amount' => (float)($_POST['adjustment_amount'] ?? 0),
+    'adjustment_by' => (int)($_POST['adjustment_by'] ?? 0),
+    'closed_by' => (int)($_POST['closed_by'] ?? 0),
 );
 $shift = $store->create_shifts($data);
 

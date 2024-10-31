@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 
-if ($_POST) {
+if (!empty($_POST)) {
     if ('add_category' == $_POST['form_name']) {
         $category = $store->create_categories($_POST);
         header('Location: manage_items.php?category_id=' . $category->id);
@@ -52,7 +52,7 @@ if ($_POST) {
     }
 }
 
-if ($_GET['category_id']) {
+if ($_GET['category_id'] ?? false) {
     $category = $store->getCategoryById($_GET['category_id']);
     $products = $category->products->order('position ASC');
     $online_products = array();
@@ -64,7 +64,7 @@ if ($_GET['category_id']) {
             $online_products[] = $product;
         }
     }
-} elseif ($_GET['product']) {
+} elseif ($_GET['product'] ?? false) {
     $product = $store->getProductById($_GET['product']);
 } else {
     $categories = $store->categories;

@@ -232,12 +232,14 @@ class StatHelper
         $quantity_dataset = array();
         foreach ($bill_items as $key => $bill_item) {
             $product_name = $product_names[$bill_item->product_id];
+	    $turnover_dataset[$product_name] = $turnover_dataset[$product_name] ?? 0;
             $turnover_dataset[$product_name] += $bill_item->getTotalPrice();
+	    $quantity_dataset[$product_name] = $quantity_dataset[$product_name] ?? 0;
             $quantity_dataset[$product_name] += $bill_item->amount;
         }
         arsort($turnover_dataset);
         foreach ($turnover_dataset as $product_name => $total_price) {
-            $total_quantity = $quantity_dataset[$product_name];
+            $total_quantity = $quantity_dataset[$product_name] ?? 0;
             $dataset = array('金額' => $total_price, '數量' => $total_quantity);
             $chart->append($product_name, $dataset);
         }
@@ -278,7 +280,9 @@ class StatHelper
             $shifts = $this->store->shifts->search("`created_at` BETWEEN {$tmp_start_at} AND {$tmp_end_at}");
             foreach ($shifts as $shift) {
                 $staff_name = $staff_names[$shift->adjustment_by] ?? '老闆';
+		$staff_adjustment_dataset[$staff_name] = $staff_adjustment_dataset[$staff_name] ?? 0;
                 $staff_adjustment_dataset[$staff_name] += $shift->getAdjustmentValue();
+		$staff_quantity_dataset[$staff_name] = $staff_quantity_dataset[$staff_name] ?? 0;
                 $staff_quantity_dataset[$staff_name] += 1;
                 $shift_dataset['結餘金額'] += $shift->getAdjustmentValue();
                 $shift_dataset['臨時支出'] += $shift->paid_out;
@@ -291,7 +295,7 @@ class StatHelper
         }
         arsort($staff_adjustment_dataset);
         foreach ($staff_adjustment_dataset as $staff_name => $total_price) {
-            $total_quantity = $staff_quantity_dataset[$staff_name];
+            $total_quantity = $staff_quantity_dataset[$staff_name] ?? 0;
             $dataset = array('金額' => $total_price, '次數' => $total_quantity);
             $staff_chart->append($staff_name, $dataset);
         }

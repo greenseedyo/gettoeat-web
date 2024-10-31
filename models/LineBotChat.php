@@ -17,8 +17,8 @@ class LineBotChatRow extends Pix_Table_Row
     {
         $gav_key = 'line-bot-config-gettoeat';
         $config = json_decode(GAV::find($gav_key)->value);
-        $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($config->access_token);
-        $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $config->channel_secret]);
+        $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($config->access_token ?? '');
+        $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $config->channel_secret ?? '']);
         return $bot;
     }
 
