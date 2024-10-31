@@ -72,7 +72,7 @@ class LineBotChat extends Pix_Table
         $this->_relations['store'] = array('rel' => 'has_one', 'type' => 'Store', 'foreign_key' => 'store_id');
     }
 
-    public function getBySource($source_type, $source_id)
+    public static function getBySource($source_type, $source_id)
     {
         return self::search(array('source_type' => $source_type, 'source_id' => $source_id))->first();
     }

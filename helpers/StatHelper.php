@@ -88,7 +88,7 @@ class StatHelper
         $stat_chart = $stat_result->createChart('總覽', $stat_items);
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
-            $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
+            $tmp_start_datetime = $tmp_start_datetime ?? $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
             $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             if ($tmp_end_datetime > $this->end_datetime) {
@@ -130,7 +130,7 @@ class StatHelper
         $avg_stat_chart = $stat_result->createChart('平均客單價', array('平均客單價'));
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
-            $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
+            $tmp_start_datetime = $tmp_start_datetime ?? $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
             $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
@@ -172,7 +172,7 @@ class StatHelper
         $quantity_chart = $stat_result->createChart('分類銷售數量', $stat_items);
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
-            $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
+            $tmp_start_datetime = $tmp_start_datetime ?? $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
             $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
@@ -267,7 +267,7 @@ class StatHelper
         $end_at = $this->end_datetime->getTimestamp();
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
-            $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
+            $tmp_start_datetime = $tmp_start_datetime ?? $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
             $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
@@ -277,7 +277,7 @@ class StatHelper
 
             $shifts = $this->store->shifts->search("`created_at` BETWEEN {$tmp_start_at} AND {$tmp_end_at}");
             foreach ($shifts as $shift) {
-                $staff_name = $staff_names[$shift->adjustment_by] ?: '老闆';
+                $staff_name = $staff_names[$shift->adjustment_by] ?? '老闆';
                 $staff_adjustment_dataset[$staff_name] += $shift->getAdjustmentValue();
                 $staff_quantity_dataset[$staff_name] += 1;
                 $shift_dataset['結餘金額'] += $shift->getAdjustmentValue();
@@ -314,7 +314,7 @@ class StatHelper
         $quantity_chart = $stat_result->createChart('折扣活動次數統計', $stat_items);
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
-            $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
+            $tmp_start_datetime = $tmp_start_datetime ?? $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
             $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();
@@ -353,7 +353,7 @@ class StatHelper
         $quantity_chart = $stat_result->createChart('付款方式次數統計', $stat_items);
 
         while (!isset($tmp_end_datetime) or $tmp_end_datetime < $this->end_datetime) {
-            $tmp_start_datetime = $tmp_start_datetime ?: $this->start_datetime;
+            $tmp_start_datetime = $tmp_start_datetime ?? $this->start_datetime;
             $tmp_start_at = $tmp_start_datetime->getTimestamp();
             $tmp_end_datetime = $this->calculateEndDatetime($tmp_start_datetime);
             $tmp_end_at = $tmp_end_datetime->getTimestamp();

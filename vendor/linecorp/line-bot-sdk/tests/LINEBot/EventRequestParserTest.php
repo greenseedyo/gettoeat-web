@@ -24,6 +24,8 @@ use LINE\LINEBot\Event\BeaconDetectionEvent;
 use LINE\LINEBot\Event\FollowEvent;
 use LINE\LINEBot\Event\JoinEvent;
 use LINE\LINEBot\Event\LeaveEvent;
+use LINE\LINEBot\Event\MemberJoinEvent;
+use LINE\LINEBot\Event\MemberLeaveEvent;
 use LINE\LINEBot\Event\MessageEvent\AudioMessage;
 use LINE\LINEBot\Event\MessageEvent\FileMessage;
 use LINE\LINEBot\Event\MessageEvent\ImageMessage;
@@ -33,6 +35,8 @@ use LINE\LINEBot\Event\MessageEvent\TextMessage;
 use LINE\LINEBot\Event\MessageEvent\UnknownMessage;
 use LINE\LINEBot\Event\MessageEvent\VideoMessage;
 use LINE\LINEBot\Event\PostbackEvent;
+use LINE\LINEBot\Event\Things\ThingsResultAction;
+use LINE\LINEBot\Event\ThingsEvent;
 use LINE\LINEBot\Event\UnfollowEvent;
 use LINE\LINEBot\Event\UnknownEvent;
 use LINE\Tests\LINEBot\Util\DummyHttpClient;
@@ -42,6 +46,7 @@ class EventRequestParserTest extends TestCase
 {
     private static $json = <<<JSON
 {
+ "destination":"U0123456789abcdef0123456789abcd",
  "events":[
   {
    "type":"message",
@@ -67,7 +72,12 @@ class EventRequestParserTest extends TestCase
    "replyToken":"replytoken",
    "message":{
     "id":"contentid",
-    "type":"image"
+    "type":"image",
+    "contentProvider":{
+     "type":"external",
+     "originalContentUrl":"https://example.com/test.jpg",
+     "previewImageUrl":"https://example.com/test-preview.jpg"
+    }
    }
   },
   {
@@ -81,7 +91,12 @@ class EventRequestParserTest extends TestCase
    "replyToken":"replytoken",
    "message":{
     "id":"contentid",
-    "type":"audio"
+    "type":"audio",
+    "duration":10000,
+    "contentProvider":{
+     "type":"external",
+     "originalContentUrl":"https://example.com/test.m4a"
+    }
    }
   },
   {
@@ -94,7 +109,13 @@ class EventRequestParserTest extends TestCase
    "replyToken":"replytoken",
    "message":{
     "id":"contentid",
-    "type":"video"
+    "type":"video",
+    "duration":10000,
+    "contentProvider":{
+     "type":"external",
+     "originalContentUrl":"https://example.com/test.mp4",
+     "previewImageUrl":"https://example.com/test-preview.jpg"
+    }
    }
   },
   {
@@ -108,7 +129,12 @@ class EventRequestParserTest extends TestCase
    "replyToken":"replytoken",
    "message":{
     "id":"contentid",
-    "type":"audio"
+    "type":"audio",
+    "duration":10000,
+    "contentProvider":{
+     "type":"external",
+     "originalContentUrl":"https://example.com/test.m4a"
+    }
    }
   },
   {
@@ -348,6 +374,100 @@ class EventRequestParserTest extends TestCase
     "result": "failed",
     "nonce": "1234567890abcdefghijklmnopqrstuvwxyz"
    }
+  },
+  {
+   "type":"memberJoined",
+   "timestamp":12345678901234,
+   "source":{
+    "type":"group",
+    "groupId":"groupid"
+   },
+   "joined": {
+    "members": [
+     {
+      "type": "user",
+      "userId": "U4af4980629..."
+     },
+     {
+      "type": "user",
+      "userId": "U91eeaf62d9..."
+     }
+    ]
+   },
+   "replyToken":"replytoken"
+  },
+  {
+   "type":"memberLeft",
+   "timestamp":12345678901234,
+   "source":{
+    "type":"group",
+    "groupId":"groupid"
+   },
+   "left": {
+    "members": [
+     {
+      "type": "user",
+      "userId": "U4af4980629..."
+     },
+     {
+      "type": "user",
+      "userId": "U91eeaf62d9..."
+     }
+    ]
+   }
+  },
+  {
+   "type":"things",
+   "timestamp":12345678901234,
+   "source":{
+    "type":"user",
+    "userId":"userid"
+   },
+   "replyToken":"replytoken",
+   "things":{
+    "deviceId":"t2c449c9d1",
+    "type": "link"
+   }
+  },
+  {
+   "type":"things",
+   "timestamp":12345678901234,
+   "source":{
+    "type":"user",
+    "userId":"userid"
+   },
+   "replyToken":"replytoken",
+   "things":{
+    "deviceId":"t2c449c9d1",
+    "type": "unlink"
+   }
+  },
+  {
+   "type": "things",
+   "timestamp":12345678901234,
+   "source":{
+    "type":"user",
+    "userId":"userid"
+   },
+   "replyToken":"replytoken",
+   "things": {
+    "type": "scenarioResult",
+    "deviceId": "t2c449c9d1",
+    "result": {
+     "scenarioId": "dummy_scenario_id",
+     "revision": 2,
+     "startTime": 1547817845950,
+     "endTime": 1547817845952,
+     "resultCode": "success",
+     "bleNotificationPayload": "AQ==",
+     "actionResults": [
+      {
+       "type": "binary",
+       "data": "/w=="
+      }
+     ]
+    }
+   }
   }
  ]
 }
@@ -362,9 +482,15 @@ JSON;
     {
         $bot = new LINEBot(new DummyHttpClient($this, function () {
         }), ['channelSecret' => 'testsecret']);
-        $events = $bot->parseEventRequest($this::$json, 'uilGuZPX3SyyreXYIYla+I3kS48xg4+igqQZL33fc6M=');
+        list($destination, $events) = $bot->parseEventRequest(
+            $this::$json,
+            'QbldItjJS8DrEngSZWTdbmZi1ZWppeQVLVKWnrlc1V4=',
+            false
+        );
 
-        $this->assertEquals(count($events), 24);
+        $this->assertEquals($destination, 'U0123456789abcdef0123456789abcd');
+
+        $this->assertEquals(count($events), 29);
 
         {
             // text
@@ -394,6 +520,15 @@ JSON;
             $this->assertEquals('replytoken', $event->getReplyToken());
             $this->assertEquals('image', $event->getMessageType());
             $this->assertEquals('contentid', $event->getMessageId());
+            $this->assertTrue($event->getContentProvider()->isExternal());
+            $this->assertEquals(
+                'https://example.com/test.jpg',
+                $event->getContentProvider()->getOriginalContentUrl()
+            );
+            $this->assertEquals(
+                'https://example.com/test-preview.jpg',
+                $event->getContentProvider()->getPreviewImageUrl()
+            );
         }
 
         {
@@ -408,6 +543,12 @@ JSON;
             $this->assertEquals('replytoken', $event->getReplyToken());
             $this->assertEquals('audio', $event->getMessageType());
             $this->assertEquals('contentid', $event->getMessageId());
+            $this->assertEquals(10000, $event->getDuration());
+            $this->assertTrue($event->getContentProvider()->isExternal());
+            $this->assertEquals(
+                'https://example.com/test.m4a',
+                $event->getContentProvider()->getOriginalContentUrl()
+            );
         }
 
         {
@@ -421,6 +562,16 @@ JSON;
             /** @var VideoMessage $event */
             $this->assertEquals('replytoken', $event->getReplyToken());
             $this->assertEquals('video', $event->getMessageType());
+            $this->assertEquals(10000, $event->getDuration());
+            $this->assertTrue($event->getContentProvider()->isExternal());
+            $this->assertEquals(
+                'https://example.com/test.mp4',
+                $event->getContentProvider()->getOriginalContentUrl()
+            );
+            $this->assertEquals(
+                'https://example.com/test-preview.jpg',
+                $event->getContentProvider()->getPreviewImageUrl()
+            );
         }
 
         {
@@ -639,6 +790,70 @@ JSON;
             $this->assertEquals(false, $event->isSuccess());
             $this->assertEquals(true, $event->isFailed());
             $this->assertEquals("1234567890abcdefghijklmnopqrstuvwxyz", $event->getNonce());
+        }
+
+        {
+            // member join
+            $event = $events[24];
+            $this->assertInstanceOf('LINE\LINEBot\Event\MemberJoinEvent', $event);
+            /** @var MemberJoinEvent $event */
+            $this->assertEquals('replytoken', $event->getReplyToken());
+            $this->assertEquals(12345678901234, $event->getTimestamp());
+            $members = $event->getMembers();
+            $this->assertEquals(["type" => "user", "userId" => "U4af4980629..."], $members[0]);
+            $this->assertEquals(["type" => "user", "userId" => "U91eeaf62d9..."], $members[1]);
+        }
+
+        {
+            // member leave
+            $event = $events[25];
+            $this->assertInstanceOf('LINE\LINEBot\Event\MemberLeaveEvent', $event);
+            /** @var MemberLeaveEvent $event */
+            $this->assertTrue($event->getReplyToken() === null);
+            $this->assertEquals(12345678901234, $event->getTimestamp());
+            $members = $event->getMembers();
+            $this->assertEquals(["type" => "user", "userId" => "U4af4980629..."], $members[0]);
+            $this->assertEquals(["type" => "user", "userId" => "U91eeaf62d9..."], $members[1]);
+        }
+
+        {
+            // things
+            $event = $events[26];
+            $this->assertInstanceOf('LINE\LINEBot\Event\ThingsEvent', $event);
+            /** @var ThingsEvent $event */
+            $this->assertEquals('replytoken', $event->getReplyToken());
+            $this->assertEquals('t2c449c9d1', $event->getDeviceId());
+            $this->assertEquals(ThingsEvent::TYPE_DEVICE_LINKED, $event->getThingsEventType());
+        }
+
+        {
+            // things
+            $event = $events[27];
+            $this->assertInstanceOf('LINE\LINEBot\Event\ThingsEvent', $event);
+            /** @var ThingsEvent $event */
+            $this->assertEquals('replytoken', $event->getReplyToken());
+            $this->assertEquals('t2c449c9d1', $event->getDeviceId());
+            $this->assertEquals(ThingsEvent::TYPE_DEVICE_UNLINKED, $event->getThingsEventType());
+        }
+
+        {
+            // things
+            $event = $events[28];
+            $this->assertInstanceOf('LINE\LINEBot\Event\ThingsEvent', $event);
+            /** @var ThingsEvent $event */
+            $this->assertEquals('replytoken', $event->getReplyToken());
+            $this->assertEquals('t2c449c9d1', $event->getDeviceId());
+            $this->assertEquals(ThingsEvent::TYPE_SCENARIO_RESULT, $event->getThingsEventType());
+            $this->assertEquals('dummy_scenario_id', $event->getScenarioResult()->getScenarioId());
+            $scenarioResult = $event->getScenarioResult();
+            $this->assertEquals(2, $scenarioResult->getRevision());
+            $this->assertEquals(1547817845950, $scenarioResult->getStartTime());
+            $this->assertEquals(1547817845952, $scenarioResult->getEndTime());
+            $this->assertEquals('success', $scenarioResult->getResultCode());
+            $this->assertEquals('AQ==', $scenarioResult->getBleNotificationPayload());
+            $actionResults = $scenarioResult->getActionResults();
+            $this->assertEquals(ThingsResultAction::TYPE_BINARY, $actionResults[0]->getType());
+            $this->assertEquals('/w==', $actionResults[0]->getData());
         }
     }
 }

@@ -1,0 +1,8 @@
+body {
+  /* leave it to hide the scrollbars */
+  overflow: hidden;
+  margin: 0;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+}

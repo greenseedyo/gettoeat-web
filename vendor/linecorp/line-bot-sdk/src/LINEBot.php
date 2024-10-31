@@ -26,6 +26,8 @@ use LINE\LINEBot\Response;
 use LINE\LINEBot\SignatureValidator;
 use LINE\LINEBot\RichMenuBuilder;
 use ReflectionClass;
+use DateTime;
+use DateTimeZone;
 
 /**
  * A client class of LINE Messaging API.
@@ -56,7 +58,7 @@ class LINEBot
         $this->channelSecret = $args['channelSecret'];
 
         $this->endpointBase = LINEBot::DEFAULT_ENDPOINT_BASE;
-        if (array_key_exists('endpointBase', $args) && !empty($args['endpointBase'])) {
+        if (!empty($args['endpointBase'])) {
             $this->endpointBase = $args['endpointBase'];
         }
     }
@@ -81,6 +83,26 @@ class LINEBot
     public function getMessageContent($messageId)
     {
         return $this->httpClient->get($this->endpointBase . '/v2/bot/message/' . urlencode($messageId) . '/content');
+    }
+
+    /**
+     * Gets the target limit for additional messages in the current month.
+     *
+     * @return Response
+     */
+    public function getNumberOfLimitForAdditional()
+    {
+        return $this->httpClient->get($this->endpointBase . '/v2/bot/message/quota');
+    }
+
+    /**
+     * Gets the number of messages sent in the current month.
+     *
+     * @return Response
+     */
+    public function getNumberOfSentThisMonth()
+    {
+        return $this->httpClient->get($this->endpointBase . '/v2/bot/message/quota/consumption');
     }
 
     /**
@@ -137,13 +159,15 @@ class LINEBot
      *
      * @param string $to Identifier of destination.
      * @param MessageBuilder $messageBuilder Message builder to send.
+     * @param boolean $notificationDisabled Don't send push notifications(=true) or send(=false)
      * @return Response
      */
-    public function pushMessage($to, MessageBuilder $messageBuilder)
+    public function pushMessage($to, MessageBuilder $messageBuilder, $notificationDisabled = false)
     {
         return $this->httpClient->post($this->endpointBase . '/v2/bot/message/push', [
             'to' => $to,
             'messages' => $messageBuilder->buildMessage(),
+            'notificationDisabled' => $notificationDisabled,
         ]);
     }
 
@@ -152,13 +176,31 @@ class LINEBot
      *
      * @param array $tos Identifiers of destination.
      * @param MessageBuilder $messageBuilder Message builder to send.
+     * @param boolean $notificationDisabled Don't send push notifications(=true) or send(=false)
      * @return Response
      */
-    public function multicast(array $tos, MessageBuilder $messageBuilder)
+    public function multicast(array $tos, MessageBuilder $messageBuilder, $notificationDisabled = false)
     {
         return $this->httpClient->post($this->endpointBase . '/v2/bot/message/multicast', [
             'to' => $tos,
             'messages' => $messageBuilder->buildMessage(),
+            'notificationDisabled' => $notificationDisabled,
+        ]);
+    }
+
+    /**
+     * Sends push messages to multiple users at any time.
+     * LINE@ accounts cannot call this API endpoint. Please migrate it to a LINE official account.
+     *
+     * @param MessageBuilder $messageBuilder Message builder to send.
+     * @param boolean $notificationDisabled Don't send push notifications(=true) or send(=false)
+     * @return Response
+     */
+    public function broadcast(MessageBuilder $messageBuilder, $notificationDisabled = false)
+    {
+        return $this->httpClient->post($this->endpointBase . '/v2/bot/message/broadcast', [
+            'messages' => $messageBuilder->buildMessage(),
+            'notificationDisabled' => $notificationDisabled,
         ]);
     }
 
@@ -189,13 +231,14 @@ class LINEBot
      *
      * @param string $body Request body.
      * @param string $signature Signature of request.
-     * @return LINEBot\Event\BaseEvent[]
+     * @param bool $eventOnly if this flag on, get events only.
+     * @return mixed
      * @throws LINEBot\Exception\InvalidEventRequestException
      * @throws LINEBot\Exception\InvalidSignatureException
      */
-    public function parseEventRequest($body, $signature)
+    public function parseEventRequest($body, $signature, $eventOnly = true)
     {
-        return EventRequestParser::parseEventRequest($body, $this->channelSecret, $signature);
+        return EventRequestParser::parseEventRequest($body, $this->channelSecret, $signature, $eventOnly);
     }
 
     /**
@@ -324,6 +367,18 @@ class LINEBot
     }
 
     /**
+     * Issues a link token used for the account link feature.
+     *
+     * @param string $userId User ID for the LINE account to be linked.
+     * @return Response
+     */
+    public function createLinkToken($userId)
+    {
+        $url = sprintf('%s/v2/bot/user/%s/linkToken', $this->endpointBase, urlencode($userId));
+        return $this->httpClient->post($url, []);
+    }
+
+    /**
      * Gets a rich menu via a rich menu ID.
      *
      * @param string $richMenuId ID of an uploaded rich menu
@@ -391,7 +446,23 @@ class LINEBot
     }
 
     /**
-     * Unlinks a rich menu from a user.
+     * Links a rich menu to multiple users.
+     *
+     * @param string[] $userIds Found in the source object of webhook event objects. Max: 150 user IDs.
+     * @param string $richMenuId ID of an uploaded rich menu
+     * @return Response
+     */
+    public function bulkLinkRichMenu($userIds, $richMenuId)
+    {
+        $url = $this->endpointBase . '/v2/bot/richmenu/bulk/link';
+        return $this->httpClient->post($url, [
+            'richMenuId' => $richMenuId,
+            'userIds' => $userIds
+        ]);
+    }
+
+    /**
+     * Unlinks a rich menu from multiple user.
      *
      * @param string $userId User ID. Found in the source object of webhook event objects.
      * @return Response
@@ -400,6 +471,20 @@ class LINEBot
     {
         $url = sprintf('%s/v2/bot/user/%s/richmenu', $this->endpointBase, urlencode($userId));
         return $this->httpClient->delete($url);
+    }
+
+    /**
+     * Unlinks rich menus from multiple users.
+     *
+     * @param string[] $userIds Found in the source object of webhook event objects. Max: 150 user IDs.
+     * @return Response
+     */
+    public function bulkUnlinkRichMenu($userIds)
+    {
+        $url = $this->endpointBase . '/v2/bot/richmenu/bulk/unlink';
+        return $this->httpClient->post($url, [
+            'userIds' => $userIds
+        ]);
     }
 
     /**
@@ -448,5 +533,157 @@ class LINEBot
     public function getRichMenuList()
     {
         return $this->httpClient->get($this->endpointBase . '/v2/bot/richmenu/list');
+    }
+
+    /**
+     * Get number of sent reply messages
+     *
+     * @param DateTime $datetime Date the messages were sent.
+     * @return Response
+     */
+    public function getNumberOfSentReplyMessages(DateTime $datetime)
+    {
+        $url = $this->endpointBase . '/v2/bot/message/delivery/reply';
+        $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
+        return $this->httpClient->get($url, ['date' => $datetime->format('Ymd')]);
+    }
+
+    /**
+     * Get number of sent push messages
+     *
+     * @param DateTime $datetime Date the messages were sent.
+     * @return Response
+     */
+    public function getNumberOfSentPushMessages(DateTime $datetime)
+    {
+        $url = $this->endpointBase . '/v2/bot/message/delivery/push';
+        $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
+        return $this->httpClient->get($url, ['date' => $datetime->format('Ymd')]);
+    }
+
+    /**
+     * Get number of sent multicast messages
+     *
+     * @param DateTime $datetime Date the messages were sent.
+     * @return Response
+     */
+    public function getNumberOfSentMulticastMessages(DateTime $datetime)
+    {
+        $url = $this->endpointBase . '/v2/bot/message/delivery/multicast';
+        $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
+        return $this->httpClient->get($url, ['date' => $datetime->format('Ymd')]);
+    }
+
+    /**
+     * Get number of sent broadcast messages
+     *
+     * @param DateTime $datetime Date the messages were sent.
+     * @return Response
+     */
+    public function getNumberOfSentBroadcastMessages(DateTime $datetime)
+    {
+        $url = $this->endpointBase . '/v2/bot/message/delivery/broadcast';
+        $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
+        return $this->httpClient->get($url, ['date' => $datetime->format('Ymd')]);
+    }
+
+    /**
+     * Get number of message deliveries
+     *
+     * @param DateTime $datetime Date for which to retrieve number of sent messages.
+     * @return Response
+     */
+    public function getNumberOfMessageDeliveries(DateTime $datetime)
+    {
+        $url = $this->endpointBase . '/v2/bot/insight/message/delivery';
+        $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
+        return $this->httpClient->get($url, ['date' => $datetime->format('Ymd')]);
+    }
+
+    /**
+     * Get number of followers
+     *
+     * @param DateTime $datetime Date for which to retrieve the number of followers.
+     * @return Response
+     */
+    public function getNumberOfFollowers(DateTime $datetime)
+    {
+        $url = $this->endpointBase . '/v2/bot/insight/followers';
+        $datetime->setTimezone(new DateTimeZone('Asia/Tokyo'));
+        return $this->httpClient->get($url, ['date' => $datetime->format('Ymd')]);
+    }
+
+    /**
+     * Get friend demographics
+     *
+     * It can take up to 3 days for demographic information to be calculated.
+     * This means the information the API returns may be 3 days old.
+     * Furthermore, your Target reach number must be at least 20 to retrieve demographic information.
+     *
+     * @return Response
+     */
+    public function getFriendDemographics()
+    {
+        $url = $this->endpointBase . '/v2/bot/insight/demographic';
+        return $this->httpClient->get($url);
+    }
+
+    /**
+     * Get user interaction statistics
+     *
+     * Returns statistics about how users interact with broadcast messages sent from your LINE official account.
+     * Interactions are tracked for only 14 days after a message was sent.
+     * The statistics are no longer updated after 15 days.
+     *
+     * @param string $requestId Request ID of broadcast message.
+     * @return Response
+     */
+    public function getUserInteractionStatistics($requestId)
+    {
+        $url = $this->endpointBase . '/v2/bot/insight/message/event';
+        return $this->httpClient->get($url, ['requestId' => $requestId]);
+    }
+
+    /**
+     * Create channel access token
+     *
+     * Create a short-lived channel access token.
+     * Up to 30 tokens can be issued.
+     * If the maximum is exceeded,
+     * existing channel access tokens are revoked in the order of when they were first issued.
+     *
+     * @param string $channelId
+     * @return Response
+     */
+    public function createChannelAccessToken($channelId)
+    {
+        $url = $this->endpointBase . '/v2/oauth/accessToken';
+        return $this->httpClient->post(
+            $url,
+            [
+                'grant_type' => 'client_credentials',
+                'client_id' => $channelId,
+                'client_secret' => $this->channelSecret,
+            ],
+            ['Content-Type: application/x-www-form-urlencoded']
+        );
+    }
+    
+    /**
+     * Revoke channel access token
+     *
+     * Revokes a channel access token.
+     *
+     * @param string $channelAccessToken
+     * @return Response
+     */
+    public function revokeChannelAccessToken($channelAccessToken)
+    {
+        $url = $this->endpointBase . '/v2/oauth/revoke';
+        return $this->httpClient->post(
+            $url,
+            ['access_token' => $channelAccessToken],
+            ['Content-Type: application/x-www-form-urlencoded']
+        );
     }
 }

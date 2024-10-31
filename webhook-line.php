@@ -75,6 +75,7 @@ $event = $data->events[0];
 $event_type = $event->type;
 $source = $event->source;
 $source_type = $source->type;
+$source_id = null;
 switch ($source_type) {
 case 'user':
     $source_id = $source->userId;
@@ -145,7 +146,7 @@ case 'leave':
     break;
 }
 
-if ($reply_message) {
+if ($reply_message ?? false) {
     if ('development' == $environment) {
         $response = $line_bot_chat->pushMessage($reply_message);
     } else {
@@ -153,7 +154,7 @@ if ($reply_message) {
     }
 }
 
-if ($push_message) {
+if ($push_message ?? false) {
     $response = $line_bot_chat->pushMessage($push_message);
 }
 
