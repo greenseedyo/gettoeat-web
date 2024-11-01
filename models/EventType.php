@@ -20,7 +20,7 @@ class EventType extends Pix_Table
         $this->addIndex('name', array('name'), 'unique');
     }
 
-    public function getByName($name)
+    public static function getByName($name)
     {
         return EventType::search(array('name' => $name))->first();
     }

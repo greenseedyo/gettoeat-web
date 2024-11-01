@@ -94,7 +94,8 @@ class StoreRow extends Pix_Table_Row
 
     public function createTablesInfoWithVersion($version)
     {
-        $tables_info = $this->create_tables_infos(array('version' => $version));
+        $default_data = '{"totalHeight":400,"totalWidth":600,"tables":[{"name":"2桌","width":80,"height":80,"x":"320px","y":"140px","active":true},{"name":"1桌","width":80,"height":80,"x":"200px","y":"140px","active":true},{"name":"外帶2","width":80,"height":40,"x":"260px","y":"340px","active":true},{"name":"外帶1","width":80,"height":40,"x":"160px","y":"340px","active":true},{"name":"老闆","width":80,"height":40,"x":"360px","y":"340px","active":true},{"name":"請至後台設定桌位圖","width":200,"height":60,"x":"200px","y":"40px","active":true}]}';
+        $tables_info = $this->create_tables_infos(array('version' => $version, 'data' => $default_data));
         return $tables_info;
     }
 
@@ -180,8 +181,8 @@ class Store extends Pix_Table
         $this->_columns['account'] = array('type' => 'varchar', 'size' => 20);
         $this->_columns['name'] = array('type' => 'varchar', 'size' => 20);
         $this->_columns['nickname'] = array('type' => 'varchar', 'size' => 10);
-        $this->_columns['date_change_at'] = array('type' => 'int', 'size' => 10);
-        $this->_columns['payment_method_keys'] = array('type' => 'varchar', 'size' => 255);
+        $this->_columns['date_change_at'] = array('type' => 'int', 'size' => 10, 'default' => 6);
+        $this->_columns['payment_method_keys'] = array('type' => 'varchar', 'size' => 255, 'default' => '1');
 
         $this->addIndex('account', array('account'));
         $this->addIndex('name', array('name'));

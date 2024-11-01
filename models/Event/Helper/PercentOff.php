@@ -24,15 +24,15 @@ class PercentOff extends AbstractHelper
 
     public function setData($data = null)
     {
-        if ($percent_reversed = $data['percent_reversed']) {
+        if ($percent_reversed = $data['percent_reversed'] ?? false) {
             $percent_reversed = floatval("0.{$percent_reversed}") * 100;
             $percent = 100 - $percent_reversed;
-        } elseif ($percent = $data['percent']) {
+        } elseif ($percent = $data['percent'] ?? false) {
             $percent_reversed = 100 - $percent;
         }
         $new_data = array(
-            'percent' => $percent,
-            'percent_reversed' => $percent_reversed,
+            'percent' => $percent ?? null,
+            'percent_reversed' => $percent_reversed ?? null,
         );
         $this->event->update(array('data' => json_encode($new_data)));
     }

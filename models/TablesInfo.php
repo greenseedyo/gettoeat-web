@@ -21,7 +21,7 @@ class TablesInfo extends Pix_Table
         $this->_columns['id'] = array('type' => 'int', 'auto_increment' => true, 'unsigned' => true);
         $this->_columns['store_id'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['version'] = array('type' => 'tinyint', 'unsigned' => true);
-        $this->_columns['data'] = array('type' => 'text');
+        $this->_columns['data'] = array('type' => 'text', 'default' => '');
 
         $this->addIndex('store_version', array('store_id', 'version'));
     }

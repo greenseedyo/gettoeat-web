@@ -34,8 +34,8 @@ class Event extends Pix_Table
         $this->_columns['type_id'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['created_at'] = array('type' => 'int', 'unsigned' => true);
         $this->_columns['updated_at'] = array('type' => 'int', 'unsigned' => true);
-        $this->_columns['start_at'] = array('type' => 'int', 'unsigned' => true);
-        $this->_columns['end_at'] = array('type' => 'int', 'unsigned' => true);
+        $this->_columns['start_at'] = array('type' => 'int', 'unsigned' => true, 'default' => 0);
+        $this->_columns['end_at'] = array('type' => 'int', 'unsigned' => true, 'default' => 0);
         $this->_columns['title'] = array('type' => 'varchar', 'size' => 255);
         $this->_columns['note'] = array('type' => 'varchar', 'size' => 255);
         $this->_columns['data'] = array('type' => 'text', 'not-null' => false);
